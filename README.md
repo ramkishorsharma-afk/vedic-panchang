@@ -1,1 +1,0 @@
-# vedic-panchang
