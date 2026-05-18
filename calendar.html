@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>हिन्दू कैलेण्डर | Hindu Calendar — वैदिक पञ्चाङ्ग</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Sanskrit:ital@0;1&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <div class="cosmos-bg">
+    <div class="stars" id="stars"></div>
+    <div class="mandala-bg"></div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-brand">
+      <span class="om">ॐ</span>
+      <span class="brand-text">वैदिक पञ्चाङ्ग</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="../index.html">पञ्चाङ्ग</a></li>
+      <li><a href="calendar.html" class="active">कैलेण्डर</a></li>
+      <li><a href="muhurat.html">मुहूर्त</a></li>
+      <li><a href="kundali.html">कुण्डली</a></li>
+    </ul>
+    <button class="lang-toggle" id="langToggle">EN / हि</button>
+  </nav>
+
+  <div class="page-wrapper">
+    <h1 class="page-title hi">हिन्दू कैलेण्डर</h1>
+    <h1 class="page-title en" style="display:none">Hindu Calendar</h1>
+    <p class="page-subtitle hi">पर्व, व्रत एवं तिथियाँ</p>
+    <p class="page-subtitle en" style="display:none">Festivals, Vrats & Tithis</p>
+
+    <!-- Calendar Header -->
+    <div class="cal-header">
+      <button class="cal-nav-btn" id="prevMonth">&#8592;</button>
+      <div>
+        <div class="cal-month-title" id="calMonthTitle">—</div>
+        <div style="font-size:0.75rem;color:var(--text-light);font-family:'DM Mono',monospace;text-align:center;margin-top:2px" id="calHinduMonth">—</div>
+      </div>
+      <button class="cal-nav-btn" id="nextMonth">&#8594;</button>
+    </div>
+
+    <!-- Day Headers -->
+    <div class="cal-grid" id="calDayHeaders"></div>
+
+    <!-- Calendar Days -->
+    <div class="cal-grid" id="calGrid" style="margin-top:0.5rem"></div>
+
+    <!-- Festival Legend -->
+    <div style="margin-top:2rem;background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:1.5rem;backdrop-filter:blur(12px)">
+      <h3 class="hi" style="font-family:'Tiro Devanagari Sanskrit',serif;color:var(--crimson);margin-bottom:1rem;font-weight:400">इस माह के पर्व</h3>
+      <h3 class="en" style="display:none;font-family:'Tiro Devanagari Sanskrit',serif;color:var(--crimson);margin-bottom:1rem;font-weight:400">This Month's Festivals</h3>
+      <div id="monthFestivals"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="om-footer">ॐ</div>
+    <p class="footer-copy">© 2025 वैदिक पञ्चाङ्ग | Vedic Panchang</p>
+  </footer>
+
+  <script src="../js/panchang.js"></script>
+  <script>
+    const MONTHS_HI = ['जनवरी','फरवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितम्बर','अक्टूबर','नवम्बर','दिसम्बर'];
+    const MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const HINDI_MONTHS = ['चैत्र','वैशाख','ज्येष्ठ','आषाढ़','श्रावण','भाद्रपद','अश्विन','कार्तिक','मार्गशीर्ष','पौष','माघ','फाल्गुन'];
+    const DAYS_HI = ['रवि','सोम','मंगल','बुध','गुरु','शुक्र','शनि'];
+    const DAYS_EN = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+    let viewYear = new Date().getFullYear();
+    let viewMonth = new Date().getMonth();
+
+    function renderCalendar() {
+      const today = new Date();
+      const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+      const daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
+
+      // Title
+      document.getElementById('calMonthTitle').textContent =
+        `${MONTHS_HI[viewMonth]} ${viewYear}`;
+      document.getElementById('calHinduMonth').textContent =
+        HINDI_MONTHS[viewMonth] + ' / ' + HINDI_MONTHS[(viewMonth+1)%12];
+
+      // Day headers
+      const hdrs = document.getElementById('calDayHeaders');
+      hdrs.innerHTML = DAYS_HI.map(d =>
+        `<div class="cal-day-header">${d}</div>`
+      ).join('');
+
+      // Grid
+      const grid = document.getElementById('calGrid');
+      let html = '';
+
+      // Empty cells
+      for (let i = 0; i < firstDay; i++) {
+        html += '<div class="cal-day empty"></div>';
+      }
+
+      const festivals = Panchang.getFestivalsForMonth(viewYear, viewMonth+1);
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const date = new Date(viewYear, viewMonth, d);
+        const jd = Panchang.toJulianDate(date);
+        const tithi = Panchang.getTithi(jd);
+        const isToday = date.toDateString() === today.toDateString();
+        const dayFests = festivals.filter(f => f.day === d);
+        const hasFest = dayFests.length > 0;
+        html += `
+          <div class="cal-day${isToday?' today':''}${hasFest?' has-festival':''}"
+               onclick="showDayDetail(${viewYear},${viewMonth},${d})">
+            <div class="cal-day-num">${d}</div>
+            <div class="cal-tithi-mini">${tithi.nameHi}</div>
+            ${hasFest ? `<div class="cal-festival-dot" title="${dayFests.map(f=>f.nameHi).join(', ')}"></div>` : ''}
+            ${hasFest ? `<div style="font-size:0.6rem;color:var(--saffron)">${dayFests[0].nameHi}</div>` : ''}
+          </div>
+        `;
+      }
+
+      grid.innerHTML = html;
+
+      // Month festivals
+      const mfEl = document.getElementById('monthFestivals');
+      if (festivals.length === 0) {
+        mfEl.innerHTML = '<p style="color:var(--text-light);font-size:0.9rem">इस माह कोई विशेष पर्व नहीं है।</p>';
+      } else {
+        mfEl.innerHTML = festivals.map(f => `
+          <div class="festival-item" style="margin-bottom:0.5rem">
+            <div class="festival-icon">${f.icon}</div>
+            <div>
+              <div class="festival-name hi">${f.day} ${MONTHS_HI[viewMonth]} — ${f.nameHi}</div>
+              <div class="festival-name en" style="display:none">${f.day} ${MONTHS_EN[viewMonth]} — ${f.nameEn}</div>
+            </div>
+            <span class="festival-tag">${f.type==='national'?'राष्ट्रीय':'हिन्दू पर्व'}</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    function showDayDetail(y, m, d) {
+      const date = new Date(y, m, d);
+      const jd = Panchang.toJulianDate(date);
+      const tithi = Panchang.getTithi(jd);
+      const nak   = Panchang.getNakshatra(jd);
+      const yoga  = Panchang.getYoga(jd);
+      const varDay = Panchang.getVar(date);
+      alert(`📅 ${d} ${MONTHS_HI[m]} ${y}\n\nतिथि: ${tithi.nameHi} (${tithi.pakshaHi})\nनक्षत्र: ${nak.nameHi} - पाद ${nak.pada}\nयोग: ${yoga.nameHi}\nवार: ${varDay.nameHi}`);
+    }
+
+    document.getElementById('prevMonth').addEventListener('click', () => {
+      viewMonth--; if(viewMonth<0){viewMonth=11;viewYear--;} renderCalendar();
+    });
+    document.getElementById('nextMonth').addEventListener('click', () => {
+      viewMonth++; if(viewMonth>11){viewMonth=0;viewYear++;} renderCalendar();
+    });
+
+    // Stars
+    function createStars() {
+      const c = document.getElementById('stars');
+      for (let i=0;i<100;i++) {
+        const s=document.createElement('div');
+        s.style.cssText=`position:absolute;left:${Math.random()*100}%;top:${Math.random()*100}%;width:${Math.random()*2+1}px;height:${Math.random()*2+1}px;background:rgba(242,212,114,${Math.random()*0.6+0.2});border-radius:50%;`;
+        c.appendChild(s);
+      }
+    }
+    // Lang
+    let lang='hi';
+    document.getElementById('langToggle').addEventListener('click',()=>{
+      lang=lang==='hi'?'en':'hi';
+      document.body.classList.toggle('lang-en',lang==='en');
+    });
+
+    createStars();
+    renderCalendar();
+  </script>
+</body>
+</html>

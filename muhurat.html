@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>शुभ मुहूर्त | Auspicious Muhurat — वैदिक पञ्चाङ्ग</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Sanskrit:ital@0;1&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <div class="cosmos-bg">
+    <div class="stars" id="stars"></div>
+    <div class="mandala-bg"></div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-brand">
+      <span class="om">ॐ</span>
+      <span class="brand-text">वैदिक पञ्चाङ्ग</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="../index.html">पञ्चाङ्ग</a></li>
+      <li><a href="calendar.html">कैलेण्डर</a></li>
+      <li><a href="muhurat.html" class="active">मुहूर्त</a></li>
+      <li><a href="kundali.html">कुण्डली</a></li>
+    </ul>
+    <button class="lang-toggle" id="langToggle">EN / हि</button>
+  </nav>
+
+  <div class="page-wrapper">
+    <h1 class="page-title hi">शुभ मुहूर्त</h1>
+    <h1 class="page-title en" style="display:none">Auspicious Muhurat</h1>
+    <p class="page-subtitle hi">शुभ कार्यों के लिए उत्तम समय</p>
+    <p class="page-subtitle en" style="display:none">Best time for auspicious activities</p>
+
+    <!-- Form -->
+    <div class="muhurat-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="hi">कार्य का प्रकार</label>
+          <label class="en" style="display:none">Purpose</label>
+          <select id="purposeSelect">
+            <option value="vivah">विवाह (Marriage)</option>
+            <option value="griha">गृह प्रवेश (House Warming)</option>
+            <option value="vyapar">व्यापार आरम्भ (Business Start)</option>
+            <option value="yatra">यात्रा (Journey)</option>
+            <option value="namakarana">नामकरण (Naming Ceremony)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="hi">दिनांक</label>
+          <label class="en" style="display:none">Date</label>
+          <input type="date" id="muhuratDate" />
+        </div>
+        <div class="form-group">
+          <label class="hi">नगर / अक्षांश</label>
+          <label class="en" style="display:none">City / Latitude</label>
+          <input type="text" id="cityInput" placeholder="उदा: नई दिल्ली" />
+        </div>
+      </div>
+      <button class="btn-primary" onclick="calcMuhurat()">
+        <span class="hi">मुहूर्त निकालें 🔍</span>
+        <span class="en" style="display:none">Find Muhurat 🔍</span>
+      </button>
+    </div>
+
+    <!-- TODAY'S SPECIAL MUHURATS -->
+    <h2 class="section-title hi">आज के विशेष मुहूर्त</h2>
+    <h2 class="section-title en" style="display:none">Today's Special Muhurats</h2>
+
+    <div class="muhurat-results" id="specialMuhurats"></div>
+
+    <div style="margin-top:2rem">
+      <h2 class="section-title hi">चयनित दिन के मुहूर्त</h2>
+      <h2 class="section-title en" style="display:none">Muhurats for Selected Date</h2>
+      <div class="muhurat-results" id="muhuratResults"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="om-footer">ॐ</div>
+    <p class="footer-copy">© 2025 वैदिक पञ्चाङ्ग | Vedic Panchang</p>
+  </footer>
+
+  <script src="../js/panchang.js"></script>
+  <script>
+    function createStars() {
+      const c=document.getElementById('stars');
+      for(let i=0;i<100;i++){const s=document.createElement('div');s.style.cssText=`position:absolute;left:${Math.random()*100}%;top:${Math.random()*100}%;width:${Math.random()*2+1}px;height:${Math.random()*2+1}px;background:rgba(242,212,114,${Math.random()*0.6+0.2});border-radius:50%;`;c.appendChild(s);}
+    }
+    document.getElementById('langToggle').addEventListener('click',()=>{
+      document.body.classList.toggle('lang-en');
+    });
+
+    // Set today's date
+    const today = new Date();
+    document.getElementById('muhuratDate').value = today.toISOString().split('T')[0];
+
+    // Special daily muhurats
+    const SPECIAL = [
+      { nameHi:'ब्रह्म मुहूर्त',      nameEn:'Brahma Muhurat',      time:'04:24 – 05:12', icon:'🌅', quality:'best',  descHi:'सर्वोत्तम — ध्यान व अध्ययन',        descEn:'Best for meditation & study' },
+      { nameHi:'प्रातः सन्ध्या',      nameEn:'Pratah Sandhya',      time:'05:42 – 06:00', icon:'🌄', quality:'best',  descHi:'संध्योपासना का समय',                 descEn:'Time for morning prayers' },
+      { nameHi:'अभिजीत मुहूर्त',      nameEn:'Abhijit Muhurat',     time:'11:48 – 12:36', icon:'☀️', quality:'best',  descHi:'सभी कार्यों के लिए श्रेष्ठ',        descEn:'Excellent for all activities' },
+      { nameHi:'विजय मुहूर्त',        nameEn:'Vijay Muhurat',       time:'14:15 – 15:03', icon:'🏆', quality:'good',  descHi:'विजय प्राप्ति हेतु',                 descEn:'For victory & success' },
+      { nameHi:'गोधूलि मुहूर्त',     nameEn:'Godhuli Muhurat',     time:'18:00 – 18:24', icon:'🐄', quality:'good',  descHi:'विवाह व गृह प्रवेश हेतु',           descEn:'Good for marriage & housewarming' },
+      { nameHi:'निशीथ काल',          nameEn:'Nishith Kaal',         time:'00:00 – 00:24', icon:'🌙', quality:'best',  descHi:'तांत्रिक साधना का समय',             descEn:'Time for spiritual practices' },
+    ];
+
+    function renderSpecial() {
+      const el = document.getElementById('specialMuhurats');
+      el.innerHTML = SPECIAL.map(m => `
+        <div class="muhurat-card ${m.quality}">
+          <div style="font-size:1.5rem;margin-bottom:0.5rem">${m.icon}</div>
+          <div class="card-value hi" style="margin-bottom:0.25rem">${m.nameHi}</div>
+          <div class="card-value en" style="display:none;margin-bottom:0.25rem">${m.nameEn}</div>
+          <div class="muhurat-time">${m.time}</div>
+          <div class="muhurat-quality">${m.quality==='best'?'⭐ श्रेष्ठ':'✅ शुभ'}</div>
+          <div style="font-size:0.78rem;color:var(--text-light);margin-top:0.5rem" class="hi">${m.descHi}</div>
+          <div style="font-size:0.78rem;color:var(--text-light);margin-top:0.5rem;display:none" class="en">${m.descEn}</div>
+        </div>
+      `).join('');
+    }
+
+    function calcMuhurat() {
+      const dateVal = document.getElementById('muhuratDate').value;
+      const purpose = document.getElementById('purposeSelect').value;
+      if (!dateVal) return;
+
+      const date = new Date(dateVal);
+      const lat = 28.6, lon = 77.2; // Default Delhi; could use geolocation
+      const results = Panchang.getMuhuratForDay(date, lat, lon, purpose);
+      const el = document.getElementById('muhuratResults');
+
+      if (results.length === 0) {
+        el.innerHTML = '<p style="color:var(--text-light);text-align:center">कोई शुभ मुहूर्त नहीं मिला।</p>';
+        return;
+      }
+
+      el.innerHTML = results.map(r => `
+        <div class="muhurat-card ${r.quality}">
+          <div class="card-value hi">${Panchang.MUHURAT_TYPES_HI[purpose]?.name || 'मुहूर्त'}</div>
+          <div class="muhurat-time">${r.timeRange}</div>
+          <div class="muhurat-quality">${r.quality==='best'?'⭐ श्रेष्ठ':'✅ शुभ'}</div>
+          <div style="font-size:0.78rem;color:var(--text-light);margin-top:0.5rem">योग: ${r.yogaHi}</div>
+        </div>
+      `).join('');
+    }
+
+    createStars();
+    renderSpecial();
+  </script>
+</body>
+</html>

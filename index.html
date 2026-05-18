@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>वैदिक पञ्चाङ्ग | Vedic Panchang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Sanskrit:ital@0;1&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="cosmos-bg">
+    <div class="stars" id="stars"></div>
+    <div class="mandala-bg"></div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-brand">
+      <span class="om">ॐ</span>
+      <span class="brand-text">वैदिक पञ्चाङ्ग</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">पञ्चाङ्ग</a></li>
+      <li><a href="pages/calendar.html">कैलेण्डर</a></li>
+      <li><a href="pages/muhurat.html">मुहूर्त</a></li>
+      <li><a href="pages/kundali.html">कुण्डली</a></li>
+    </ul>
+    <button class="lang-toggle" id="langToggle">EN / हि</button>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-date" id="heroDate"></div>
+    <h1 class="hero-title">
+      <span class="hi">आज का पञ्चाङ्ग</span>
+      <span class="en" style="display:none">Today's Panchang</span>
+    </h1>
+    <p class="hero-location" id="heroLocation">📍 स्थान लोड हो रहा है…</p>
+    <div class="sunrise-bar" id="sunriseBar"></div>
+  </header>
+
+  <!-- PANCHA TATTVA -->
+  <section class="pancha-grid">
+    <div class="pancha-card" id="card-tithi">
+      <div class="card-icon">🌙</div>
+      <div class="card-label hi">तिथि</div>
+      <div class="card-label en" style="display:none">Tithi</div>
+      <div class="card-value" id="tithi-value">—</div>
+      <div class="card-sub" id="tithi-sub"></div>
+    </div>
+    <div class="pancha-card" id="card-nakshatra">
+      <div class="card-icon">⭐</div>
+      <div class="card-label hi">नक्षत्र</div>
+      <div class="card-label en" style="display:none">Nakshatra</div>
+      <div class="card-value" id="nakshatra-value">—</div>
+      <div class="card-sub" id="nakshatra-sub"></div>
+    </div>
+    <div class="pancha-card" id="card-yoga">
+      <div class="card-icon">🕉️</div>
+      <div class="card-label hi">योग</div>
+      <div class="card-label en" style="display:none">Yoga</div>
+      <div class="card-value" id="yoga-value">—</div>
+      <div class="card-sub" id="yoga-sub"></div>
+    </div>
+    <div class="pancha-card" id="card-karan">
+      <div class="card-icon">🌀</div>
+      <div class="card-label hi">करण</div>
+      <div class="card-label en" style="display:none">Karan</div>
+      <div class="card-value" id="karan-value">—</div>
+      <div class="card-sub" id="karan-sub"></div>
+    </div>
+    <div class="pancha-card" id="card-var">
+      <div class="card-icon">☀️</div>
+      <div class="card-label hi">वार</div>
+      <div class="card-label en" style="display:none">Var (Day)</div>
+      <div class="card-value" id="var-value">—</div>
+      <div class="card-sub" id="var-sub"></div>
+    </div>
+  </section>
+
+  <!-- SUN & MOON -->
+  <section class="astro-section">
+    <div class="astro-card sun-card">
+      <h2 class="hi">सूर्य विवरण</h2>
+      <h2 class="en" style="display:none">Sun Details</h2>
+      <div class="astro-row">
+        <div class="astro-item">
+          <span class="astro-icon">🌅</span>
+          <span class="hi">सूर्योदय</span><span class="en" style="display:none">Sunrise</span>
+          <strong id="sunrise">—</strong>
+        </div>
+        <div class="astro-item">
+          <span class="astro-icon">🌇</span>
+          <span class="hi">सूर्यास्त</span><span class="en" style="display:none">Sunset</span>
+          <strong id="sunset">—</strong>
+        </div>
+      </div>
+      <div class="astro-row">
+        <div class="astro-item">
+          <span class="astro-icon">🔆</span>
+          <span class="hi">दिनमान</span><span class="en" style="display:none">Day Duration</span>
+          <strong id="dayDuration">—</strong>
+        </div>
+        <div class="astro-item">
+          <span class="astro-icon">♒</span>
+          <span class="hi">सूर्य राशि</span><span class="en" style="display:none">Sun Sign</span>
+          <strong id="sunSign">—</strong>
+        </div>
+      </div>
+    </div>
+    <div class="astro-card moon-card">
+      <h2 class="hi">चन्द्र विवरण</h2>
+      <h2 class="en" style="display:none">Moon Details</h2>
+      <div class="astro-row">
+        <div class="astro-item">
+          <span class="astro-icon">🌙</span>
+          <span class="hi">चन्द्र राशि</span><span class="en" style="display:none">Moon Sign</span>
+          <strong id="moonSign">—</strong>
+        </div>
+        <div class="astro-item">
+          <span class="astro-icon">🌔</span>
+          <span class="hi">चन्द्र पक्ष</span><span class="en" style="display:none">Moon Phase</span>
+          <strong id="moonPhase">—</strong>
+        </div>
+      </div>
+      <div class="astro-row">
+        <div class="astro-item">
+          <span class="astro-icon">🌛</span>
+          <span class="hi">चन्द्रोदय</span><span class="en" style="display:none">Moonrise</span>
+          <strong id="moonrise">—</strong>
+        </div>
+        <div class="astro-item">
+          <span class="astro-icon">🌜</span>
+          <span class="hi">चन्द्रास्त</span><span class="en" style="display:none">Moonset</span>
+          <strong id="moonset">—</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RAHUKAAL & AUSPICIOUS TIMES -->
+  <section class="times-section">
+    <h2 class="section-title hi">शुभ-अशुभ काल</h2>
+    <h2 class="section-title en" style="display:none">Auspicious & Inauspicious Periods</h2>
+    <div class="times-grid" id="timesGrid"></div>
+  </section>
+
+  <!-- FESTIVALS TODAY -->
+  <section class="festival-section">
+    <h2 class="section-title hi">आज के पर्व एवं व्रत</h2>
+    <h2 class="section-title en" style="display:none">Today's Festivals & Vrats</h2>
+    <div class="festival-list" id="festivalList"></div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="om-footer">ॐ</div>
+    <p class="hi">सर्वे भवन्तु सुखिनः | सर्वे सन्तु निरामयाः</p>
+    <p class="en" style="display:none">May all be happy | May all be free from illness</p>
+    <p class="footer-copy">© 2025 वैदिक पञ्चाङ्ग | Vedic Panchang</p>
+  </footer>
+
+  <script src="js/panchang.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
