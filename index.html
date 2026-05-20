@@ -1,47 +1,268 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>वैदिक पञ्चाङ्ग | Vedic Panchang</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Sanskrit:ital@0;1&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>वैदिक पञ्चाङ्ग | Vedic Panchang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Sanskrit:ital@0;1&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+<style>
+/* ===================== TAB NAVIGATION ===================== */
+.main-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 1.2rem 1rem 0;
+  position: sticky;
+  top: 60px;
+  z-index: 50;
+  background: rgba(10,6,30,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(200,146,42,0.15);
+}
+.tab-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1.5px solid rgba(200,146,42,0.25);
+  color: rgba(242,212,114,0.7);
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 0.92rem;
+  padding: 8px 20px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.25s;
+  white-space: nowrap;
+}
+.tab-btn:hover {
+  background: rgba(200,146,42,0.12);
+  color: #f2d472;
+  border-color: rgba(200,146,42,0.5);
+}
+.tab-btn.active {
+  background: linear-gradient(135deg, rgba(200,146,42,0.25), rgba(139,26,26,0.2));
+  border-color: rgba(200,146,42,0.7);
+  color: #f2d472;
+  box-shadow: 0 0 16px rgba(200,146,42,0.2);
+}
+.tab-section { display: none; }
+.tab-section.active { display: block; }
+
+/* ===================== CITY SEARCH ===================== */
+.city-search-wrap { position: relative; }
+.city-search-wrap input {
+  width: 100%; padding: 9px 16px; border-radius: 24px;
+  border: 1.5px solid rgba(200,146,42,0.4);
+  background: rgba(255,255,255,0.07); color: #f2d472;
+  font-family: inherit; font-size: 0.92rem; outline: none;
+  box-sizing: border-box; transition: border-color 0.2s;
+}
+.city-search-wrap input::placeholder { color: rgba(242,212,114,0.4); }
+.city-search-wrap input:focus { border-color: rgba(242,212,114,0.8); background: rgba(255,255,255,0.1); }
+.city-suggestions {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: #1a1235; border: 1.5px solid rgba(200,146,42,0.3);
+  border-radius: 12px; z-index: 999; box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+  max-height: 210px; overflow-y: auto; display: none;
+}
+.sug-item {
+  padding: 9px 16px; font-size: 0.87rem; color: #e8d5a3; cursor: pointer;
+  border-bottom: 1px solid rgba(255,255,255,0.06); transition: background 0.15s;
+}
+.sug-item:last-child { border-bottom: none; }
+.sug-item:hover { background: rgba(242,212,114,0.12); }
+.sug-loading { padding: 10px 16px; font-size: 0.83rem; color: rgba(242,212,114,0.55); text-align: center; }
+
+/* ===================== MUHURAT ===================== */
+.muhurat-form, .kundali-form {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 1.8rem;
+  backdrop-filter: blur(12px);
+  margin-bottom: 2rem;
+}
+.form-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.form-group { flex: 1 1 180px; display: flex; flex-direction: column; gap: 6px; }
+.form-group label {
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 0.82rem; color: var(--saffron); opacity: 0.8;
+}
+.form-group input, .form-group select {
+  background: rgba(255,255,255,0.07);
+  border: 1.5px solid rgba(200,146,42,0.35);
+  border-radius: 10px; color: var(--text-dark);
+  font-family: inherit; font-size: 0.9rem;
+  padding: 8px 12px; outline: none;
+  transition: border-color 0.2s;
+}
+.form-group input:focus, .form-group select:focus { border-color: rgba(200,146,42,0.7); }
+.form-group select option { background: #1a1235; color: #f2d472; }
+.btn-primary {
+  background: linear-gradient(135deg, var(--saffron), var(--crimson));
+  border: none; border-radius: 24px; color: #fff;
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 1rem; padding: 10px 32px; cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s; margin-top: 0.5rem;
+}
+.btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+.muhurat-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap: 1rem; }
+.muhurat-card {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: 16px; padding: 1.2rem; text-align: center;
+  backdrop-filter: blur(12px); transition: transform 0.2s;
+}
+.muhurat-card:hover { transform: translateY(-3px); }
+.muhurat-card.best { border-color: rgba(200,146,42,0.5); }
+.muhurat-card.good { border-color: rgba(60,180,60,0.4); }
+.muhurat-time { font-family: 'DM Mono', monospace; font-size: 0.83rem; color: var(--saffron); margin-top: 0.4rem; }
+.muhurat-quality { font-size: 0.75rem; margin-top: 0.3rem; color: var(--text-light); }
+
+/* ===================== KUNDALI ===================== */
+.chakra-container { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+@media(max-width:768px){ .chakra-container { grid-template-columns: 1fr; } }
+.chakra-chart { aspect-ratio: 1; max-width: 360px; margin: auto; }
+.planet-table { width: 100%; border-collapse: collapse; font-size: 0.87rem; }
+.planet-table th, .planet-table td {
+  padding: 6px 10px; text-align: left;
+  border-bottom: 1px solid rgba(200,146,42,0.12);
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+}
+.planet-table th { color: var(--crimson); font-weight: 600; }
+.planet-table td { color: var(--text-dark); }
+.kundali-svg-house-num { fill: #9B7651; font-size: 10px; font-family: 'DM Mono',monospace; }
+.kundali-svg-rashi     { fill: #8B1A1A; font-size: 9px; font-family: 'Tiro Devanagari Sanskrit',serif; }
+.kundali-svg-planet    { fill: #1A5C8A; font-size: 9px; font-family: 'Tiro Devanagari Sanskrit',serif; }
+.kundali-svg-lagna     { fill: #C8922A; font-size: 9px; font-family: 'DM Mono',monospace; }
+.detail-row {
+  display: flex; justify-content: space-between;
+  padding: 0.4rem 0; border-bottom: 1px solid rgba(200,146,42,0.12);
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+}
+.detail-row span { font-size: 0.82rem; color: var(--text-light); }
+.detail-row strong { font-size: 0.9rem; color: var(--text-dark); }
+
+/* ===================== CALENDAR ===================== */
+.cal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.2rem;
+}
+.cal-nav-btn {
+  background: rgba(200,146,42,0.12); border: 1px solid rgba(200,146,42,0.3);
+  border-radius: 50%; width: 36px; height: 36px; cursor: pointer;
+  color: #f2d472; font-size: 1.1rem; transition: background 0.2s;
+}
+.cal-nav-btn:hover { background: rgba(200,146,42,0.25); }
+.cal-month-title {
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 1.1rem; color: var(--saffron);
+}
+.cal-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.cal-day-header {
+  text-align: center; font-size: 0.72rem;
+  font-family: 'DM Mono', monospace; color: var(--saffron);
+  opacity: 0.6; padding: 4px 0; border-bottom: 1px solid rgba(200,146,42,0.15);
+}
+.cal-day {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(200,146,42,0.1);
+  border-radius: 10px; min-height: 60px; padding: 6px;
+  cursor: pointer; transition: all 0.2s; position: relative;
+}
+.cal-day:hover { background: rgba(200,146,42,0.1); border-color: rgba(200,146,42,0.35); }
+.cal-day.today { border-color: rgba(200,146,42,0.6); background: rgba(200,146,42,0.1); }
+.cal-day.today .cal-day-num { color: var(--saffron); font-weight: 700; }
+.cal-day.empty { background: transparent; border-color: transparent; cursor: default; }
+.cal-day-num { font-size: 0.88rem; font-family: 'DM Mono', monospace; color: var(--text-dark); }
+.cal-tithi { font-size: 0.65rem; color: var(--saffron); opacity: 0.75; margin-top: 2px; font-family: 'Tiro Devanagari Sanskrit', serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-festival { font-size: 0.62rem; color: var(--crimson); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-purnima { background: rgba(200,146,42,0.08); }
+.cal-amavas  { background: rgba(30,20,60,0.4); }
+
+/* ===================== SECTION TITLES ===================== */
+.section-title {
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 1.25rem; font-weight: 400;
+  color: var(--saffron); text-align: center;
+  margin: 2rem 0 1.2rem;
+  letter-spacing: 0.03em;
+}
+.section-title::after {
+  content: ''; display: block; width: 60px; height: 2px;
+  background: linear-gradient(to right, transparent, var(--saffron), transparent);
+  margin: 8px auto 0;
+}
+
+/* ===================== INFO CARD ===================== */
+.info-card {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: 16px; padding: 1.5rem; backdrop-filter: blur(12px);
+  margin-bottom: 1rem;
+}
+
+@keyframes twinkle {
+  from { opacity: 0.2; transform: scale(1); }
+  to   { opacity: 1;   transform: scale(1.3); }
+}
+</style>
 </head>
 <body>
-  <div class="cosmos-bg">
-    <div class="stars" id="stars"></div>
-    <div class="mandala-bg"></div>
+
+<div class="cosmos-bg">
+  <div class="stars" id="stars"></div>
+  <div class="mandala-bg"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">
+    <span class="om">ॐ</span>
+    <span class="brand-text">वैदिक पञ्चाङ्ग</span>
   </div>
+  <button class="lang-toggle" id="langToggle">EN / हि</button>
+</nav>
 
-  <!-- NAV -->
-  <nav class="nav">
-    <div class="nav-brand">
-      <span class="om">ॐ</span>
-      <span class="brand-text">वैदिक पञ्चाङ्ग</span>
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-date" id="heroDate"></div>
+  <h1 class="hero-title">
+    <span class="hi">वैदिक पञ्चाङ्ग</span>
+    <span class="en" style="display:none">Vedic Panchang</span>
+  </h1>
+  <!-- City Search in hero -->
+  <div style="max-width:400px;margin:0.8rem auto 0;padding:0 1rem">
+    <div class="city-search-wrap">
+      <input type="text" id="heroCity"
+        placeholder="📍 शहर खोजें / Search city…"
+        autocomplete="off" spellcheck="false" />
+      <div class="city-suggestions" id="heroCitySug"></div>
     </div>
-    <ul class="nav-links">
-      <li><a href="index.html" class="active">पञ्चाङ्ग</a></li>
-      <a href="calendar.html">
-      <a href="muhurat.html">
-      <a href="kundali.html">
-      </ul>
-    <button class="lang-toggle" id="langToggle">EN / हि</button>
-  </nav>
+  </div>
+  <p class="hero-location" id="heroLocation" style="margin-top:6px;font-size:0.85rem;opacity:0.7">नई दिल्ली, भारत</p>
+  <div class="sunrise-bar" id="sunriseBar"></div>
+</header>
 
-  <!-- HERO -->
-  <header class="hero">
-    <div class="hero-date" id="heroDate"></div>
-    <h1 class="hero-title">
-      <span class="hi">आज का पञ्चाङ्ग</span>
-      <span class="en" style="display:none">Today's Panchang</span>
-    </h1>
-    <p class="hero-location" id="heroLocation">📍 स्थान लोड हो रहा है…</p>
-    <div class="sunrise-bar" id="sunriseBar"></div>
-  </header>
+<!-- TAB BUTTONS -->
+<div class="main-tabs">
+  <button class="tab-btn active" onclick="showTab('panchang')" id="tab-panchang">
+    🕉️ <span class="hi">पञ्चाङ्ग</span><span class="en" style="display:none">Panchang</span>
+  </button>
+  <button class="tab-btn" onclick="showTab('muhurat')" id="tab-muhurat">
+    ⏰ <span class="hi">मुहूर्त</span><span class="en" style="display:none">Muhurat</span>
+  </button>
+  <button class="tab-btn" onclick="showTab('kundali')" id="tab-kundali">
+    🔭 <span class="hi">कुण्डली</span><span class="en" style="display:none">Kundali</span>
+  </button>
+  <button class="tab-btn" onclick="showTab('calendar')" id="tab-calendar">
+    📅 <span class="hi">कैलेण्डर</span><span class="en" style="display:none">Calendar</span>
+  </button>
+</div>
 
-  <!-- PANCHA TATTVA -->
+<!-- ==================== TAB: PANCHANG ==================== -->
+<div class="tab-section active" id="section-panchang">
   <section class="pancha-grid">
     <div class="pancha-card" id="card-tithi">
       <div class="card-icon">🌙</div>
@@ -80,89 +301,615 @@
     </div>
   </section>
 
-  <!-- SUN & MOON -->
   <section class="astro-section">
     <div class="astro-card sun-card">
       <h2 class="hi">सूर्य विवरण</h2>
       <h2 class="en" style="display:none">Sun Details</h2>
       <div class="astro-row">
-        <div class="astro-item">
-          <span class="astro-icon">🌅</span>
-          <span class="hi">सूर्योदय</span><span class="en" style="display:none">Sunrise</span>
-          <strong id="sunrise">—</strong>
-        </div>
-        <div class="astro-item">
-          <span class="astro-icon">🌇</span>
-          <span class="hi">सूर्यास्त</span><span class="en" style="display:none">Sunset</span>
-          <strong id="sunset">—</strong>
-        </div>
+        <div class="astro-item"><span class="astro-icon">🌅</span><span class="hi">सूर्योदय</span><span class="en" style="display:none">Sunrise</span><strong id="sunrise">—</strong></div>
+        <div class="astro-item"><span class="astro-icon">🌇</span><span class="hi">सूर्यास्त</span><span class="en" style="display:none">Sunset</span><strong id="sunset">—</strong></div>
       </div>
       <div class="astro-row">
-        <div class="astro-item">
-          <span class="astro-icon">🔆</span>
-          <span class="hi">दिनमान</span><span class="en" style="display:none">Day Duration</span>
-          <strong id="dayDuration">—</strong>
-        </div>
-        <div class="astro-item">
-          <span class="astro-icon">♒</span>
-          <span class="hi">सूर्य राशि</span><span class="en" style="display:none">Sun Sign</span>
-          <strong id="sunSign">—</strong>
-        </div>
+        <div class="astro-item"><span class="astro-icon">🔆</span><span class="hi">दिनमान</span><span class="en" style="display:none">Day Duration</span><strong id="dayDuration">—</strong></div>
+        <div class="astro-item"><span class="astro-icon">♒</span><span class="hi">सूर्य राशि</span><span class="en" style="display:none">Sun Sign</span><strong id="sunSign">—</strong></div>
       </div>
     </div>
     <div class="astro-card moon-card">
       <h2 class="hi">चन्द्र विवरण</h2>
       <h2 class="en" style="display:none">Moon Details</h2>
       <div class="astro-row">
-        <div class="astro-item">
-          <span class="astro-icon">🌙</span>
-          <span class="hi">चन्द्र राशि</span><span class="en" style="display:none">Moon Sign</span>
-          <strong id="moonSign">—</strong>
-        </div>
-        <div class="astro-item">
-          <span class="astro-icon">🌔</span>
-          <span class="hi">चन्द्र पक्ष</span><span class="en" style="display:none">Moon Phase</span>
-          <strong id="moonPhase">—</strong>
-        </div>
+        <div class="astro-item"><span class="astro-icon">🌙</span><span class="hi">चन्द्र राशि</span><span class="en" style="display:none">Moon Sign</span><strong id="moonSign">—</strong></div>
+        <div class="astro-item"><span class="astro-icon">🌔</span><span class="hi">चन्द्र पक्ष</span><span class="en" style="display:none">Moon Phase</span><strong id="moonPhase">—</strong></div>
       </div>
       <div class="astro-row">
-        <div class="astro-item">
-          <span class="astro-icon">🌛</span>
-          <span class="hi">चन्द्रोदय</span><span class="en" style="display:none">Moonrise</span>
-          <strong id="moonrise">—</strong>
-        </div>
-        <div class="astro-item">
-          <span class="astro-icon">🌜</span>
-          <span class="hi">चन्द्रास्त</span><span class="en" style="display:none">Moonset</span>
-          <strong id="moonset">—</strong>
-        </div>
+        <div class="astro-item"><span class="astro-icon">🌛</span><span class="hi">चन्द्रोदय</span><span class="en" style="display:none">Moonrise</span><strong id="moonrise">—</strong></div>
+        <div class="astro-item"><span class="astro-icon">🌜</span><span class="hi">चन्द्रास्त</span><span class="en" style="display:none">Moonset</span><strong id="moonset">—</strong></div>
       </div>
     </div>
   </section>
 
-  <!-- RAHUKAAL & AUSPICIOUS TIMES -->
   <section class="times-section">
     <h2 class="section-title hi">शुभ-अशुभ काल</h2>
     <h2 class="section-title en" style="display:none">Auspicious & Inauspicious Periods</h2>
     <div class="times-grid" id="timesGrid"></div>
   </section>
 
-  <!-- FESTIVALS TODAY -->
   <section class="festival-section">
     <h2 class="section-title hi">आज के पर्व एवं व्रत</h2>
     <h2 class="section-title en" style="display:none">Today's Festivals & Vrats</h2>
     <div class="festival-list" id="festivalList"></div>
   </section>
+</div>
 
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="om-footer">ॐ</div>
-    <p class="hi">सर्वे भवन्तु सुखिनः | सर्वे सन्तु निरामयाः</p>
-    <p class="en" style="display:none">May all be happy | May all be free from illness</p>
-    <p class="footer-copy">© 2025 वैदिक पञ्चाङ्ग | Vedic Panchang</p>
-  </footer>
+<!-- ==================== TAB: MUHURAT ==================== -->
+<div class="tab-section" id="section-muhurat">
+  <div style="max-width:900px;margin:0 auto;padding:1.5rem 1rem">
 
-  <script src="panchang.js"></script>
-<script src="main.js"></script>
+    <h2 class="section-title hi">शुभ मुहूर्त</h2>
+    <h2 class="section-title en" style="display:none">Auspicious Muhurat</h2>
+
+    <div class="muhurat-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="hi">कार्य का प्रकार</label>
+          <label class="en" style="display:none">Purpose</label>
+          <select id="purposeSelect">
+            <option value="vivah">विवाह (Marriage)</option>
+            <option value="griha">गृह प्रवेश (House Warming)</option>
+            <option value="vyapar">व्यापार आरम्भ (Business Start)</option>
+            <option value="yatra">यात्रा (Journey)</option>
+            <option value="namakarana">नामकरण (Naming Ceremony)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="hi">दिनांक</label>
+          <label class="en" style="display:none">Date</label>
+          <input type="date" id="muhuratDate" />
+        </div>
+        <div class="form-group" style="flex:1 1 220px">
+          <label class="hi">स्थान</label>
+          <label class="en" style="display:none">Location</label>
+          <div class="city-search-wrap">
+            <input type="text" id="mCity" placeholder="📍 शहर खोजें…" autocomplete="off" spellcheck="false" />
+            <div class="city-suggestions" id="mCitySug"></div>
+          </div>
+          <input type="hidden" id="mLat" value="28.6139" />
+          <input type="hidden" id="mLon" value="77.2090" />
+        </div>
+      </div>
+      <button class="btn-primary" onclick="calcMuhurat()">
+        <span class="hi">मुहूर्त निकालें 🔍</span>
+        <span class="en" style="display:none">Find Muhurat 🔍</span>
+      </button>
+    </div>
+
+    <h2 class="section-title hi">आज के विशेष मुहूर्त</h2>
+    <h2 class="section-title en" style="display:none">Today's Special Muhurats</h2>
+    <div class="muhurat-results" id="specialMuhurats"></div>
+
+    <h2 class="section-title hi" id="muhuratResultTitle" style="display:none">चयनित दिन के मुहूर्त</h2>
+    <h2 class="section-title en" id="muhuratResultTitleEn" style="display:none">Muhurats for Selected Date</h2>
+    <div class="muhurat-results" id="muhuratResults"></div>
+  </div>
+</div>
+
+<!-- ==================== TAB: KUNDALI ==================== -->
+<div class="tab-section" id="section-kundali">
+  <div style="max-width:900px;margin:0 auto;padding:1.5rem 1rem">
+
+    <h2 class="section-title hi">जन्म कुण्डली</h2>
+    <h2 class="section-title en" style="display:none">Birth Chart (Kundali)</h2>
+
+    <div class="kundali-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="hi">नाम</label>
+          <label class="en" style="display:none">Name</label>
+          <input type="text" id="kName" placeholder="अपना नाम लिखें" />
+        </div>
+        <div class="form-group">
+          <label class="hi">जन्म दिनांक</label>
+          <label class="en" style="display:none">Date of Birth</label>
+          <input type="date" id="kDob" />
+        </div>
+        <div class="form-group">
+          <label class="hi">जन्म समय</label>
+          <label class="en" style="display:none">Time of Birth</label>
+          <input type="time" id="kTob" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:1 1 100%">
+          <label class="hi">जन्म स्थान खोजें</label>
+          <label class="en" style="display:none">Search Birth Place</label>
+          <div class="city-search-wrap">
+            <input type="text" id="kCity"
+              placeholder="📍 शहर का नाम लिखें — उदा: लुधियाना, वाराणसी, मुम्बई"
+              autocomplete="off" spellcheck="false" />
+            <div class="city-suggestions" id="kCitySug"></div>
+          </div>
+          <input type="hidden" id="kLat" value="28.6139" />
+          <input type="hidden" id="kLon" value="77.2090" />
+          <small style="color:rgba(242,212,114,0.4);font-size:0.76rem;margin-top:4px;display:block" class="hi">
+            टाइप करते ही सुझाव आएंगे — सूची से सही शहर चुनें
+          </small>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="generateKundali()">
+        <span class="hi">कुण्डली बनाएं 🔭</span>
+        <span class="en" style="display:none">Generate Kundali 🔭</span>
+      </button>
+    </div>
+
+    <div id="kundaliOutput" style="display:none">
+      <div class="chakra-container">
+        <div class="chakra-chart" id="chartContainer"></div>
+        <div class="chakra-info">
+          <div class="info-card">
+            <h3 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1rem;color:var(--crimson);margin-bottom:1rem" class="hi">ग्रह स्थिति</h3>
+            <h3 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1rem;color:var(--crimson);margin-bottom:1rem;display:none" class="en">Planetary Positions</h3>
+            <table class="planet-table" id="planetTable"></table>
+          </div>
+          <div class="info-card">
+            <h3 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1rem;color:var(--crimson);margin-bottom:1rem" class="hi">मूल विवरण</h3>
+            <h3 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1rem;color:var(--crimson);margin-bottom:1rem;display:none" class="en">Key Details</h3>
+            <div id="lagnaDetails"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB: CALENDAR ==================== -->
+<div class="tab-section" id="section-calendar">
+  <div style="max-width:900px;margin:0 auto;padding:1.5rem 1rem">
+
+    <h2 class="section-title hi">हिन्दू पञ्चाङ्ग कैलेण्डर</h2>
+    <h2 class="section-title en" style="display:none">Hindu Calendar</h2>
+
+    <div class="info-card">
+      <div class="cal-header">
+        <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+        <div class="cal-month-title" id="calMonthTitle"></div>
+        <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+      </div>
+      <div class="cal-grid" id="calDayHeaders"></div>
+      <div class="cal-grid" id="calGrid" style="margin-top:4px"></div>
+    </div>
+
+    <!-- Festival list for month -->
+    <h2 class="section-title hi">इस माह के पर्व</h2>
+    <h2 class="section-title en" style="display:none">Festivals This Month</h2>
+    <div class="festival-list" id="monthFestivals"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="om-footer">ॐ</div>
+  <p class="hi">सर्वे भवन्तु सुखिनः | सर्वे सन्तु निरामयाः</p>
+  <p class="en" style="display:none">May all be happy | May all be free from illness</p>
+  <p class="footer-copy">© 2026 वैदिक पञ्चाङ्ग | Vedic Panchang</p>
+</footer>
+
+<script src="panchang.js"></script>
+<script>
+// ===================== STARS =====================
+function createStars() {
+  const c = document.getElementById('stars');
+  for (let i = 0; i < 120; i++) {
+    const s = document.createElement('div');
+    s.style.cssText = `position:absolute;left:${Math.random()*100}%;top:${Math.random()*100}%;width:${Math.random()*2+1}px;height:${Math.random()*2+1}px;background:rgba(242,212,114,${Math.random()*0.7+0.2});border-radius:50%;animation:twinkle ${Math.random()*3+2}s ease-in-out infinite alternate;animation-delay:${Math.random()*4}s;`;
+    c.appendChild(s);
+  }
+}
+
+// ===================== LANG TOGGLE =====================
+let currentLang = localStorage.getItem('lang') || 'hi';
+function applyLang() {
+  document.body.classList.toggle('lang-en', currentLang === 'en');
+}
+document.getElementById('langToggle').addEventListener('click', () => {
+  currentLang = currentLang === 'hi' ? 'en' : 'hi';
+  localStorage.setItem('lang', currentLang);
+  applyLang();
+});
+applyLang();
+
+// ===================== TAB SWITCHING =====================
+function showTab(name) {
+  document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'calendar') renderCalendar();
+  if (name === 'muhurat') renderSpecialMuhurats();
+}
+
+// ===================== SHARED STATE =====================
+let currentLat = 28.6139, currentLon = 77.2090, currentCityName = 'नई दिल्ली, भारत';
+
+function loadSavedLocation() {
+  try {
+    const s = JSON.parse(localStorage.getItem('lastLocation') || '{}');
+    if (s.lat) { currentLat = s.lat; currentLon = s.lon; currentCityName = s.name || 'आपका स्थान'; }
+  } catch(e) {}
+}
+
+function saveLocation(lat, lon, name) {
+  currentLat = lat; currentLon = lon; currentCityName = name;
+  localStorage.setItem('lastLocation', JSON.stringify({ lat, lon, name }));
+}
+
+// ===================== CITY SEARCH =====================
+function makeCitySearch(inputId, sugId, onSelect) {
+  const input = document.getElementById(inputId);
+  const sug   = document.getElementById(sugId);
+  let timer = null;
+
+  input.addEventListener('input', () => {
+    clearTimeout(timer);
+    const q = input.value.trim();
+    if (q.length < 2) { sug.innerHTML = ''; sug.style.display = 'none'; return; }
+    timer = setTimeout(() => {
+      sug.innerHTML = '<div class="sug-loading">🔍 खोज रहे हैं…</div>';
+      sug.style.display = 'block';
+      fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=6&addressdetails=1`)
+        .then(r => r.json())
+        .then(data => {
+          if (!data.length) { sug.innerHTML = '<div class="sug-loading">कोई स्थान नहीं मिला</div>'; return; }
+          sug.innerHTML = data.map(r => {
+            const city  = r.address.city || r.address.town || r.address.village || r.display_name.split(',')[0];
+            const state = r.address.state || '';
+            const label = [city, state].filter(Boolean).join(', ');
+            return `<div class="sug-item" data-lat="${r.lat}" data-lon="${r.lon}" data-name="${label}">📍 ${label}</div>`;
+          }).join('');
+          sug.querySelectorAll('.sug-item').forEach(el => {
+            el.addEventListener('click', () => {
+              const lat = parseFloat(el.dataset.lat), lon = parseFloat(el.dataset.lon), name = el.dataset.name;
+              input.value = name;
+              sug.innerHTML = ''; sug.style.display = 'none';
+              onSelect(lat, lon, name);
+            });
+          });
+        })
+        .catch(() => { sug.innerHTML = '<div class="sug-loading">नेटवर्क त्रुटि</div>'; });
+    }, 350);
+  });
+  input.addEventListener('keydown', e => { if (e.key === 'Escape') { sug.innerHTML=''; sug.style.display='none'; } });
+  document.addEventListener('click', e => {
+    if (!input.contains(e.target) && !sug.contains(e.target)) { sug.innerHTML=''; sug.style.display='none'; }
+  });
+}
+
+// ===================== HERO DATE =====================
+function renderHeroDate(date) {
+  const days   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const el = document.getElementById('heroDate');
+  if (el) el.textContent = `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+}
+
+// ===================== PANCHANG RENDER =====================
+function renderPanchang(lat, lon, locationName) {
+  const now = new Date();
+  const jd  = Panchang.toJulianDate(now);
+
+  const locEl = document.getElementById('heroLocation');
+  if (locEl && locationName) locEl.textContent = '📍 ' + locationName;
+
+  // 5 elements
+  const tithi = Panchang.getTithi(jd);
+  document.getElementById('tithi-value').textContent = tithi.nameHi;
+  document.getElementById('tithi-sub').textContent   = tithi.pakshaHi;
+
+  const nak = Panchang.getNakshatra(jd);
+  document.getElementById('nakshatra-value').textContent = nak.nameHi;
+  document.getElementById('nakshatra-sub').textContent   = `पाद ${nak.pada}`;
+
+  const yoga = Panchang.getYoga(jd);
+  document.getElementById('yoga-value').textContent = yoga.nameHi;
+  document.getElementById('yoga-sub').textContent   = yoga.nameEn;
+
+  const karan = Panchang.getKaran(jd);
+  document.getElementById('karan-value').textContent = karan.nameHi;
+  document.getElementById('karan-sub').textContent   = karan.nameEn;
+
+  const varDay = Panchang.getVar(now);
+  document.getElementById('var-value').textContent = varDay.nameHi;
+  document.getElementById('var-sub').textContent   = varDay.deityHi;
+
+  // Sun/Moon
+  const sunTimes = Panchang.getSunTimes(now, lat, lon);
+  if (sunTimes) {
+    document.getElementById('sunrise').textContent     = sunTimes.sunrise;
+    document.getElementById('sunset').textContent      = sunTimes.sunset;
+    const dur = sunTimes.setH - sunTimes.riseH;
+    document.getElementById('dayDuration').textContent = `${Math.floor(dur)}h ${Math.round((dur%1)*60)}m`;
+    const nowH = now.getHours() + now.getMinutes()/60;
+    const pct  = Math.max(0, Math.min(1, (nowH - sunTimes.riseH) / (sunTimes.setH - sunTimes.riseH)));
+    const bar  = document.querySelector('.sunrise-bar');
+    if (bar) bar.style.setProperty('--day-pct', (pct*100)+'%');
+    renderTimes(Panchang.getRahukaal(now, sunTimes.riseH, sunTimes.setH));
+  }
+
+  document.getElementById('sunSign').textContent  = Panchang.getSunRashi(jd).nameHi;
+  document.getElementById('moonSign').textContent = Panchang.getMoonRashi(jd).nameHi;
+  document.getElementById('moonPhase').textContent = Panchang.getMoonPhase(jd).nameHi;
+  document.getElementById('moonrise').textContent  = '—';
+  document.getElementById('moonset').textContent   = '—';
+
+  renderFestivals(now);
+}
+
+function renderTimes(times) {
+  const grid = document.getElementById('timesGrid');
+  if (!grid) return;
+  const items = [
+    { nameHi:'राहुकाल',        nameEn:'Rahukaal',       type:'inauspicious', time: times.rahukaal.start  + ' – ' + times.rahukaal.end },
+    { nameHi:'यमगण्ड',        nameEn:'Yamaganda',      type:'inauspicious', time: times.yamaganda.start + ' – ' + times.yamaganda.end },
+    { nameHi:'गुलिक काल',     nameEn:'Gulika Kaal',    type:'inauspicious', time: times.gulika.start    + ' – ' + times.gulika.end },
+    { nameHi:'अभिजीत',        nameEn:'Abhijit',        type:'auspicious',   time: times.abhijit.start   + ' – ' + times.abhijit.end },
+    { nameHi:'ब्रह्म मुहूर्त', nameEn:'Brahma Muhurat', type:'auspicious',   time: '04:24 AM – 05:12 AM' },
+    { nameHi:'विजय मुहूर्त',   nameEn:'Vijay Muhurat',  type:'auspicious',   time: '02:15 PM – 03:00 PM' },
+  ];
+  grid.innerHTML = items.map(i => `
+    <div class="time-card ${i.type}">
+      <div class="time-card-label hi">${i.type==='auspicious'?'✅ शुभ काल':'⛔ अशुभ काल'}</div>
+      <div class="time-card-label en" style="display:none">${i.type==='auspicious'?'✅ Auspicious':'⛔ Inauspicious'}</div>
+      <div class="time-card-name hi">${i.nameHi}</div>
+      <div class="time-card-name en" style="display:none">${i.nameEn}</div>
+      <div class="time-card-time">${i.time}</div>
+    </div>`).join('');
+}
+
+function renderFestivals(date) {
+  const list = document.getElementById('festivalList');
+  if (!list) return;
+  const festivals = Panchang.getFestivalsForDate(date);
+  list.innerHTML = festivals.length === 0
+    ? `<div class="festival-item"><div class="festival-icon">🕉️</div><div>
+        <div class="festival-name hi">आज कोई विशेष पर्व नहीं</div>
+        <div class="festival-name en" style="display:none">No special festival today</div>
+        <div class="festival-desc hi">नित्य पूजा करें, ईश्वर की कृपा प्राप्त करें</div>
+        <div class="festival-desc en" style="display:none">Perform daily worship, receive divine blessings</div>
+      </div></div>`
+    : festivals.map((f,i) => `
+        <div class="festival-item" style="animation-delay:${i*0.1}s">
+          <div class="festival-icon">${f.icon}</div>
+          <div><div class="festival-name hi">${f.nameHi}</div><div class="festival-name en" style="display:none">${f.nameEn}</div></div>
+          <span class="festival-tag">${f.type==='national'?'राष्ट्रीय':'हिन्दू पर्व'}</span>
+        </div>`).join('');
+}
+
+// ===================== MUHURAT =====================
+const SPECIAL_MUHURATS = [
+  { nameHi:'ब्रह्म मुहूर्त',   nameEn:'Brahma Muhurat',  time:'04:24 – 05:12', icon:'🌅', quality:'best', descHi:'ध्यान व अध्ययन हेतु सर्वोत्तम',  descEn:'Best for meditation & study' },
+  { nameHi:'प्रातः सन्ध्या',   nameEn:'Pratah Sandhya',  time:'05:42 – 06:00', icon:'🌄', quality:'best', descHi:'संध्योपासना का समय',              descEn:'Time for morning prayers' },
+  { nameHi:'अभिजीत मुहूर्त',  nameEn:'Abhijit Muhurat', time:'11:48 – 12:36', icon:'☀️', quality:'best', descHi:'सभी कार्यों के लिए श्रेष्ठ',      descEn:'Excellent for all activities' },
+  { nameHi:'विजय मुहूर्त',    nameEn:'Vijay Muhurat',   time:'14:15 – 15:03', icon:'🏆', quality:'good', descHi:'विजय प्राप्ति हेतु',               descEn:'For victory & success' },
+  { nameHi:'गोधूलि मुहूर्त',  nameEn:'Godhuli Muhurat', time:'18:00 – 18:24', icon:'🐄', quality:'good', descHi:'विवाह व गृह प्रवेश हेतु',          descEn:'Good for marriage & housewarming' },
+  { nameHi:'निशीथ काल',        nameEn:'Nishith Kaal',    time:'00:00 – 00:24', icon:'🌙', quality:'best', descHi:'साधना का समय',                    descEn:'Time for spiritual practices' },
+];
+
+function renderSpecialMuhurats() {
+  const el = document.getElementById('specialMuhurats');
+  if (!el || el.innerHTML.trim()) return; // already rendered
+  el.innerHTML = SPECIAL_MUHURATS.map(m => `
+    <div class="muhurat-card ${m.quality}">
+      <div style="font-size:1.4rem;margin-bottom:0.4rem">${m.icon}</div>
+      <div class="card-value hi">${m.nameHi}</div>
+      <div class="card-value en" style="display:none">${m.nameEn}</div>
+      <div class="muhurat-time">${m.time}</div>
+      <div class="muhurat-quality">${m.quality==='best'?'⭐ श्रेष्ठ':'✅ शुभ'}</div>
+      <div style="font-size:0.76rem;color:var(--text-light);margin-top:0.4rem" class="hi">${m.descHi}</div>
+      <div style="font-size:0.76rem;color:var(--text-light);margin-top:0.4rem;display:none" class="en">${m.descEn}</div>
+    </div>`).join('');
+}
+
+function calcMuhurat() {
+  const dateVal = document.getElementById('muhuratDate').value;
+  const purpose = document.getElementById('purposeSelect').value;
+  const lat     = parseFloat(document.getElementById('mLat').value) || currentLat;
+  const lon     = parseFloat(document.getElementById('mLon').value) || currentLon;
+  if (!dateVal) { alert('कृपया दिनांक चुनें।'); return; }
+  const results = Panchang.getMuhuratForDay(new Date(dateVal), lat, lon, purpose);
+  const el = document.getElementById('muhuratResults');
+  const tHi = document.getElementById('muhuratResultTitle');
+  const tEn = document.getElementById('muhuratResultTitleEn');
+  tHi.style.display = 'block'; tEn.style.display = 'none';
+  if (document.body.classList.contains('lang-en')) { tHi.style.display='none'; tEn.style.display='block'; }
+  el.innerHTML = results.length === 0
+    ? '<p style="color:var(--text-light);text-align:center;padding:2rem">इस दिन कोई शुभ मुहूर्त नहीं मिला।</p>'
+    : results.map(r => `
+        <div class="muhurat-card ${r.quality}">
+          <div class="card-value hi">${Panchang.MUHURAT_TYPES_HI[purpose]?.name||'मुहूर्त'}</div>
+          <div class="muhurat-time">${r.timeRange}</div>
+          <div class="muhurat-quality">${r.quality==='best'?'⭐ श्रेष्ठ':'✅ शुभ'}</div>
+          <div style="font-size:0.76rem;color:var(--text-light);margin-top:0.4rem">योग: ${r.yogaHi}</div>
+        </div>`).join('');
+}
+
+// ===================== KUNDALI =====================
+function drawChart(cusps, planets) {
+  const svgW = 340, svgH = 340;
+  const rashiIdx = Panchang.RASHIS_HI.indexOf(cusps[0].rashiHi);
+  const byHouse  = {};
+  planets.forEach(p => {
+    const h = ((Panchang.RASHIS_HI.indexOf(p.rashi) - rashiIdx + 12) % 12) + 1;
+    (byHouse[h] = byHouse[h]||[]).push(p.planetHi);
+  });
+  const pos = [
+    {x:svgW/2-15,y:28},{x:svgW-70,y:svgH/4-10},{x:svgW-70,y:svgH*3/4-10},{x:svgW/2-15,y:svgH-44},
+    {x:10,y:svgH*3/4-10},{x:10,y:svgH/4-10},
+    {x:svgW/3+2,y:svgH/2-30},{x:svgW*2/3-32,y:svgH/2-30},
+    {x:svgW*2/3-32,y:svgH/2+16},{x:svgW/3+2,y:svgH/2+16},
+    {x:svgW/2-10,y:svgH/3+6},{x:svgW/2-10,y:svgH*2/3-20},
+  ];
+  let svg = `<svg viewBox="0 0 ${svgW} ${svgH}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;border-radius:12px;">
+    <rect width="${svgW}" height="${svgH}" fill="rgba(251,246,238,0.95)" rx="12"/>
+    <rect x="1" y="1" width="${svgW-2}" height="${svgH-2}" fill="none" stroke="rgba(200,146,42,0.5)" stroke-width="1.5" rx="11"/>
+    <line x1="0" y1="0" x2="${svgW}" y2="${svgH}" stroke="rgba(200,146,42,0.35)" stroke-width="1"/>
+    <line x1="${svgW}" y1="0" x2="0" y2="${svgH}" stroke="rgba(200,146,42,0.35)" stroke-width="1"/>
+    <polygon points="${svgW/2},${svgH/3} ${svgW*2/3},${svgH/2} ${svgW/2},${svgH*2/3} ${svgW/3},${svgH/2}" fill="rgba(255,248,235,0.6)" stroke="rgba(200,146,42,0.5)" stroke-width="1"/>
+    <line x1="${svgW/2}" y1="0" x2="${svgW/2}" y2="${svgH}" stroke="rgba(200,146,42,0.3)" stroke-width="0.5"/>
+    <line x1="0" y1="${svgH/2}" x2="${svgW}" y2="${svgH/2}" stroke="rgba(200,146,42,0.3)" stroke-width="0.5"/>`;
+  for (let i = 0; i < 12; i++) {
+    const h = i+1, sign = Panchang.RASHIS_HI[(rashiIdx+i)%12], p = byHouse[h]||[], {x,y} = pos[i];
+    svg += `<text x="${x}" y="${y}" class="kundali-svg-house-num">${h}</text>
+    <text x="${x}" y="${y+13}" class="kundali-svg-rashi" font-size="9">${sign}</text>
+    ${p.map((pl,pi)=>`<text x="${x}" y="${y+26+pi*11}" class="kundali-svg-planet" font-size="9">${pl}</text>`).join('')}
+    ${i===0?`<text x="${x-2}" y="${y-8}" class="kundali-svg-lagna">Asc</text>`:''}`;
+  }
+  svg += `<text x="${svgW/2}" y="${svgH/2+8}" text-anchor="middle" font-family="'Tiro Devanagari Sanskrit',serif" font-size="22" fill="rgba(200,146,42,0.5)">ॐ</text></svg>`;
+  return svg;
+}
+
+function generateKundali() {
+  const dob   = document.getElementById('kDob').value;
+  const tob   = document.getElementById('kTob').value;
+  const lat   = parseFloat(document.getElementById('kLat').value) || 28.6139;
+  const lon   = parseFloat(document.getElementById('kLon').value) || 77.2090;
+  const place = document.getElementById('kCity').value.trim();
+  if (!dob) { alert('कृपया जन्म दिनांक दर्ज करें।'); return; }
+  if (!place) { alert('कृपया जन्म स्थान चुनें।'); return; }
+  const [y,m,d] = dob.split('-').map(Number);
+  const [hr,mn] = tob ? tob.split(':').map(Number) : [12,0];
+  const jd = Panchang.toJulianDate(new Date(y,m-1,d,hr,mn));
+  const planets = Panchang.getPlanetaryPositions(jd);
+  const lagna   = Panchang.getLagna(jd, lat, lon);
+  const cusps   = Panchang.getHouseCusps(jd, lat, lon);
+  const tithi   = Panchang.getTithi(jd);
+  const nak     = Panchang.getNakshatra(jd);
+  document.getElementById('chartContainer').innerHTML = drawChart(cusps, planets);
+  document.getElementById('planetTable').innerHTML = `
+    <thead><tr>
+      <th class="hi">ग्रह</th><th class="en" style="display:none">Planet</th>
+      <th class="hi">राशि</th><th class="en" style="display:none">Sign</th>
+      <th class="hi">अंश</th><th class="en" style="display:none">Deg</th>
+    </tr></thead><tbody>
+    ${planets.map(p=>`<tr><td>${p.planet}</td>
+      <td><span class="hi">${p.rashi}</span><span class="en" style="display:none">${p.rashiEn}</span></td>
+      <td style="font-family:'DM Mono',monospace;font-size:0.82rem">${p.degree}°</td></tr>`).join('')}
+    </tbody>`;
+  document.getElementById('lagnaDetails').innerHTML = [
+    ['जन्म स्थान', place, 'Birth Place', place],
+    ['लग्न', `${lagna.rashiHi} ${lagna.degree}°`, 'Ascendant', `${lagna.rashiEn} ${lagna.degree}°`],
+    ['जन्म नक्षत्र', `${nak.nameHi} पाद ${nak.pada}`, 'Nakshatra', `${nak.nameEn} Pada ${nak.pada}`],
+    ['जन्म तिथि', tithi.nameHi, 'Tithi', tithi.nameEn],
+    ['चन्द्र राशि', Panchang.getMoonRashi(jd).nameHi, 'Moon Sign', Panchang.getMoonRashi(jd).nameEn],
+  ].map(([lH,vH,lE,vE])=>`
+    <div class="detail-row">
+      <span><span class="hi">${lH}</span><span class="en" style="display:none">${lE}</span></span>
+      <strong><span class="hi">${vH}</span><span class="en" style="display:none">${vE}</span></strong>
+    </div>`).join('');
+  const out = document.getElementById('kundaliOutput');
+  out.style.display = 'block';
+  out.scrollIntoView({ behavior:'smooth' });
+  if (document.body.classList.contains('lang-en')) {
+    out.querySelectorAll('.hi').forEach(el=>el.style.display='none');
+    out.querySelectorAll('.en').forEach(el=>el.style.display='block');
+  }
+}
+
+// ===================== CALENDAR =====================
+let calYear = new Date().getFullYear(), calMonth = new Date().getMonth();
+const DAY_HEADERS_HI = ['रवि','सोम','मंगल','बुध','गुरु','शुक्र','शनि'];
+const MONTHS_HI = ['जनवरी','फरवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितम्बर','अक्टूबर','नवम्बर','दिसम्बर'];
+const MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function changeMonth(dir) { calMonth += dir; if (calMonth > 11) { calMonth=0; calYear++; } if (calMonth < 0) { calMonth=11; calYear--; } renderCalendar(); }
+
+function renderCalendar() {
+  document.getElementById('calMonthTitle').textContent = `${MONTHS_HI[calMonth]} / ${MONTHS_EN[calMonth]} ${calYear}`;
+  // Day headers
+  const hdrEl = document.getElementById('calDayHeaders');
+  hdrEl.innerHTML = DAY_HEADERS_HI.map(d=>`<div class="cal-day-header">${d}</div>`).join('');
+  // Days
+  const grid   = document.getElementById('calGrid');
+  const today  = new Date();
+  const first  = new Date(calYear, calMonth, 1).getDay();
+  const days   = new Date(calYear, calMonth+1, 0).getDate();
+  let html = '';
+  for (let i = 0; i < first; i++) html += '<div class="cal-day empty"></div>';
+  for (let d = 1; d <= days; d++) {
+    const date    = new Date(calYear, calMonth, d);
+    const jd      = Panchang.toJulianDate(date);
+    const tithi   = Panchang.getTithi(jd);
+    const phase   = Panchang.getMoonPhase(jd);
+    const fests   = Panchang.getFestivalsForDate(date);
+    const isToday = d === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear();
+    const extraClass = phase.nameEn === 'Purnima' ? 'cal-purnima' : phase.nameEn === 'Amavasya' ? 'cal-amavas' : '';
+    html += `<div class="cal-day ${isToday?'today':''} ${extraClass}">
+      <div class="cal-day-num">${d}</div>
+      <div class="cal-tithi">${tithi.nameHi}</div>
+      ${fests.length ? `<div class="cal-festival">${fests[0].icon} ${fests[0].nameHi}</div>` : ''}
+    </div>`;
+  }
+  grid.innerHTML = html;
+  // Month festivals
+  const mf = document.getElementById('monthFestivals');
+  const allFests = Panchang.getFestivalsForMonth(calYear, calMonth+1);
+  mf.innerHTML = allFests.length === 0
+    ? '<div class="festival-item"><div class="festival-icon">🕉️</div><div><div class="festival-name hi">इस माह कोई पर्व नहीं है</div></div></div>'
+    : allFests.map(f=>`
+        <div class="festival-item">
+          <div class="festival-icon">${f.icon}</div>
+          <div>
+            <div class="festival-name hi">${f.nameHi} — ${f.day} ${MONTHS_HI[calMonth]}</div>
+            <div class="festival-name en" style="display:none">${f.nameEn} — ${f.day} ${MONTHS_EN[calMonth]}</div>
+          </div>
+          <span class="festival-tag">${f.type==='national'?'राष्ट्रीय':'हिन्दू पर्व'}</span>
+        </div>`).join('');
+}
+
+// ===================== INIT =====================
+function init() {
+  createStars();
+  renderHeroDate(new Date());
+  loadSavedLocation();
+
+  // Hero city search
+  makeCitySearch('heroCity', 'heroCitySug', (lat, lon, name) => {
+    saveLocation(lat, lon, name);
+    document.getElementById('heroLocation').textContent = '📍 ' + name;
+    renderPanchang(lat, lon, name);
+    // Sync muhurat & kundali city inputs
+    const mCity = document.getElementById('mCity');
+    if (mCity) mCity.value = name;
+    document.getElementById('mLat').value = lat;
+    document.getElementById('mLon').value = lon;
+  });
+  // Muhurat city search
+  makeCitySearch('mCity', 'mCitySug', (lat, lon, name) => {
+    saveLocation(lat, lon, name);
+    document.getElementById('mLat').value = lat;
+    document.getElementById('mLon').value = lon;
+  });
+  // Kundali city search
+  makeCitySearch('kCity', 'kCitySug', (lat, lon, name) => {
+    document.getElementById('kLat').value = lat;
+    document.getElementById('kLon').value = lon;
+  });
+
+  // Pre-fill inputs with saved city
+  document.getElementById('heroCity').value = currentCityName;
+  document.getElementById('mCity').value    = currentCityName;
+  document.getElementById('mLat').value     = currentLat;
+  document.getElementById('mLon').value     = currentLon;
+
+  // Set today's date defaults
+  const todayStr = new Date().toISOString().split('T')[0];
+  document.getElementById('muhuratDate').value = todayStr;
+  document.getElementById('kDob').value = todayStr;
+  const now = new Date();
+  document.getElementById('kTob').value = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+
+  renderPanchang(currentLat, currentLon, currentCityName);
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
 </body>
 </html>
