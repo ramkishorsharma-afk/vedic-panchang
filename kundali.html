@@ -1,381 +1,355 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>कुण्डली | Kundali Birth Chart — वैदिक पञ्चाङ्ग</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Sanskrit:ital@0;1&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/style.css" />
-  <style>
-    .kundali-svg-house { fill: rgba(255,248,235,0.85); stroke: rgba(200,146,42,0.5); stroke-width: 1; }
-    .kundali-svg-house-num { fill: #9B7651; font-size: 10px; font-family: 'DM Mono',monospace; }
-    .kundali-svg-rashi { fill: #8B1A1A; font-size: 11px; font-family: 'Tiro Devanagari Sanskrit',serif; }
-    .kundali-svg-planet { fill: #1A5C8A; font-size: 10px; font-family: 'Tiro Devanagari Sanskrit',serif; }
-    .kundali-svg-lagna { fill: #C8922A; font-size: 9px; font-family: 'DM Mono',monospace; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>कुण्डली | Kundali Birth Chart — वैदिक पञ्चाङ्ग</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Sanskrit:ital@0;1&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+<style>
+  .kundali-svg-house     { fill:rgba(255,248,235,0.85); stroke:rgba(200,146,42,0.5); stroke-width:1; }
+  .kundali-svg-house-num { fill:#9B7651; font-size:10px; font-family:'DM Mono',monospace; }
+  .kundali-svg-rashi     { fill:#8B1A1A; font-size:11px; font-family:'Tiro Devanagari Sanskrit',serif; }
+  .kundali-svg-planet    { fill:#1A5C8A; font-size:10px; font-family:'Tiro Devanagari Sanskrit',serif; }
+  .kundali-svg-lagna     { fill:#C8922A; font-size:9px; font-family:'DM Mono',monospace; }
+
+  /* City search styles */
+  .city-search-wrap { position:relative; }
+  .city-search-wrap input {
+    width:100%; padding:8px 14px; border-radius:20px;
+    border:1.5px solid rgba(200,146,42,0.4);
+    background:rgba(255,255,255,0.07); color:#f2d472;
+    font-family:inherit; font-size:0.92rem; outline:none;
+    box-sizing:border-box; transition:border-color 0.2s;
+  }
+  .city-search-wrap input::placeholder { color:rgba(242,212,114,0.4); }
+  .city-search-wrap input:focus { border-color:rgba(242,212,114,0.8); }
+  .city-suggestions {
+    position:absolute; top:calc(100% + 4px); left:0; right:0;
+    background:#1a1235; border:1.5px solid rgba(200,146,42,0.3);
+    border-radius:12px; z-index:999; box-shadow:0 8px 24px rgba(0,0,0,0.5);
+    max-height:200px; overflow-y:auto; display:none;
+  }
+  .sug-item {
+    padding:9px 14px; font-size:0.87rem; color:#e8d5a3; cursor:pointer;
+    border-bottom:1px solid rgba(255,255,255,0.06); transition:background 0.15s;
+  }
+  .sug-item:last-child { border-bottom:none; }
+  .sug-item:hover { background:rgba(242,212,114,0.12); }
+  .sug-loading { padding:10px 14px; font-size:0.83rem; color:rgba(242,212,114,0.55); text-align:center; }
+</style>
 </head>
 <body>
-  <div class="cosmos-bg">
-    <div class="stars" id="stars"></div>
-    <div class="mandala-bg"></div>
+<div class="cosmos-bg">
+  <div class="stars" id="stars"></div>
+  <div class="mandala-bg"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav-brand">
+    <span class="om">ॐ</span>
+    <span class="brand-text">वैदिक पञ्चाङ्ग</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="index.html">पञ्चाङ्ग</a></li>
+    <li><a href="calendar.html">कैलेण्डर</a></li>
+    <li><a href="muhurat.html">मुहूर्त</a></li>
+    <li><a href="kundali.html" class="active">कुण्डली</a></li>
+  </ul>
+  <button class="lang-toggle" id="langToggle">EN / हि</button>
+</nav>
+
+<div class="page-wrapper">
+  <h1 class="page-title hi">जन्म कुण्डली</h1>
+  <h1 class="page-title en" style="display:none">Birth Chart (Kundali)</h1>
+  <p class="page-subtitle hi">वैदिक ज्योतिष पर आधारित ग्रह चक्र</p>
+  <p class="page-subtitle en" style="display:none">Vedic Astrology Birth Chart</p>
+
+  <!-- Form -->
+  <div class="kundali-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="hi">नाम</label>
+        <label class="en" style="display:none">Name</label>
+        <input type="text" id="kName" placeholder="अपना नाम लिखें" />
+      </div>
+      <div class="form-group">
+        <label class="hi">जन्म दिनांक</label>
+        <label class="en" style="display:none">Date of Birth</label>
+        <input type="date" id="kDob" />
+      </div>
+      <div class="form-group">
+        <label class="hi">जन्म समय</label>
+        <label class="en" style="display:none">Time of Birth</label>
+        <input type="time" id="kTob" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <!-- CITY SEARCH — replaces separate lat/lon fields -->
+      <div class="form-group" style="flex:1 1 100%">
+        <label class="hi">जन्म स्थान खोजें</label>
+        <label class="en" style="display:none">Search Birth Place</label>
+        <div class="city-search-wrap">
+          <input
+            type="text"
+            id="kPlaceInput"
+            placeholder="📍 शहर का नाम लिखें — उदा: लुधियाना, वाराणसी, मुम्बई"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <div class="city-suggestions" id="kPlaceSuggestions"></div>
+        </div>
+        <!-- Hidden fields that store resolved lat/lon -->
+        <input type="hidden" id="kLat" value="28.6139" />
+        <input type="hidden" id="kLon" value="77.2090" />
+        <small style="color:rgba(242,212,114,0.45);font-size:0.78rem;margin-top:4px;display:block">
+          <span class="hi">टाइप करते ही सुझाव आएंगे — सही शहर चुनें</span>
+          <span class="en" style="display:none">Suggestions appear as you type — select the correct city</span>
+        </small>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="generateKundali()">
+      <span class="hi">कुण्डली बनाएं 🔭</span>
+      <span class="en" style="display:none">Generate Kundali 🔭</span>
+    </button>
   </div>
 
-  <nav class="nav">
-    <div class="nav-brand">
-      <span class="om">ॐ</span>
-      <span class="brand-text">वैदिक पञ्चाङ्ग</span>
-    </div>
-    <ul class="nav-links">
-      <li><a href="../index.html">पञ्चाङ्ग</a></li>
-      <li><a href="calendar.html">कैलेण्डर</a></li>
-      <li><a href="muhurat.html">मुहूर्त</a></li>
-      <li><a href="kundali.html" class="active">कुण्डली</a></li>
-    </ul>
-    <button class="lang-toggle" id="langToggle">EN / हि</button>
-  </nav>
-
-  <div class="page-wrapper">
-    <h1 class="page-title hi">जन्म कुण्डली</h1>
-    <h1 class="page-title en" style="display:none">Birth Chart (Kundali)</h1>
-    <p class="page-subtitle hi">वैदिक ज्योतिष पर आधारित ग्रह चक्र</p>
-    <p class="page-subtitle en" style="display:none">Vedic Astrology Birth Chart</p>
-
-    <!-- Form -->
-    <div class="kundali-form">
-      <div class="form-row">
-        <div class="form-group">
-          <label class="hi">नाम</label>
-          <label class="en" style="display:none">Name</label>
-          <input type="text" id="kName" placeholder="अपना नाम लिखें" />
+  <!-- Output -->
+  <div id="kundaliOutput" style="display:none">
+    <div class="chakra-container">
+      <div class="chakra-chart" id="chartContainer"></div>
+      <div class="chakra-info">
+        <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:1.5rem;backdrop-filter:blur(12px);">
+          <h2 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1.1rem;font-weight:400;color:var(--crimson);margin-bottom:1rem" class="hi">ग्रह स्थिति</h2>
+          <h2 style="display:none;font-family:'Tiro Devanagari Sanskrit',serif;font-size:1.1rem;font-weight:400;color:var(--crimson);margin-bottom:1rem" class="en">Planetary Positions</h2>
+          <table class="planet-table" id="planetTable"></table>
         </div>
-        <div class="form-group">
-          <label class="hi">जन्म दिनांक</label>
-          <label class="en" style="display:none">Date of Birth</label>
-          <input type="date" id="kDob" />
-        </div>
-        <div class="form-group">
-          <label class="hi">जन्म समय</label>
-          <label class="en" style="display:none">Time of Birth</label>
-          <input type="time" id="kTob" />
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="hi">जन्म स्थान</label>
-          <label class="en" style="display:none">Place of Birth</label>
-          <input type="text" id="kPlace" placeholder="उदा: नई दिल्ली" />
-        </div>
-        <div class="form-group">
-          <label>Latitude</label>
-          <input type="number" id="kLat" value="28.61" step="0.01" />
-        </div>
-        <div class="form-group">
-          <label>Longitude</label>
-          <input type="number" id="kLon" value="77.20" step="0.01" />
-        </div>
-      </div>
-      <button class="btn-primary" onclick="generateKundali()">
-        <span class="hi">कुण्डली बनाएं 🔭</span>
-        <span class="en" style="display:none">Generate Kundali 🔭</span>
-      </button>
-    </div>
-
-    <!-- Output -->
-    <div id="kundaliOutput" style="display:none">
-      <div class="chakra-container">
-        <!-- SVG Chart -->
-        <div class="chakra-chart" id="chartContainer"></div>
-
-        <!-- Planet Table -->
-        <div class="chakra-info">
-          <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:1.5rem;backdrop-filter:blur(12px);">
-            <h2 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1.1rem;font-weight:400;color:var(--crimson);margin-bottom:1rem" class="hi">ग्रह स्थिति</h2>
-            <h2 style="display:none;font-family:'Tiro Devanagari Sanskrit',serif;font-size:1.1rem;font-weight:400;color:var(--crimson);margin-bottom:1rem" class="en">Planetary Positions</h2>
-            <table class="planet-table" id="planetTable"></table>
-          </div>
-
-          <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:1.5rem;backdrop-filter:blur(12px);margin-top:1rem">
-            <h2 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1.1rem;font-weight:400;color:var(--crimson);margin-bottom:1rem" class="hi">मूल विवरण</h2>
-            <h2 style="display:none;font-family:'Tiro Devanagari Sanskrit',serif;font-size:1.1rem;font-weight:400;color:var(--crimson);margin-bottom:1rem" class="en">Key Details</h2>
-            <div id="lagnaDetails"></div>
-          </div>
+        <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:1.5rem;backdrop-filter:blur(12px);margin-top:1rem">
+          <h2 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1.1rem;font-weight:400;color:var(--crimson);margin-bottom:1rem" class="hi">मूल विवरण</h2>
+          <h2 style="display:none;font-family:'Tiro Devanagari Sanskrit',serif;font-size:1.1rem;font-weight:400;color:var(--crimson);margin-bottom:1rem" class="en">Key Details</h2>
+          <div id="lagnaDetails"></div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <footer class="footer">
-    <div class="om-footer">ॐ</div>
-    <p class="footer-copy">© 2025 वैदिक पञ्चाङ्ग | Vedic Panchang</p>
-  </footer>
+<footer class="footer">
+  <div class="om-footer">ॐ</div>
+  <p class="footer-copy">© 2026 वैदिक पञ्चाङ्ग | Vedic Panchang</p>
+</footer>
 
-  <script src="../js/panchang.js"></script>
-  <script>
-    function createStars(){const c=document.getElementById('stars');for(let i=0;i<100;i++){const s=document.createElement('div');s.style.cssText=`position:absolute;left:${Math.random()*100}%;top:${Math.random()*100}%;width:${Math.random()*2+1}px;height:${Math.random()*2+1}px;background:rgba(242,212,114,${Math.random()*0.6+0.2});border-radius:50%;`;c.appendChild(s);}}
-    document.getElementById('langToggle').addEventListener('click',()=>document.body.classList.toggle('lang-en'));
+<script src="panchang.js"></script>
+<script>
+// ---- Stars ----
+function createStars() {
+  const c = document.getElementById('stars');
+  for (let i = 0; i < 100; i++) {
+    const s = document.createElement('div');
+    s.style.cssText = `position:absolute;left:${Math.random()*100}%;top:${Math.random()*100}%;width:${Math.random()*2+1}px;height:${Math.random()*2+1}px;background:rgba(242,212,114,${Math.random()*0.6+0.2});border-radius:50%;`;
+    c.appendChild(s);
+  }
+}
 
-    // Default to today
-    const now = new Date();
-    document.getElementById('kDob').value = now.toISOString().split('T')[0];
-    document.getElementById('kTob').value = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+// ---- Lang Toggle ----
+document.getElementById('langToggle').addEventListener('click', () => {
+  document.body.classList.toggle('lang-en');
+  localStorage.setItem('lang', document.body.classList.contains('lang-en') ? 'en' : 'hi');
+});
+if (localStorage.getItem('lang') === 'en') document.body.classList.add('lang-en');
 
-    // North Indian Kundali Chart (12 houses)
-    // Houses layout (North Indian style):
-    // 12 1 2
-    // 11   3
-    // 10 9 8 7  (but we'll do a simplified diamond)
-    function drawNorthIndianChart(houseCusps, planets) {
-      const size = 320;
-      const c = size / 2; // center
-      const h = size / 3; // house size
+// ---- Default dates ----
+const now = new Date();
+document.getElementById('kDob').value = now.toISOString().split('T')[0];
+document.getElementById('kTob').value = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
 
-      // North Indian chart: fixed house positions
-      // Houses are numbered by sign, Lagna sign gets house 1
-      // Standard layout positions (simplified grid):
-      const houseCoords = [
-        // [houseNum, x1,y1, x2,y2] — corners of each trapezoid/triangle
-        // We'll draw them as rectangles in a 4x4 grid with diagonals
-      ];
+// ---- City Search ----
+let searchTimer = null;
 
-      // Simpler approach: 4x4 grid, 12 cells + center
-      // Classic North Indian:
-      //  [12][01][02]
-      //  [11][  ][03]
-      //  [10][09][08] ... wait, needs 4 cols
-      // Let's do proper 4x4:
-      // Col:  0   1   2   3
-      // Row0: 12  01  02  --
-      // Row1: 11  []  []  03
-      // Row2: 10  []  []  04
-      // Row3: 09  08  07  06  05? ...
+function initCitySearch() {
+  const input = document.getElementById('kPlaceInput');
+  const sug   = document.getElementById('kPlaceSuggestions');
 
-      // Simplified: draw the diamond SVG
-      const svgW = 340, svgH = 340;
-      const pts = [
-        // outer square corners
-        {x:0,y:0},{x:svgW,y:0},{x:svgW,y:svgH},{x:0,y:svgH},
-        // inner diamond
-        {x:svgW/2,y:0},{x:svgW,y:svgH/2},{x:svgW/2,y:svgH},{x:0,y:svgH/2}
-      ];
+  input.addEventListener('input', () => {
+    clearTimeout(searchTimer);
+    const q = input.value.trim();
+    if (q.length < 2) { sug.innerHTML = ''; sug.style.display = 'none'; return; }
+    searchTimer = setTimeout(() => {
+      sug.innerHTML = '<div class="sug-loading">🔍 खोज रहे हैं…</div>';
+      sug.style.display = 'block';
+      fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=6&addressdetails=1`)
+        .then(r => r.json())
+        .then(data => {
+          if (!data.length) {
+            sug.innerHTML = '<div class="sug-loading">कोई स्थान नहीं मिला</div>';
+            return;
+          }
+          sug.innerHTML = data.map(r => {
+            const city  = r.address.city || r.address.town || r.address.village || r.display_name.split(',')[0];
+            const state = r.address.state || '';
+            const label = [city, state].filter(Boolean).join(', ');
+            return `<div class="sug-item" data-lat="${r.lat}" data-lon="${r.lon}" data-name="${label}">📍 ${label}</div>`;
+          }).join('');
+          sug.querySelectorAll('.sug-item').forEach(el => {
+            el.addEventListener('click', () => {
+              input.value = el.dataset.name;
+              document.getElementById('kLat').value = el.dataset.lat;
+              document.getElementById('kLon').value = el.dataset.lon;
+              sug.innerHTML = ''; sug.style.display = 'none';
+            });
+          });
+        })
+        .catch(() => { sug.innerHTML = '<div class="sug-loading">नेटवर्क त्रुटि</div>'; });
+    }, 350);
+  });
 
-      // House polygons (North Indian, Lagna = top-center triangle)
-      const houses = [
-        // [houseIndex(0=1), polygon points]
-        {h:1,  pts:`${svgW/2},0 ${svgW},0 ${svgW/2},${svgH/2} 0,0`},
-        {h:2,  pts:`${svgW},0 ${svgW},${svgH/2} ${svgW/2},${svgH/2}`},
-        {h:3,  pts:`${svgW},${svgH/2} ${svgW},${svgH} ${svgW/2},${svgH/2}`},
-        {h:4,  pts:`${svgW},${svgH} ${svgW/2},${svgH} ${svgW/2},${svgH/2}`},
-        {h:5,  pts:`${svgW/2},${svgH} 0,${svgH} ${svgW/2},${svgH/2}`},
-        {h:6,  pts:`0,${svgH} 0,${svgH/2} ${svgW/2},${svgH/2}`},
-        {h:7,  pts:`0,${svgH/2} 0,0 ${svgW/2},${svgH/2}`},
-        {h:8,  pts:`0,0 ${svgW/2},0 ${svgW/2},${svgH/2}`},
-        // Center square (houses 9-12 drawn as 4 triangles meeting at center)
-        {h:9,  pts:`${svgW/2},0 ${svgW},0 ${svgW/2+30},${svgH/2-30} ${svgW/2-30},${svgH/2-30}`},
-        {h:10, pts:`${svgW},0 ${svgW},${svgH/2} ${svgW/2+30},${svgH/2+30} ${svgW/2+30},${svgH/2-30}`},
-        {h:11, pts:`${svgW},${svgH} ${svgW/2},${svgH} ${svgW/2+30},${svgH/2+30} ${svgW/2-30},${svgH/2+30}`},
-        {h:12, pts:`0,${svgH/2} 0,0 ${svgW/2-30},${svgH/2-30} ${svgW/2-30},${svgH/2+30}`},
-      ];
-
-      // Place signs in houses
-      const lagnaRashi = houseCusps[0].rashiHi;
-      const rashiIdx = Panchang.RASHIS_HI.indexOf(lagnaRashi);
-
-      // House sign labels
-      const houseLabels = houses.slice(0,8).map((h, i) => {
-        const signIdx = (rashiIdx + i) % 12;
-        return { h: h.h, sign: Panchang.RASHIS_HI[signIdx], signEn: Panchang.RASHIS_EN[signIdx] };
-      });
-
-      // Planet placements by house
-      const planetsByHouse = {};
-      planets.forEach(p => {
-        const pRashiIdx = Panchang.RASHIS_HI.indexOf(p.rashi);
-        const houseNum = ((pRashiIdx - rashiIdx + 12) % 12) + 1;
-        if (!planetsByHouse[houseNum]) planetsByHouse[houseNum] = [];
-        planetsByHouse[houseNum].push(p.planetHi);
-      });
-
-      // House centers for labels
-      const centers = [
-        {x: svgW/2,   y: svgH/6},     // 1
-        {x: svgW*5/6, y: svgH/4},     // 2
-        {x: svgW*5/6, y: svgH*3/4},   // 3
-        {x: svgW/2,   y: svgH*5/6},   // 4
-        {x: svgW/6,   y: svgH*3/4},   // 5
-        {x: svgW/6,   y: svgH/4},     // 6 (was 7)
-        {x: svgW/6,   y: svgH/4},     // 7
-        {x: svgW/2,   y: svgH/6},     // 8 (reused)
-        // inner 4 will not be used in simple 8-house chart
-      ];
-
-      const house8Centers = [
-        {x: svgW/2,     y: svgH/7},     // 1 top
-        {x: svgW*6/7,   y: svgH/4},     // 2 right-top
-        {x: svgW*6/7,   y: svgH*3/4},   // 3 right-bottom
-        {x: svgW/2,     y: svgH*6/7},   // 4 bottom
-        {x: svgW/7,     y: svgH*3/4},   // 5 left-bottom
-        {x: svgW/7,     y: svgH/4},     // 6 left-top
-        {x: svgW/7,     y: svgH/4},     // 7 placeholder
-        {x: svgW/2,     y: svgH/7},     // 8 placeholder
-      ];
-
-      // Proper 8 outer + 4 inner arrangement
-      const allCenters = [
-        {x: svgW/2,    y: 50},        // H1 top
-        {x: svgW-50,   y: svgH/4},    // H2 right-top
-        {x: svgW-50,   y: svgH*3/4},  // H3 right-bottom
-        {x: svgW/2,    y: svgH-50},   // H4 bottom
-        {x: 50,        y: svgH*3/4},  // H5 left-bottom
-        {x: 50,        y: svgH/4},    // H6 left-top
-        // inner 4 centers (approx)
-        {x: svgW/2-60, y: svgH/2-60}, // H7 inner-top-left
-        {x: svgW/2+60, y: svgH/2-60}, // H8 inner-top-right
-        {x: svgW/2+60, y: svgH/2+60}, // H9 inner-right-bottom
-        {x: svgW/2-60, y: svgH/2+60}, // H10 inner-left-bottom
-        {x: svgW/2,    y: svgH/2-80}, // H11 inner-top
-        {x: svgW/2,    y: svgH/2+80}, // H12 inner-bottom
-      ];
-
-      let svgContent = `<svg viewBox="0 0 ${svgW} ${svgH}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;border-radius:12px;">
-        <defs>
-          <filter id="glow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        </defs>
-        <rect width="${svgW}" height="${svgH}" fill="rgba(251,246,238,0.95)" rx="12"/>
-        <!-- Outer border -->
-        <rect x="1" y="1" width="${svgW-2}" height="${svgH-2}" fill="none" stroke="rgba(200,146,42,0.5)" stroke-width="1.5" rx="11"/>
-        <!-- Diagonals -->
-        <line x1="0" y1="0" x2="${svgW}" y2="${svgH}" stroke="rgba(200,146,42,0.35)" stroke-width="1"/>
-        <line x1="${svgW}" y1="0" x2="0" y2="${svgH}" stroke="rgba(200,146,42,0.35)" stroke-width="1"/>
-        <!-- Inner diamond -->
-        <polygon points="${svgW/2},${svgH/3} ${svgW*2/3},${svgH/2} ${svgW/2},${svgH*2/3} ${svgW/3},${svgH/2}"
-          fill="rgba(255,248,235,0.6)" stroke="rgba(200,146,42,0.5)" stroke-width="1"/>
-        <!-- Cross lines -->
-        <line x1="${svgW/2}" y1="0" x2="${svgW/2}" y2="${svgH}" stroke="rgba(200,146,42,0.3)" stroke-width="0.5"/>
-        <line x1="0" y1="${svgH/2}" x2="${svgW}" y2="${svgH/2}" stroke="rgba(200,146,42,0.3)" stroke-width="0.5"/>
-      `;
-
-      // Draw house numbers and signs
-      const housePositions = [
-        {hx: svgW/2-15, hy: 28},         // H1
-        {hx: svgW-65,   hy: svgH/4-10},  // H2
-        {hx: svgW-65,   hy: svgH*3/4-10},// H3
-        {hx: svgW/2-15, hy: svgH-42},    // H4
-        {hx: 12,        hy: svgH*3/4-10},// H5
-        {hx: 12,        hy: svgH/4-10},  // H6
-        {hx: svgW/3+5,  hy: svgH/2-28},  // H7 (inner top-left)
-        {hx: svgW*2/3-30,hy: svgH/2-28}, // H8 (inner top-right)
-        {hx: svgW*2/3-30,hy: svgH/2+18}, // H9
-        {hx: svgW/3+5,  hy: svgH/2+18},  // H10
-        {hx: svgW/2-10, hy: svgH/3+8},   // H11
-        {hx: svgW/2-10, hy: svgH*2/3-18},// H12
-      ];
-
-      for (let i = 0; i < 12; i++) {
-        const hNum = i + 1;
-        const signIdx = (rashiIdx + i) % 12;
-        const sign = Panchang.RASHIS_HI[signIdx];
-        const pList = planetsByHouse[hNum] || [];
-        const pos = housePositions[i];
-        const isLagna = i === 0;
-
-        svgContent += `
-          <text x="${pos.hx}" y="${pos.hy}" class="kundali-svg-house-num">${hNum}</text>
-          <text x="${pos.hx}" y="${pos.hy+13}" class="kundali-svg-rashi" font-size="9">${sign}</text>
-          ${pList.map((p,pi) =>
-            `<text x="${pos.hx}" y="${pos.hy+26+pi*11}" class="kundali-svg-planet" font-size="9">${p}</text>`
-          ).join('')}
-          ${isLagna ? `<text x="${pos.hx-2}" y="${pos.hy-8}" class="kundali-svg-lagna">Asc</text>` : ''}
-        `;
-      }
-
-      // Om in center
-      svgContent += `<text x="${svgW/2}" y="${svgH/2+8}" text-anchor="middle" font-family="'Tiro Devanagari Sanskrit',serif" font-size="22" fill="rgba(200,146,42,0.5)">ॐ</text>`;
-      svgContent += '</svg>';
-      return svgContent;
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { sug.innerHTML = ''; sug.style.display = 'none'; }
+  });
+  document.addEventListener('click', e => {
+    if (!input.contains(e.target) && !sug.contains(e.target)) {
+      sug.innerHTML = ''; sug.style.display = 'none';
     }
+  });
+}
 
-    function generateKundali() {
-      const dobVal = document.getElementById('kDob').value;
-      const tobVal = document.getElementById('kTob').value;
-      const lat    = parseFloat(document.getElementById('kLat').value) || 28.61;
-      const lon    = parseFloat(document.getElementById('kLon').value) || 77.20;
-      const name   = document.getElementById('kName').value || 'जातक';
+// ---- Draw North Indian Kundali Chart ----
+function drawNorthIndianChart(houseCusps, planets) {
+  const svgW = 340, svgH = 340;
+  const lagnaRashi = houseCusps[0].rashiHi;
+  const rashiIdx   = Panchang.RASHIS_HI.indexOf(lagnaRashi);
 
-      if (!dobVal) { alert('कृपया जन्म दिनांक दर्ज करें।'); return; }
+  const planetsByHouse = {};
+  planets.forEach(p => {
+    const pRashiIdx = Panchang.RASHIS_HI.indexOf(p.rashi);
+    const houseNum  = ((pRashiIdx - rashiIdx + 12) % 12) + 1;
+    if (!planetsByHouse[houseNum]) planetsByHouse[houseNum] = [];
+    planetsByHouse[houseNum].push(p.planetHi);
+  });
 
-      const [y,m,d] = dobVal.split('-').map(Number);
-      const [hr,min] = tobVal ? tobVal.split(':').map(Number) : [12,0];
-      const birthDate = new Date(y, m-1, d, hr, min);
-      const jd = Panchang.toJulianDate(birthDate);
+  const housePositions = [
+    {hx: svgW/2-15, hy: 28},
+    {hx: svgW-70,   hy: svgH/4-10},
+    {hx: svgW-70,   hy: svgH*3/4-10},
+    {hx: svgW/2-15, hy: svgH-44},
+    {hx: 10,        hy: svgH*3/4-10},
+    {hx: 10,        hy: svgH/4-10},
+    {hx: svgW/3+2,  hy: svgH/2-30},
+    {hx: svgW*2/3-32,hy: svgH/2-30},
+    {hx: svgW*2/3-32,hy: svgH/2+16},
+    {hx: svgW/3+2,  hy: svgH/2+16},
+    {hx: svgW/2-10, hy: svgH/3+6},
+    {hx: svgW/2-10, hy: svgH*2/3-20},
+  ];
 
-      const planets = Panchang.getPlanetaryPositions(jd);
-      const lagna   = Panchang.getLagna(jd, lat, lon);
-      const cusps   = Panchang.getHouseCusps(jd, lat, lon);
-      const tithi   = Panchang.getTithi(jd);
-      const nak     = Panchang.getNakshatra(jd);
+  let svg = `<svg viewBox="0 0 ${svgW} ${svgH}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;border-radius:12px;">
+  <rect width="${svgW}" height="${svgH}" fill="rgba(251,246,238,0.95)" rx="12"/>
+  <rect x="1" y="1" width="${svgW-2}" height="${svgH-2}" fill="none" stroke="rgba(200,146,42,0.5)" stroke-width="1.5" rx="11"/>
+  <line x1="0" y1="0" x2="${svgW}" y2="${svgH}" stroke="rgba(200,146,42,0.35)" stroke-width="1"/>
+  <line x1="${svgW}" y1="0" x2="0" y2="${svgH}" stroke="rgba(200,146,42,0.35)" stroke-width="1"/>
+  <polygon points="${svgW/2},${svgH/3} ${svgW*2/3},${svgH/2} ${svgW/2},${svgH*2/3} ${svgW/3},${svgH/2}"
+    fill="rgba(255,248,235,0.6)" stroke="rgba(200,146,42,0.5)" stroke-width="1"/>
+  <line x1="${svgW/2}" y1="0" x2="${svgW/2}" y2="${svgH}" stroke="rgba(200,146,42,0.3)" stroke-width="0.5"/>
+  <line x1="0" y1="${svgH/2}" x2="${svgW}" y2="${svgH/2}" stroke="rgba(200,146,42,0.3)" stroke-width="0.5"/>`;
 
-      // Draw chart
-      document.getElementById('chartContainer').innerHTML = drawNorthIndianChart(cusps, planets);
+  for (let i = 0; i < 12; i++) {
+    const hNum     = i + 1;
+    const signIdx  = (rashiIdx + i) % 12;
+    const sign     = Panchang.RASHIS_HI[signIdx];
+    const pList    = planetsByHouse[hNum] || [];
+    const pos      = housePositions[i];
+    svg += `
+    <text x="${pos.hx}" y="${pos.hy}" class="kundali-svg-house-num">${hNum}</text>
+    <text x="${pos.hx}" y="${pos.hy+13}" class="kundali-svg-rashi" font-size="9">${sign}</text>
+    ${pList.map((p,pi) => `<text x="${pos.hx}" y="${pos.hy+26+pi*11}" class="kundali-svg-planet" font-size="9">${p}</text>`).join('')}
+    ${i === 0 ? `<text x="${pos.hx-2}" y="${pos.hy-8}" class="kundali-svg-lagna">Asc</text>` : ''}`;
+  }
 
-      // Planet table
-      const table = document.getElementById('planetTable');
-      table.innerHTML = `
-        <thead>
-          <tr>
-            <th class="hi">ग्रह</th><th class="en" style="display:none">Planet</th>
-            <th class="hi">राशि</th><th class="en" style="display:none">Sign</th>
-            <th class="hi">अंश</th><th class="en" style="display:none">Degree</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${planets.map(p => `
-            <tr>
-              <td>${p.planet}</td>
-              <td>
-                <span class="hi">${p.rashi}</span>
-                <span class="en" style="display:none">${p.rashiEn}</span>
-              </td>
-              <td style="font-family:'DM Mono',monospace;font-size:0.85rem">${p.degree}°</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      `;
+  svg += `<text x="${svgW/2}" y="${svgH/2+8}" text-anchor="middle" font-family="'Tiro Devanagari Sanskrit',serif" font-size="22" fill="rgba(200,146,42,0.5)">ॐ</text></svg>`;
+  return svg;
+}
 
-      // Lagna details
-      document.getElementById('lagnaDetails').innerHTML = `
-        <div style="display:grid;gap:0.5rem">
-          ${[
-            ['लग्न', `${lagna.rashiHi} ${lagna.degree}°`, 'Ascendant', `${lagna.rashiEn} ${lagna.degree}°`],
-            ['जन्म नक्षत्र', `${nak.nameHi} पाद ${nak.pada}`, 'Birth Nakshatra', `${nak.nameEn} Pada ${nak.pada}`],
-            ['जन्म तिथि', `${tithi.nameHi}`, 'Birth Tithi', tithi.nameEn],
-            ['चन्द्र राशि', Panchang.getMoonRashi(jd).nameHi, 'Moon Sign', Panchang.getMoonRashi(jd).nameEn],
-          ].map(([labelHi, valHi, labelEn, valEn]) => `
-            <div style="display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid rgba(200,146,42,0.15)">
-              <span style="font-size:0.82rem;color:var(--text-light);font-family:'Tiro Devanagari Sanskrit',serif">
-                <span class="hi">${labelHi}</span>
-                <span class="en" style="display:none">${labelEn}</span>
-              </span>
-              <strong style="font-size:0.9rem;color:var(--text-dark);font-family:'Tiro Devanagari Sanskrit',serif">
-                <span class="hi">${valHi}</span>
-                <span class="en" style="display:none">${valEn}</span>
-              </strong>
-            </div>
-          `).join('')}
-        </div>
-      `;
+// ---- Generate Kundali ----
+function generateKundali() {
+  const dobVal = document.getElementById('kDob').value;
+  const tobVal = document.getElementById('kTob').value;
+  const lat    = parseFloat(document.getElementById('kLat').value) || 28.6139;
+  const lon    = parseFloat(document.getElementById('kLon').value) || 77.2090;
+  const place  = document.getElementById('kPlaceInput').value.trim();
 
-      document.getElementById('kundaliOutput').style.display = 'block';
-      document.getElementById('kundaliOutput').scrollIntoView({ behavior: 'smooth' });
+  if (!dobVal) {
+    alert('कृपया जन्म दिनांक दर्ज करें।\nPlease enter date of birth.');
+    return;
+  }
+  if (!place) {
+    alert('कृपया जन्म स्थान चुनें।\nPlease select a birth place from suggestions.');
+    return;
+  }
 
-      // Reapply lang
-      if (document.body.classList.contains('lang-en')) {
-        document.querySelectorAll('.hi').forEach(el=>el.style.display='none');
-        document.querySelectorAll('.en').forEach(el=>el.style.display='block');
-      }
-    }
+  const [y,m,d]   = dobVal.split('-').map(Number);
+  const [hr, min] = tobVal ? tobVal.split(':').map(Number) : [12, 0];
+  const birthDate = new Date(y, m-1, d, hr, min);
+  const jd        = Panchang.toJulianDate(birthDate);
 
-    createStars();
-  </script>
+  const planets = Panchang.getPlanetaryPositions(jd);
+  const lagna   = Panchang.getLagna(jd, lat, lon);
+  const cusps   = Panchang.getHouseCusps(jd, lat, lon);
+  const tithi   = Panchang.getTithi(jd);
+  const nak     = Panchang.getNakshatra(jd);
+
+  document.getElementById('chartContainer').innerHTML = drawNorthIndianChart(cusps, planets);
+
+  document.getElementById('planetTable').innerHTML = `
+    <thead>
+      <tr>
+        <th class="hi">ग्रह</th><th class="en" style="display:none">Planet</th>
+        <th class="hi">राशि</th><th class="en" style="display:none">Sign</th>
+        <th class="hi">अंश</th><th class="en" style="display:none">Degree</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${planets.map(p => `
+        <tr>
+          <td>${p.planet}</td>
+          <td><span class="hi">${p.rashi}</span><span class="en" style="display:none">${p.rashiEn}</span></td>
+          <td style="font-family:'DM Mono',monospace;font-size:0.85rem">${p.degree}°</td>
+        </tr>`).join('')}
+    </tbody>`;
+
+  document.getElementById('lagnaDetails').innerHTML = `
+    <div style="display:grid;gap:0.5rem">
+      ${[
+        ['जन्म स्थान', place,                    'Birth Place',      place],
+        ['लग्न',       `${lagna.rashiHi} ${lagna.degree}°`, 'Ascendant', `${lagna.rashiEn} ${lagna.degree}°`],
+        ['जन्म नक्षत्र',`${nak.nameHi} पाद ${nak.pada}`,   'Birth Nakshatra', `${nak.nameEn} Pada ${nak.pada}`],
+        ['जन्म तिथि',  tithi.nameHi,             'Birth Tithi',      tithi.nameEn],
+        ['चन्द्र राशि', Panchang.getMoonRashi(jd).nameHi, 'Moon Sign', Panchang.getMoonRashi(jd).nameEn],
+      ].map(([lHi,vHi,lEn,vEn]) => `
+        <div style="display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid rgba(200,146,42,0.15)">
+          <span style="font-size:0.82rem;color:var(--text-light);font-family:'Tiro Devanagari Sanskrit',serif">
+            <span class="hi">${lHi}</span><span class="en" style="display:none">${lEn}</span>
+          </span>
+          <strong style="font-size:0.9rem;color:var(--text-dark);font-family:'Tiro Devanagari Sanskrit',serif">
+            <span class="hi">${vHi}</span><span class="en" style="display:none">${vEn}</span>
+          </strong>
+        </div>`).join('')}
+    </div>`;
+
+  const out = document.getElementById('kundaliOutput');
+  out.style.display = 'block';
+  out.scrollIntoView({ behavior: 'smooth' });
+
+  if (document.body.classList.contains('lang-en')) {
+    document.querySelectorAll('.hi').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.en').forEach(el => el.style.display = 'block');
+  }
+}
+
+createStars();
+initCitySearch();
+</script>
 </body>
 </html>
