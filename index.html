@@ -470,37 +470,49 @@
     </div>
 
     <div id="kundaliOutput" style="display:none">
+      <!-- Charts + Details grid -->
       <div class="chakra-container">
         <div>
           <div class="chakra-chart" id="chartContainer"></div>
-          <div style="text-align:center;margin-top:0.8rem;font-size:0.8rem;color:var(--text-light);font-family:'Tiro Devanagari Sanskrit',serif;opacity:0.7">
+          <div style="text-align:center;margin-top:0.6rem;font-size:0.78rem;color:var(--text-light);opacity:0.6;font-family:'Tiro Devanagari Sanskrit',serif">
             उत्तर भारतीय पद्धति | North Indian Style
           </div>
         </div>
-        <div>
+        <div style="display:flex;flex-direction:column;gap:1rem">
           <div class="info-card" style="padding:1.2rem">
-            <h3 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1rem;color:var(--crimson);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(200,146,42,0.2)" class="hi">🪐 ग्रह स्थिति</h3>
-            <h3 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1rem;color:var(--crimson);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(200,146,42,0.2);display:none" class="en">🪐 Planetary Positions</h3>
+            <h3 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1rem;color:var(--crimson);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(200,146,42,0.2)">🪐 ग्रह स्थिति</h3>
             <table class="planet-table" id="planetTable">
-              <thead><tr>
-                <th>ग्रह</th>
-                <th>राशि</th>
-                <th>अंश</th>
-              </tr></thead>
+              <thead><tr><th>ग्रह</th><th>राशि</th><th>अंश</th></tr></thead>
               <tbody></tbody>
             </table>
           </div>
           <div class="info-card" style="padding:1.2rem">
-            <h3 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1rem;color:var(--crimson);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(200,146,42,0.2)" class="hi">📋 मूल विवरण</h3>
-            <h3 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1rem;color:var(--crimson);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(200,146,42,0.2);display:none" class="en">📋 Key Details</h3>
+            <h3 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1rem;color:var(--crimson);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(200,146,42,0.2)">📋 मूल विवरण</h3>
             <div id="lagnaDetails"></div>
           </div>
-          <button class="btn-report" onclick="goToFullReport()">
-            📖 <span class="hi">पूर्ण कुण्डली रिपोर्ट देखें →</span>
-            <span class="en" style="display:none">View Full Kundali Report →</span>
-          </button>
         </div>
       </div>
+
+      <!-- Jatak Identification -->
+      <div class="info-card" style="margin-top:1.5rem">
+        <h3 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1.1rem;color:var(--crimson);margin-bottom:1.2rem;padding-bottom:0.6rem;border-bottom:2px solid rgba(200,146,42,0.2)">
+          🏠 जातक पहचान चिह्न <span style="font-size:0.75rem;opacity:0.7">(लाल किताब के अनुसार)</span>
+        </h3>
+        <div id="jatakIdentification" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem"></div>
+      </div>
+
+      <!-- Lal Kitab Remedies -->
+      <div class="info-card" style="margin-top:1.5rem">
+        <h3 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1.1rem;color:var(--crimson);margin-bottom:1.2rem;padding-bottom:0.6rem;border-bottom:2px solid rgba(200,146,42,0.2)">
+          📿 लाल किताब उपाय
+        </h3>
+        <div id="lalKitabRemedies" style="display:grid;gap:1rem"></div>
+      </div>
+
+      <!-- Full Report Button -->
+      <button class="btn-report" onclick="goToFullReport()" style="margin-top:1.5rem">
+        📖 पूर्ण कुण्डली रिपोर्ट देखें — फलादेश, दशा, विस्तृत विश्लेषण →
+      </button>
     </div>
   </div>
 </div>
@@ -776,37 +788,79 @@ function calcMuhurat() {
 }
 
 // ===================== KUNDALI =====================
-function drawChart(cusps, planets) {
-  const svgW = 340, svgH = 340;
-  const rashiIdx = Panchang.RASHIS_HI.indexOf(cusps[0].rashiHi);
-  const byHouse  = {};
+function drawChart(cusps, planets, lagnaSign) {
+  const svgW = 480, svgH = 480;
+
+  // Use lagnaSign directly — don't rely on cusps[0].rashiHi which can be undefined
+  const validSigns = Panchang.RASHIS_HI;
+  let rashiIdx = validSigns.indexOf(lagnaSign);
+  if (rashiIdx < 0) rashiIdx = 0; // fallback to Aries
+
+  const byHouse = {};
   planets.forEach(p => {
-    const h = ((Panchang.RASHIS_HI.indexOf(p.rashi) - rashiIdx + 12) % 12) + 1;
+    const pIdx = validSigns.indexOf(p.rashi);
+    if (pIdx < 0) return;
+    const h = ((pIdx - rashiIdx + 12) % 12) + 1;
     (byHouse[h] = byHouse[h]||[]).push(p.planetHi);
   });
+
+  // North Indian chart positions — proportional to 480x480
+  const cx = svgW/2, cy = svgH/2;
   const pos = [
-    {x:svgW/2-15,y:28},{x:svgW-70,y:svgH/4-10},{x:svgW-70,y:svgH*3/4-10},{x:svgW/2-15,y:svgH-44},
-    {x:10,y:svgH*3/4-10},{x:10,y:svgH/4-10},
-    {x:svgW/3+2,y:svgH/2-30},{x:svgW*2/3-32,y:svgH/2-30},
-    {x:svgW*2/3-32,y:svgH/2+16},{x:svgW/3+2,y:svgH/2+16},
-    {x:svgW/2-10,y:svgH/3+6},{x:svgW/2-10,y:svgH*2/3-20},
+    {x:cx-18,  y:22},           // 1 top
+    {x:svgW-90,y:cy/2-18},      // 2 top-right
+    {x:svgW-90,y:cy+cy/2-18},   // 3 bottom-right
+    {x:cx-18,  y:svgH-52},      // 4 bottom
+    {x:14,     y:cy+cy/2-18},   // 5 bottom-left
+    {x:14,     y:cy/2-18},      // 6 top-left
+    {x:cx/2-10,y:cy-36},        // 7 inner-top-left
+    {x:cx+cx/2-42,y:cy-36},     // 8 inner-top-right
+    {x:cx+cx/2-42,y:cy+20},     // 9 inner-bottom-right
+    {x:cx/2-10,y:cy+20},        // 10 inner-bottom-left
+    {x:cx-18,  y:cy/3+8},       // 11 inner-top-center
+    {x:cx-18,  y:cy+cy/3-24},   // 12 inner-bottom-center
   ];
-  let svg = `<svg viewBox="0 0 ${svgW} ${svgH}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;border-radius:12px;">
-    <rect width="${svgW}" height="${svgH}" fill="rgba(251,246,238,0.95)" rx="12"/>
-    <rect x="1" y="1" width="${svgW-2}" height="${svgH-2}" fill="none" stroke="rgba(200,146,42,0.5)" stroke-width="1.5" rx="11"/>
-    <line x1="0" y1="0" x2="${svgW}" y2="${svgH}" stroke="rgba(200,146,42,0.35)" stroke-width="1"/>
-    <line x1="${svgW}" y1="0" x2="0" y2="${svgH}" stroke="rgba(200,146,42,0.35)" stroke-width="1"/>
-    <polygon points="${svgW/2},${svgH/3} ${svgW*2/3},${svgH/2} ${svgW/2},${svgH*2/3} ${svgW/3},${svgH/2}" fill="rgba(255,248,235,0.6)" stroke="rgba(200,146,42,0.5)" stroke-width="1"/>
-    <line x1="${svgW/2}" y1="0" x2="${svgW/2}" y2="${svgH}" stroke="rgba(200,146,42,0.3)" stroke-width="0.5"/>
-    <line x1="0" y1="${svgH/2}" x2="${svgW}" y2="${svgH/2}" stroke="rgba(200,146,42,0.3)" stroke-width="0.5"/>`;
+
+  let svg = `<svg viewBox="0 0 ${svgW} ${svgH}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;border-radius:14px;display:block;">
+    <rect width="${svgW}" height="${svgH}" fill="rgba(251,246,235,0.97)" rx="14"/>
+    <rect x="2" y="2" width="${svgW-4}" height="${svgH-4}" fill="none" stroke="rgba(200,146,42,0.6)" stroke-width="2" rx="13"/>
+    <!-- Diagonal lines -->
+    <line x1="0" y1="0" x2="${svgW}" y2="${svgH}" stroke="rgba(200,146,42,0.4)" stroke-width="1.5"/>
+    <line x1="${svgW}" y1="0" x2="0" y2="${svgH}" stroke="rgba(200,146,42,0.4)" stroke-width="1.5"/>
+    <!-- Center diamond -->
+    <polygon points="${cx},${svgH/3} ${svgW*2/3},${cy} ${cx},${svgH*2/3} ${svgW/3},${cy}"
+      fill="rgba(255,248,235,0.7)" stroke="rgba(200,146,42,0.6)" stroke-width="1.5"/>
+    <!-- Cross lines -->
+    <line x1="${cx}" y1="0" x2="${cx}" y2="${svgH}" stroke="rgba(200,146,42,0.25)" stroke-width="1"/>
+    <line x1="0" y1="${cy}" x2="${svgW}" y2="${cy}" stroke="rgba(200,146,42,0.25)" stroke-width="1"/>
+    <!-- OM symbol in center -->
+    <text x="${cx}" y="${cy+10}" text-anchor="middle" font-family="serif" font-size="32" fill="rgba(200,146,42,0.45)">ॐ</text>`;
+
   for (let i = 0; i < 12; i++) {
-    const h = i+1, sign = Panchang.RASHIS_HI[(rashiIdx+i)%12], p = byHouse[h]||[], {x,y} = pos[i];
-    svg += `<text x="${x}" y="${y}" class="kundali-svg-house-num">${h}</text>
-    <text x="${x}" y="${y+13}" class="kundali-svg-rashi" font-size="9">${sign}</text>
-    ${p.map((pl,pi)=>`<text x="${x}" y="${y+26+pi*11}" class="kundali-svg-planet" font-size="9">${pl}</text>`).join('')}
-    ${i===0?`<text x="${x-2}" y="${y-8}" class="kundali-svg-lagna">Asc</text>`:''}`;
+    const hNum  = i + 1;
+    const sIdx  = (rashiIdx + i) % 12;
+    const sign  = validSigns[sIdx];
+    const pList = byHouse[hNum] || [];
+    const {x, y} = pos[i];
+
+    // House number (bold, gold)
+    svg += `<text x="${x}" y="${y}" font-family="'DM Mono',monospace" font-size="11" font-weight="700" fill="#9B7651">${hNum}</text>`;
+
+    // Lagna mark on house 1 only
+    if (i === 0) {
+      svg += `<text x="${x+18}" y="${y}" font-family="'DM Mono',monospace" font-size="9" fill="#C8922A" font-weight="700">लग्न</text>`;
+    }
+
+    // Rashi name
+    svg += `<text x="${x}" y="${y+15}" font-family="'Tiro Devanagari Sanskrit',serif" font-size="10" fill="#8B1A1A">${sign||''}</text>`;
+
+    // Planets
+    pList.forEach((pl, pi) => {
+      svg += `<text x="${x}" y="${y+30+pi*13}" font-family="'Tiro Devanagari Sanskrit',serif" font-size="10" font-weight="600" fill="#1A3C8A">${pl}</text>`;
+    });
   }
-  svg += `<text x="${svgW/2}" y="${svgH/2+8}" text-anchor="middle" font-family="'Tiro Devanagari Sanskrit',serif" font-size="22" fill="rgba(200,146,42,0.5)">ॐ</text></svg>`;
+
+  svg += `</svg>`;
   return svg;
 }
 
@@ -830,21 +884,26 @@ function generateKundali() {
   const tithi   = Panchang.getTithi(jd);
   const nak     = Panchang.getNakshatra(jd);
 
-  // Fix lagna rashiHi fallback if undefined
-  if (!lagna.rashiHi || lagna.rashiHi === 'undefined') {
-    const rashiIdx = Math.floor(((lon + 180) % 360) / 30);
-    lagna.rashiHi = Panchang.RASHIS_HI[rashiIdx] || Panchang.RASHIS_HI[0];
-    lagna.rashiEn = Panchang.RASHIS_EN[rashiIdx] || Panchang.RASHIS_EN[0];
+  // Robust lagna fix — compute from Moon if getLagna fails
+  let lagnaSign = lagna.rashiHi;
+  let lagnaEn   = lagna.rashiEn;
+  let lagnaDeg  = parseFloat(lagna.degree)||0;
+  if (!lagnaSign || lagnaSign === 'undefined' || lagnaSign === 'NaN') {
+    // Fallback: use Moon rashi as approximate lagna
+    lagnaSign = Panchang.getMoonRashi(jd).nameHi;
+    lagnaEn   = Panchang.getMoonRashi(jd).nameEn;
+    lagnaDeg  = 0;
   }
 
-  // Save to localStorage for report page
-  const reportData = { name: name||'जातक', dob, tob: tob||'12:00', place, lat, lon, jd, planets, lagna, cusps, tithi, nakshatra: nak };
+  // Save full data for report page
+  const reportData = { name:name||'जातक', dob, tob:tob||'12:00', place, lat, lon, jd, planets,
+    lagna:{rashiHi:lagnaSign,rashiEn:lagnaEn,degree:lagnaDeg.toFixed(1)}, cusps, tithi, nakshatra:nak };
   localStorage.setItem('kundaliReport', JSON.stringify(reportData));
 
-  // Draw chart
-  document.getElementById('chartContainer').innerHTML = drawChart(cusps, planets);
+  // Draw chart — pass lagnaSign directly
+  document.getElementById('chartContainer').innerHTML = drawChart(cusps, planets, lagnaSign);
 
-  // Planet table — simple 3 columns, no dual-lang th (fixes header display)
+  // Planet table
   const tbody = document.querySelector('#planetTable tbody');
   tbody.innerHTML = planets.map(p => `
     <tr>
@@ -856,16 +915,19 @@ function generateKundali() {
   // Key details
   document.getElementById('lagnaDetails').innerHTML = [
     ['जन्म स्थान', place],
-    ['लग्न', `${lagna.rashiHi} ${parseFloat(lagna.degree).toFixed(1)}°`],
-    ['जन्म नक्षत्र', `${nak.nameHi} — पाद ${nak.pada}`],
-    ['जन्म तिथि', tithi.nameHi + ' (' + tithi.pakshaHi + ')'],
+    ['लग्न',        `${lagnaSign} ${lagnaDeg.toFixed(1)}°`],
+    ['जन्म नक्षत्र',`${nak.nameHi} — पाद ${nak.pada}`],
+    ['जन्म तिथि',  tithi.nameHi + ' (' + tithi.pakshaHi + ')'],
     ['चन्द्र राशि', Panchang.getMoonRashi(jd).nameHi],
-    ['सूर्य राशि', Panchang.getSunRashi(jd).nameHi],
+    ['सूर्य राशि',  Panchang.getSunRashi(jd).nameHi],
   ].map(([label, val]) => `
-    <div class="detail-row">
-      <span>${label}</span>
-      <strong>${val}</strong>
-    </div>`).join('');
+    <div class="detail-row"><span>${label}</span><strong>${val}</strong></div>`).join('');
+
+  // Jatak Identification (Lal Kitab)
+  renderJatakIdentification(lagnaSign, nak.nameHi, Panchang.getMoonRashi(jd).nameHi, dob);
+
+  // Lal Kitab Remedies
+  renderLalKitabRemedies(planets, lagnaSign);
 
   const out = document.getElementById('kundaliOutput');
   out.style.display = 'block';
@@ -873,8 +935,122 @@ function generateKundali() {
 }
 
 function goToFullReport() {
-  // Data already saved in localStorage by generateKundali
   window.location.href = 'kundali-report.html';
+}
+
+// ===================== JATAK IDENTIFICATION =====================
+const DIRECTION_BY_LAGNA = {
+  'मेष':'पूर्व','वृषभ':'दक्षिण','मिथुन':'पश्चिम','कर्क':'उत्तर',
+  'सिंह':'पूर्व','कन्या':'दक्षिण','तुला':'पश्चिम','वृश्चिक':'उत्तर',
+  'धनु':'ईशान (उत्तर-पूर्व)','मकर':'नैऋत्य (दक्षिण-पश्चिम)',
+  'कुम्भ':'वायव्य (उत्तर-पश्चिम)','मीन':'आग्नेय (दक्षिण-पूर्व)'
+};
+const TREE_BY_NAKSHATRA = {
+  'अश्विनी':'कुचला','भरणी':'आंवला','कृत्तिका':'गूलर','रोहिणी':'जामुन',
+  'मृगशिरा':'खैर','आर्द्रा':'शीशम','पुनर्वसु':'बाँस','पुष्य':'पीपल',
+  'आश्लेषा':'नागकेसर','मघा':'बरगद','पूर्वाफाल्गुनी':'पलाश','उत्तराफाल्गुनी':'पाकर',
+  'हस्त':'रीठा','चित्रा':'बेल','स्वाती':'अर्जुन','विशाखा':'विकंकत',
+  'अनुराधा':'मौलश्री','ज्येष्ठा':'चीड़','मूल':'राल','पूर्वाषाढ़ा':'अशोक',
+  'उत्तराषाढ़ा':'कटहल','श्रवण':'मदार','धनिष्ठा':'शमी','शतभिषा':'कदम्ब',
+  'पूर्वाभाद्रपद':'आम','उत्तराभाद्रपद':'नीम','रेवती':'महुआ'
+};
+const WATER_BY_MOON = {
+  'मेष':'पूर्व दिशा में कुआं','वृषभ':'घर के दक्षिण में तालाब','मिथुन':'पश्चिम में नहर',
+  'कर्क':'उत्तर में जल स्रोत','सिंह':'पूर्व में बावड़ी','कन्या':'दक्षिण-पश्चिम में कुआं',
+  'तुला':'पश्चिम में तालाब','वृश्चिक':'उत्तर में नदी','धनु':'ईशान में कुआं',
+  'मकर':'नैऋत्य में जलाशय','कुम्भ':'वायव्य में जल','मीन':'आग्नेय में तालाब'
+};
+
+function getAgeEvent(dob) {
+  const birthYear = parseInt(dob.split('-')[0]);
+  const currentYear = new Date().getFullYear();
+  const age = currentYear - birthYear;
+  if (age < 12)  return 'शिक्षा काल चल रहा है';
+  if (age < 18)  return 'किशोरावस्था — शिक्षा में ध्यान दें';
+  if (age < 25)  return 'युवावस्था — करियर निर्माण का समय';
+  if (age < 30)  return 'विवाह योग प्रबल';
+  if (age < 40)  return 'कार्यक्षेत्र में उन्नति का काल';
+  if (age < 50)  return 'परिवार और व्यवसाय में स्थिरता';
+  return 'अनुभव और प्रतिष्ठा का काल';
+}
+
+function renderJatakIdentification(lagnaSign, nakshatraName, moonSign, dob) {
+  const el = document.getElementById('jatakIdentification');
+  if (!el) return;
+  const direction = DIRECTION_BY_LAGNA[lagnaSign] || 'पूर्व';
+  const tree      = TREE_BY_NAKSHATRA[nakshatraName] || 'पीपल';
+  const water     = WATER_BY_MOON[moonSign] || 'घर के निकट जल स्रोत';
+  const lifeEvent = getAgeEvent(dob);
+  const items = [
+    { icon:'🧭', title:'घर की दिशा',    detail: direction,          note:'लग्न राशि के आधार पर' },
+    { icon:'🌳', title:'निकटवर्ती वृक्ष', detail: tree,              note:'जन्म नक्षत्र के अनुसार' },
+    { icon:'💧', title:'जल स्रोत',       detail: water,              note:'चन्द्र राशि के आधार पर' },
+    { icon:'⏳', title:'वर्तमान काल',     detail: lifeEvent,         note:'आयु विश्लेषण' },
+    { icon:'🔔', title:'आराध्य देव',     detail: getDeity(lagnaSign), note:'लग्न के स्वामी ग्रह से' },
+    { icon:'💎', title:'शुभ रत्न',       detail: getGem(lagnaSign),   note:'लग्न राशि अनुसार' },
+  ];
+  el.innerHTML = items.map(item => `
+    <div style="background:rgba(200,146,42,0.06);border:1px solid rgba(200,146,42,0.2);border-radius:12px;padding:1rem;text-align:center;">
+      <div style="font-size:1.8rem;margin-bottom:6px">${item.icon}</div>
+      <div style="font-family:'Tiro Devanagari Sanskrit',serif;color:var(--saffron);font-size:0.82rem;margin-bottom:4px">${item.title}</div>
+      <div style="font-family:'Tiro Devanagari Sanskrit',serif;color:var(--text-dark);font-size:0.95rem;font-weight:600">${item.detail}</div>
+      <div style="font-size:0.7rem;color:var(--text-light);opacity:0.6;margin-top:4px">${item.note}</div>
+    </div>`).join('');
+}
+
+function getDeity(lagnaSign) {
+  const m = {'मेष':'हनुमान जी','वृषभ':'माँ लक्ष्मी','मिथुन':'गणेश जी','कर्क':'माँ दुर्गा',
+    'सिंह':'सूर्य देव','कन्या':'माँ सरस्वती','तुला':'माँ लक्ष्मी','वृश्चिक':'काली माँ',
+    'धनु':'भगवान विष्णु','मकर':'शनि देव','कुम्भ':'शनि देव','मीन':'भगवान विष्णु'};
+  return m[lagnaSign] || 'भगवान शिव';
+}
+
+function getGem(lagnaSign) {
+  const m = {'मेष':'मूंगा (Coral)','वृषभ':'हीरा (Diamond)','मिथुन':'पन्ना (Emerald)',
+    'कर्क':'मोती (Pearl)','सिंह':'माणिक (Ruby)','कन्या':'पन्ना (Emerald)',
+    'तुला':'हीरा (Diamond)','वृश्चिक':'मूंगा (Coral)','धनु':'पुखराज (Yellow Sapphire)',
+    'मकर':'नीलम (Blue Sapphire)','कुम्भ':'नीलम (Blue Sapphire)','मीन':'पुखराज (Yellow Sapphire)'};
+  return m[lagnaSign] || 'मोती (Pearl)';
+}
+
+// ===================== LAL KITAB REMEDIES =====================
+const LAL_KITAB_DB = [
+  { planet:'सूर्य ☀️', priority:'उच्च', color:'#C8922A',
+    hiText:'रविवार को गेहूं, गुड़ व तांबे का दान करें। सूर्योदय पर जल चढ़ाएं। पिता का सम्मान करें।',
+    lkText:'सूर्य की शांति हेतु: आदित्य हृदय स्तोत्र का पाठ करें।' },
+  { planet:'चन्द्र 🌙', priority:'उच्च', color:'#6B8EC8',
+    hiText:'सोमवार का व्रत रखें। माँ को दूध-चावल अर्पित करें। सफेद वस्तुएं दान करें।',
+    lkText:'चन्द्र शांति: चाँदी का कड़ा पहनें, खीर का दान करें।' },
+  { planet:'मंगल ♂️', priority:'मध्यम', color:'#C84A4A',
+    hiText:'मंगलवार को हनुमान चालीसा पढ़ें। लाल मसूर दाल दान करें। भूमि पूजन करें।',
+    lkText:'मंगल दोष निवारण: बजरंग बली की आराधना, सिंदूर चढ़ाएं।' },
+  { planet:'बुध ☿', priority:'मध्यम', color:'#4A8C4A',
+    hiText:'बुधवार को हरी वस्तुएं व दुर्वा दान करें। विद्यार्थियों की सहायता करें। गणेश पूजा करें।',
+    lkText:'बुध शांति: हरे रंग का रुमाल रखें, कन्याओं को भोजन कराएं।' },
+  { planet:'गुरु ♃', priority:'उच्च', color:'#C8A84A',
+    hiText:'गुरुवार को केले के पेड़ में जल व हल्दी डालें। पीले वस्त्र धारण करें। गुरु जनों का आशीर्वाद लें।',
+    lkText:'गुरु प्रसन्नता: पीपल की पूजा करें, बृहस्पति स्तोत्र पढ़ें।' },
+  { planet:'शुक्र ♀', priority:'मध्यम', color:'#8C4AC8',
+    hiText:'शुक्रवार को सफेद गाय की सेवा करें। श्वेत मिठाई दान करें। माँ लक्ष्मी की पूजा करें।',
+    lkText:'शुक्र बली करें: इत्र व सफेद फूल चढ़ाएं, गाय को चारा दें।' },
+  { planet:'शनि ♄', priority:'उच्च', color:'#4A4A6C',
+    hiText:'शनिवार को सरसों तेल का दान करें। काले तिल पीपल में चढ़ाएं। गरीबों को भोजन कराएं।',
+    lkText:'शनि दोष: पीपल में जल डालें, शनि चालीसा का पाठ करें।' },
+  { planet:'राहु ☊', priority:'मध्यम', color:'#4A6C8C',
+    hiText:'राहु काल में भोजन न करें। सरसों तेल का दीपक जलाएं। नीली वस्तु दान करें।',
+    lkText:'राहु शांति: नारियल का सिक्का बहते जल में प्रवाहित करें।' },
+];
+
+function renderLalKitabRemedies(planets, lagnaSign) {
+  const el = document.getElementById('lalKitabRemedies');
+  if (!el) return;
+  el.innerHTML = LAL_KITAB_DB.map(r => `
+    <div style="border-left:4px solid ${r.color};background:rgba(255,255,255,0.04);border-radius:10px;padding:1rem 1.2rem;position:relative;">
+      <div style="position:absolute;top:0.8rem;right:0.8rem;background:${r.color};color:#fff;padding:2px 10px;border-radius:10px;font-size:0.7rem;font-weight:700">${r.priority}</div>
+      <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1rem;font-weight:700;color:var(--saffron);margin-bottom:0.4rem">${r.planet}</div>
+      <div style="font-size:0.88rem;line-height:1.6;color:var(--text-light);margin-bottom:0.5rem">${r.hiText}</div>
+      <div style="font-size:0.8rem;color:var(--saffron);opacity:0.8;font-style:italic;border-top:1px solid rgba(200,146,42,0.15);padding-top:0.4rem">📿 ${r.lkText}</div>
+    </div>`).join('');
 }
 
 // ===================== CALENDAR =====================
