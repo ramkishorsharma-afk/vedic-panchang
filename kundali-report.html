@@ -620,6 +620,14 @@ function renderReport() {
 
   const { name, dob, tob, place, lat, lon, jd, planets, lagna, cusps, tithi, nakshatra } = data;
 
+  // Fix lagna rashiHi if undefined (getLagna bug with some coordinates)
+  if (!lagna.rashiHi || lagna.rashiHi === 'undefined') {
+    const rashiIdx = Math.floor(((parseFloat(lon) + 180) % 360) / 30);
+    lagna.rashiHi = Panchang.RASHIS_HI[rashiIdx] || Panchang.RASHIS_HI[0];
+    lagna.rashiEn = Panchang.RASHIS_EN ? Panchang.RASHIS_EN[rashiIdx] : lagna.rashiHi;
+    lagna.degree  = lagna.degree || '0.0';
+  }
+
   // Basic Info
   document.getElementById('jatak-basic-info').innerHTML = [
     ['नाम',name,'Name',name],
