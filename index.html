@@ -120,28 +120,56 @@
 .muhurat-quality { font-size: 0.75rem; margin-top: 0.3rem; color: var(--text-light); }
 
 /* ===================== KUNDALI ===================== */
-.chakra-container { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.chakra-container { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
 @media(max-width:768px){ .chakra-container { grid-template-columns: 1fr; } }
-.chakra-chart { aspect-ratio: 1; max-width: 360px; margin: auto; }
+.chakra-chart { width: 100%; max-width: 480px; aspect-ratio: 1; margin: 0 auto; }
+.chakra-chart svg { width: 100% !important; height: 100% !important; }
+
+/* Planet table - clean column layout */
 .planet-table { width: 100%; border-collapse: collapse; font-size: 0.87rem; }
-.planet-table th, .planet-table td {
-  padding: 6px 10px; text-align: left;
-  border-bottom: 1px solid rgba(200,146,42,0.12);
-  font-family: 'Tiro Devanagari Sanskrit', serif;
+.planet-table thead tr {
+  background: rgba(200,146,42,0.12);
+  border-bottom: 2px solid rgba(200,146,42,0.3);
 }
-.planet-table th { color: var(--crimson); font-weight: 600; }
-.planet-table td { color: var(--text-dark); }
-.kundali-svg-house-num { fill: #9B7651; font-size: 10px; font-family: 'DM Mono',monospace; }
-.kundali-svg-rashi     { fill: #8B1A1A; font-size: 9px; font-family: 'Tiro Devanagari Sanskrit',serif; }
-.kundali-svg-planet    { fill: #1A5C8A; font-size: 9px; font-family: 'Tiro Devanagari Sanskrit',serif; }
-.kundali-svg-lagna     { fill: #C8922A; font-size: 9px; font-family: 'DM Mono',monospace; }
+.planet-table th {
+  padding: 10px 12px; text-align: left;
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  color: var(--crimson); font-weight: 700; font-size: 0.9rem;
+}
+.planet-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid rgba(200,146,42,0.1);
+  font-family: 'Crimson Pro', serif;
+  color: var(--text-dark); font-size: 0.92rem;
+}
+.planet-table tr:hover td { background: rgba(200,146,42,0.05); }
+.planet-table td:first-child { font-size: 1rem; }
+.planet-table td:last-child { font-family: 'DM Mono', monospace; font-size: 0.82rem; color: var(--saffron); }
+
+.kundali-svg-house-num { fill: #9B7651; font-size: 11px; font-family: 'DM Mono',monospace; font-weight:700; }
+.kundali-svg-rashi     { fill: #8B1A1A; font-size: 10px; font-family: 'Tiro Devanagari Sanskrit',serif; }
+.kundali-svg-planet    { fill: #1A3C8A; font-size: 10px; font-family: 'Tiro Devanagari Sanskrit',serif; font-weight:600; }
+.kundali-svg-lagna     { fill: #C8922A; font-size: 10px; font-family: 'DM Mono',monospace; font-weight:700; }
+
 .detail-row {
-  display: flex; justify-content: space-between;
-  padding: 0.4rem 0; border-bottom: 1px solid rgba(200,146,42,0.12);
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.55rem 0; border-bottom: 1px solid rgba(200,146,42,0.12);
   font-family: 'Tiro Devanagari Sanskrit', serif;
 }
 .detail-row span { font-size: 0.82rem; color: var(--text-light); }
-.detail-row strong { font-size: 0.9rem; color: var(--text-dark); }
+.detail-row strong { font-size: 0.92rem; color: var(--saffron); }
+
+/* Full report button */
+.btn-report {
+  display: block; width: 100%; margin-top: 1.5rem;
+  background: linear-gradient(135deg, rgba(200,146,42,0.8), rgba(139,26,26,0.8));
+  border: none; border-radius: 12px; color: #fff;
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 1rem; padding: 14px 24px; cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s; text-align: center;
+  letter-spacing: 0.03em;
+}
+.btn-report:hover { opacity: 0.9; transform: translateY(-2px); }
 
 /* ===================== CALENDAR ===================== */
 .cal-header {
@@ -443,18 +471,34 @@
 
     <div id="kundaliOutput" style="display:none">
       <div class="chakra-container">
-        <div class="chakra-chart" id="chartContainer"></div>
-        <div class="chakra-info">
-          <div class="info-card">
-            <h3 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1rem;color:var(--crimson);margin-bottom:1rem" class="hi">ग्रह स्थिति</h3>
-            <h3 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1rem;color:var(--crimson);margin-bottom:1rem;display:none" class="en">Planetary Positions</h3>
-            <table class="planet-table" id="planetTable"></table>
+        <div>
+          <div class="chakra-chart" id="chartContainer"></div>
+          <div style="text-align:center;margin-top:0.8rem;font-size:0.8rem;color:var(--text-light);font-family:'Tiro Devanagari Sanskrit',serif;opacity:0.7">
+            उत्तर भारतीय पद्धति | North Indian Style
           </div>
-          <div class="info-card">
-            <h3 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1rem;color:var(--crimson);margin-bottom:1rem" class="hi">मूल विवरण</h3>
-            <h3 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1rem;color:var(--crimson);margin-bottom:1rem;display:none" class="en">Key Details</h3>
+        </div>
+        <div>
+          <div class="info-card" style="padding:1.2rem">
+            <h3 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1rem;color:var(--crimson);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(200,146,42,0.2)" class="hi">🪐 ग्रह स्थिति</h3>
+            <h3 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1rem;color:var(--crimson);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(200,146,42,0.2);display:none" class="en">🪐 Planetary Positions</h3>
+            <table class="planet-table" id="planetTable">
+              <thead><tr>
+                <th>ग्रह</th>
+                <th>राशि</th>
+                <th>अंश</th>
+              </tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="info-card" style="padding:1.2rem">
+            <h3 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1rem;color:var(--crimson);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(200,146,42,0.2)" class="hi">📋 मूल विवरण</h3>
+            <h3 style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1rem;color:var(--crimson);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(200,146,42,0.2);display:none" class="en">📋 Key Details</h3>
             <div id="lagnaDetails"></div>
           </div>
+          <button class="btn-report" onclick="goToFullReport()">
+            📖 <span class="hi">पूर्ण कुण्डली रिपोर्ट देखें →</span>
+            <span class="en" style="display:none">View Full Kundali Report →</span>
+          </button>
         </div>
       </div>
     </div>
@@ -772,45 +816,65 @@ function generateKundali() {
   const lat   = parseFloat(document.getElementById('kLat').value) || 28.6139;
   const lon   = parseFloat(document.getElementById('kLon').value) || 77.2090;
   const place = document.getElementById('kCity').value.trim();
-  if (!dob) { alert('कृपया जन्म दिनांक दर्ज करें।'); return; }
+  const name  = document.getElementById('kName').value.trim();
+  if (!dob)   { alert('कृपया जन्म दिनांक दर्ज करें।'); return; }
   if (!place) { alert('कृपया जन्म स्थान चुनें।'); return; }
+
   const [y,m,d] = dob.split('-').map(Number);
   const [hr,mn] = tob ? tob.split(':').map(Number) : [12,0];
   const jd = Panchang.toJulianDate(new Date(y,m-1,d,hr,mn));
+
   const planets = Panchang.getPlanetaryPositions(jd);
   const lagna   = Panchang.getLagna(jd, lat, lon);
   const cusps   = Panchang.getHouseCusps(jd, lat, lon);
   const tithi   = Panchang.getTithi(jd);
   const nak     = Panchang.getNakshatra(jd);
+
+  // Fix lagna rashiHi fallback if undefined
+  if (!lagna.rashiHi || lagna.rashiHi === 'undefined') {
+    const rashiIdx = Math.floor(((lon + 180) % 360) / 30);
+    lagna.rashiHi = Panchang.RASHIS_HI[rashiIdx] || Panchang.RASHIS_HI[0];
+    lagna.rashiEn = Panchang.RASHIS_EN[rashiIdx] || Panchang.RASHIS_EN[0];
+  }
+
+  // Save to localStorage for report page
+  const reportData = { name: name||'जातक', dob, tob: tob||'12:00', place, lat, lon, jd, planets, lagna, cusps, tithi, nakshatra: nak };
+  localStorage.setItem('kundaliReport', JSON.stringify(reportData));
+
+  // Draw chart
   document.getElementById('chartContainer').innerHTML = drawChart(cusps, planets);
-  document.getElementById('planetTable').innerHTML = `
-    <thead><tr>
-      <th class="hi">ग्रह</th><th class="en" style="display:none">Planet</th>
-      <th class="hi">राशि</th><th class="en" style="display:none">Sign</th>
-      <th class="hi">अंश</th><th class="en" style="display:none">Deg</th>
-    </tr></thead><tbody>
-    ${planets.map(p=>`<tr><td>${p.planet}</td>
-      <td><span class="hi">${p.rashi}</span><span class="en" style="display:none">${p.rashiEn}</span></td>
-      <td style="font-family:'DM Mono',monospace;font-size:0.82rem">${p.degree}°</td></tr>`).join('')}
-    </tbody>`;
+
+  // Planet table — simple 3 columns, no dual-lang th (fixes header display)
+  const tbody = document.querySelector('#planetTable tbody');
+  tbody.innerHTML = planets.map(p => `
+    <tr>
+      <td>${p.planet}</td>
+      <td>${p.rashi}</td>
+      <td>${p.degree}°</td>
+    </tr>`).join('');
+
+  // Key details
   document.getElementById('lagnaDetails').innerHTML = [
-    ['जन्म स्थान', place, 'Birth Place', place],
-    ['लग्न', `${lagna.rashiHi} ${lagna.degree}°`, 'Ascendant', `${lagna.rashiEn} ${lagna.degree}°`],
-    ['जन्म नक्षत्र', `${nak.nameHi} पाद ${nak.pada}`, 'Nakshatra', `${nak.nameEn} Pada ${nak.pada}`],
-    ['जन्म तिथि', tithi.nameHi, 'Tithi', tithi.nameEn],
-    ['चन्द्र राशि', Panchang.getMoonRashi(jd).nameHi, 'Moon Sign', Panchang.getMoonRashi(jd).nameEn],
-  ].map(([lH,vH,lE,vE])=>`
+    ['जन्म स्थान', place],
+    ['लग्न', `${lagna.rashiHi} ${parseFloat(lagna.degree).toFixed(1)}°`],
+    ['जन्म नक्षत्र', `${nak.nameHi} — पाद ${nak.pada}`],
+    ['जन्म तिथि', tithi.nameHi + ' (' + tithi.pakshaHi + ')'],
+    ['चन्द्र राशि', Panchang.getMoonRashi(jd).nameHi],
+    ['सूर्य राशि', Panchang.getSunRashi(jd).nameHi],
+  ].map(([label, val]) => `
     <div class="detail-row">
-      <span><span class="hi">${lH}</span><span class="en" style="display:none">${lE}</span></span>
-      <strong><span class="hi">${vH}</span><span class="en" style="display:none">${vE}</span></strong>
+      <span>${label}</span>
+      <strong>${val}</strong>
     </div>`).join('');
+
   const out = document.getElementById('kundaliOutput');
   out.style.display = 'block';
   out.scrollIntoView({ behavior:'smooth' });
-  if (document.body.classList.contains('lang-en')) {
-    out.querySelectorAll('.hi').forEach(el=>el.style.display='none');
-    out.querySelectorAll('.en').forEach(el=>el.style.display='block');
-  }
+}
+
+function goToFullReport() {
+  // Data already saved in localStorage by generateKundali
+  window.location.href = 'kundali-report.html';
 }
 
 // ===================== CALENDAR =====================
