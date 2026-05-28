@@ -543,6 +543,7 @@ function saveLocation(lat, lon, name) {
 function makeCitySearch(inputId, sugId, onSelect) {
   const input = document.getElementById(inputId);
   const sug   = document.getElementById(sugId);
+  if (!input || !sug) return; // safely skip if element doesn't exist
   let timer = null;
 
   input.addEventListener('input', () => {
@@ -728,156 +729,9 @@ function calcMuhurat() {
         </div>`).join('');
 }
 
-// ===================== KUNDALI =====================
-function drawChart(cusps, planets, lagnaSign) {
-  const svgW = 480, svgH = 480;
-
-  // Use lagnaSign directly — don't rely on cusps[0].rashiHi which can be undefined
-  const validSigns = Panchang.RASHIS_HI;
-  let rashiIdx = validSigns.indexOf(lagnaSign);
-  if (rashiIdx < 0) rashiIdx = 0; // fallback to Aries
-
-  const byHouse = {};
-  planets.forEach(p => {
-    const pIdx = validSigns.indexOf(p.rashi);
-    if (pIdx < 0) return;
-    const h = ((pIdx - rashiIdx + 12) % 12) + 1;
-    (byHouse[h] = byHouse[h]||[]).push(p.planetHi);
-  });
-
-  // North Indian chart positions — proportional to 480x480
-  const cx = svgW/2, cy = svgH/2;
-  const pos = [
-    {x:cx-18,  y:22},           // 1 top
-    {x:svgW-90,y:cy/2-18},      // 2 top-right
-    {x:svgW-90,y:cy+cy/2-18},   // 3 bottom-right
-    {x:cx-18,  y:svgH-52},      // 4 bottom
-    {x:14,     y:cy+cy/2-18},   // 5 bottom-left
-    {x:14,     y:cy/2-18},      // 6 top-left
-    {x:cx/2-10,y:cy-36},        // 7 inner-top-left
-    {x:cx+cx/2-42,y:cy-36},     // 8 inner-top-right
-    {x:cx+cx/2-42,y:cy+20},     // 9 inner-bottom-right
-    {x:cx/2-10,y:cy+20},        // 10 inner-bottom-left
-    {x:cx-18,  y:cy/3+8},       // 11 inner-top-center
-    {x:cx-18,  y:cy+cy/3-24},   // 12 inner-bottom-center
-  ];
-
-  let svg = `<svg viewBox="0 0 ${svgW} ${svgH}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;border-radius:14px;display:block;">
-    <rect width="${svgW}" height="${svgH}" fill="rgba(251,246,235,0.97)" rx="14"/>
-    <rect x="2" y="2" width="${svgW-4}" height="${svgH-4}" fill="none" stroke="rgba(200,146,42,0.6)" stroke-width="2" rx="13"/>
-    <!-- Diagonal lines -->
-    <line x1="0" y1="0" x2="${svgW}" y2="${svgH}" stroke="rgba(200,146,42,0.4)" stroke-width="1.5"/>
-    <line x1="${svgW}" y1="0" x2="0" y2="${svgH}" stroke="rgba(200,146,42,0.4)" stroke-width="1.5"/>
-    <!-- Center diamond -->
-    <polygon points="${cx},${svgH/3} ${svgW*2/3},${cy} ${cx},${svgH*2/3} ${svgW/3},${cy}"
-      fill="rgba(255,248,235,0.7)" stroke="rgba(200,146,42,0.6)" stroke-width="1.5"/>
-    <!-- Cross lines -->
-    <line x1="${cx}" y1="0" x2="${cx}" y2="${svgH}" stroke="rgba(200,146,42,0.25)" stroke-width="1"/>
-    <line x1="0" y1="${cy}" x2="${svgW}" y2="${cy}" stroke="rgba(200,146,42,0.25)" stroke-width="1"/>
-    <!-- OM symbol in center -->
-    <text x="${cx}" y="${cy+10}" text-anchor="middle" font-family="serif" font-size="32" fill="rgba(200,146,42,0.45)">ॐ</text>`;
-
-  for (let i = 0; i < 12; i++) {
-    const hNum  = i + 1;
-    const sIdx  = (rashiIdx + i) % 12;
-    const sign  = validSigns[sIdx];
-    const pList = byHouse[hNum] || [];
-    const {x, y} = pos[i];
-
-    // House number (bold, gold)
-    svg += `<text x="${x}" y="${y}" font-family="'DM Mono',monospace" font-size="11" font-weight="700" fill="#9B7651">${hNum}</text>`;
-
-    // Lagna mark on house 1 only
-    if (i === 0) {
-      svg += `<text x="${x+18}" y="${y}" font-family="'DM Mono',monospace" font-size="9" fill="#C8922A" font-weight="700">लग्न</text>`;
-    }
-
-    // Rashi name
-    svg += `<text x="${x}" y="${y+15}" font-family="'Tiro Devanagari Sanskrit',serif" font-size="10" fill="#8B1A1A">${sign||''}</text>`;
-
-    // Planets
-    pList.forEach((pl, pi) => {
-      svg += `<text x="${x}" y="${y+30+pi*13}" font-family="'Tiro Devanagari Sanskrit',serif" font-size="10" font-weight="600" fill="#1A3C8A">${pl}</text>`;
-    });
-  }
-
-  svg += `</svg>`;
-  return svg;
-}
-
-function generateKundali() {
-  const dob   = document.getElementById('kDob').value;
-  const tob   = document.getElementById('kTob').value;
-  const lat   = parseFloat(document.getElementById('kLat').value) || 28.6139;
-  const lon   = parseFloat(document.getElementById('kLon').value) || 77.2090;
-  const place = document.getElementById('kCity').value.trim();
-  const name  = document.getElementById('kName').value.trim();
-  if (!dob)   { alert('कृपया जन्म दिनांक दर्ज करें।'); return; }
-  if (!place) { alert('कृपया जन्म स्थान चुनें।'); return; }
-
-  const [y,m,d] = dob.split('-').map(Number);
-  const [hr,mn] = tob ? tob.split(':').map(Number) : [12,0];
-  const jd = Panchang.toJulianDate(new Date(y,m-1,d,hr,mn));
-
-  const planets = Panchang.getPlanetaryPositions(jd);
-  const lagna   = Panchang.getLagna(jd, lat, lon);
-  const cusps   = Panchang.getHouseCusps(jd, lat, lon);
-  const tithi   = Panchang.getTithi(jd);
-  const nak     = Panchang.getNakshatra(jd);
-
-  // Robust lagna fix — compute from Moon if getLagna fails
-  let lagnaSign = lagna.rashiHi;
-  let lagnaEn   = lagna.rashiEn;
-  let lagnaDeg  = parseFloat(lagna.degree)||0;
-  if (!lagnaSign || lagnaSign === 'undefined' || lagnaSign === 'NaN') {
-    // Fallback: use Moon rashi as approximate lagna
-    lagnaSign = Panchang.getMoonRashi(jd).nameHi;
-    lagnaEn   = Panchang.getMoonRashi(jd).nameEn;
-    lagnaDeg  = 0;
-  }
-
-  // Save full data for report page
-  const reportData = { name:name||'जातक', dob, tob:tob||'12:00', place, lat, lon, jd, planets,
-    lagna:{rashiHi:lagnaSign,rashiEn:lagnaEn,degree:lagnaDeg.toFixed(1)}, cusps, tithi, nakshatra:nak };
-  localStorage.setItem('kundaliReport', JSON.stringify(reportData));
-
-  // Draw chart — pass lagnaSign directly
-  document.getElementById('chartContainer').innerHTML = drawChart(cusps, planets, lagnaSign);
-
-  // Planet table
-  const tbody = document.querySelector('#planetTable tbody');
-  tbody.innerHTML = planets.map(p => `
-    <tr>
-      <td>${p.planet}</td>
-      <td>${p.rashi}</td>
-      <td>${p.degree}°</td>
-    </tr>`).join('');
-
-  // Key details
-  document.getElementById('lagnaDetails').innerHTML = [
-    ['जन्म स्थान', place],
-    ['लग्न',        `${lagnaSign} ${lagnaDeg.toFixed(1)}°`],
-    ['जन्म नक्षत्र',`${nak.nameHi} — पाद ${nak.pada}`],
-    ['जन्म तिथि',  tithi.nameHi + ' (' + tithi.pakshaHi + ')'],
-    ['चन्द्र राशि', Panchang.getMoonRashi(jd).nameHi],
-    ['सूर्य राशि',  Panchang.getSunRashi(jd).nameHi],
-  ].map(([label, val]) => `
-    <div class="detail-row"><span>${label}</span><strong>${val}</strong></div>`).join('');
-
-  // Jatak Identification (Lal Kitab)
-  renderJatakIdentification(lagnaSign, nak.nameHi, Panchang.getMoonRashi(jd).nameHi, dob);
-
-  // Lal Kitab Remedies
-  renderLalKitabRemedies(planets, lagnaSign);
-
-  const out = document.getElementById('kundaliOutput');
-  out.style.display = 'block';
-  out.scrollIntoView({ behavior:'smooth' });
-}
-
-function goToFullReport() {
-  window.location.href = 'kundali-report.html';
-}
+// ===================== KUNDALI (tab redirects to kundali.html) =====================
+function generateKundali() { window.location.href = 'kundali.html'; }
+function goToFullReport()  { window.location.href = 'kundali-report.html'; }
 
 // ===================== JATAK IDENTIFICATION =====================
 const DIRECTION_BY_LAGNA = {
@@ -954,46 +808,6 @@ function getGem(lagnaSign) {
   return m[lagnaSign] || 'मोती (Pearl)';
 }
 
-// ===================== LAL KITAB REMEDIES =====================
-const LAL_KITAB_DB = [
-  { planet:'सूर्य ☀️', priority:'उच्च', color:'#C8922A',
-    hiText:'रविवार को गेहूं, गुड़ व तांबे का दान करें। सूर्योदय पर जल चढ़ाएं। पिता का सम्मान करें।',
-    lkText:'सूर्य की शांति हेतु: आदित्य हृदय स्तोत्र का पाठ करें।' },
-  { planet:'चन्द्र 🌙', priority:'उच्च', color:'#6B8EC8',
-    hiText:'सोमवार का व्रत रखें। माँ को दूध-चावल अर्पित करें। सफेद वस्तुएं दान करें।',
-    lkText:'चन्द्र शांति: चाँदी का कड़ा पहनें, खीर का दान करें।' },
-  { planet:'मंगल ♂️', priority:'मध्यम', color:'#C84A4A',
-    hiText:'मंगलवार को हनुमान चालीसा पढ़ें। लाल मसूर दाल दान करें। भूमि पूजन करें।',
-    lkText:'मंगल दोष निवारण: बजरंग बली की आराधना, सिंदूर चढ़ाएं।' },
-  { planet:'बुध ☿', priority:'मध्यम', color:'#4A8C4A',
-    hiText:'बुधवार को हरी वस्तुएं व दुर्वा दान करें। विद्यार्थियों की सहायता करें। गणेश पूजा करें।',
-    lkText:'बुध शांति: हरे रंग का रुमाल रखें, कन्याओं को भोजन कराएं।' },
-  { planet:'गुरु ♃', priority:'उच्च', color:'#C8A84A',
-    hiText:'गुरुवार को केले के पेड़ में जल व हल्दी डालें। पीले वस्त्र धारण करें। गुरु जनों का आशीर्वाद लें।',
-    lkText:'गुरु प्रसन्नता: पीपल की पूजा करें, बृहस्पति स्तोत्र पढ़ें।' },
-  { planet:'शुक्र ♀', priority:'मध्यम', color:'#8C4AC8',
-    hiText:'शुक्रवार को सफेद गाय की सेवा करें। श्वेत मिठाई दान करें। माँ लक्ष्मी की पूजा करें।',
-    lkText:'शुक्र बली करें: इत्र व सफेद फूल चढ़ाएं, गाय को चारा दें।' },
-  { planet:'शनि ♄', priority:'उच्च', color:'#4A4A6C',
-    hiText:'शनिवार को सरसों तेल का दान करें। काले तिल पीपल में चढ़ाएं। गरीबों को भोजन कराएं।',
-    lkText:'शनि दोष: पीपल में जल डालें, शनि चालीसा का पाठ करें।' },
-  { planet:'राहु ☊', priority:'मध्यम', color:'#4A6C8C',
-    hiText:'राहु काल में भोजन न करें। सरसों तेल का दीपक जलाएं। नीली वस्तु दान करें।',
-    lkText:'राहु शांति: नारियल का सिक्का बहते जल में प्रवाहित करें।' },
-];
-
-function renderLalKitabRemedies(planets, lagnaSign) {
-  const el = document.getElementById('lalKitabRemedies');
-  if (!el) return;
-  el.innerHTML = LAL_KITAB_DB.map(r => `
-    <div style="border-left:4px solid ${r.color};background:rgba(255,255,255,0.04);border-radius:10px;padding:1rem 1.2rem;position:relative;">
-      <div style="position:absolute;top:0.8rem;right:0.8rem;background:${r.color};color:#fff;padding:2px 10px;border-radius:10px;font-size:0.7rem;font-weight:700">${r.priority}</div>
-      <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:1rem;font-weight:700;color:var(--saffron);margin-bottom:0.4rem">${r.planet}</div>
-      <div style="font-size:0.88rem;line-height:1.6;color:var(--text-light);margin-bottom:0.5rem">${r.hiText}</div>
-      <div style="font-size:0.8rem;color:var(--saffron);opacity:0.8;font-style:italic;border-top:1px solid rgba(200,146,42,0.15);padding-top:0.4rem">📿 ${r.lkText}</div>
-    </div>`).join('');
-}
-
 // ===================== CALENDAR =====================
 let calYear = new Date().getFullYear(), calMonth = new Date().getMonth();
 const DAY_HEADERS_HI = ['रवि','सोम','मंगल','बुध','गुरु','शुक्र','शनि'];
@@ -1054,38 +868,44 @@ function init() {
   // Hero city search
   makeCitySearch('heroCity', 'heroCitySug', (lat, lon, name) => {
     saveLocation(lat, lon, name);
-    document.getElementById('heroLocation').textContent = '📍 ' + name;
+    const locEl = document.getElementById('heroLocation');
+    if (locEl) locEl.textContent = '📍 ' + name;
     renderPanchang(lat, lon, name);
-    // Sync muhurat & kundali city inputs
     const mCity = document.getElementById('mCity');
-    if (mCity) mCity.value = name;
-    document.getElementById('mLat').value = lat;
-    document.getElementById('mLon').value = lon;
-  });
-  // Muhurat city search
-  makeCitySearch('mCity', 'mCitySug', (lat, lon, name) => {
-    saveLocation(lat, lon, name);
-    document.getElementById('mLat').value = lat;
-    document.getElementById('mLon').value = lon;
-  });
-  // Kundali city search
-  makeCitySearch('kCity', 'kCitySug', (lat, lon, name) => {
-    document.getElementById('kLat').value = lat;
-    document.getElementById('kLon').value = lon;
+    if (mCity) { mCity.value = name; }
+    const mLat = document.getElementById('mLat');
+    const mLon = document.getElementById('mLon');
+    if (mLat) mLat.value = lat;
+    if (mLon) mLon.value = lon;
   });
 
-  // Pre-fill inputs with saved city
-  document.getElementById('heroCity').value = currentCityName;
-  document.getElementById('mCity').value    = currentCityName;
-  document.getElementById('mLat').value     = currentLat;
-  document.getElementById('mLon').value     = currentLon;
+  // Muhurat city search (only if element exists)
+  if (document.getElementById('mCity')) {
+    makeCitySearch('mCity', 'mCitySug', (lat, lon, name) => {
+      saveLocation(lat, lon, name);
+      const mLat = document.getElementById('mLat');
+      const mLon = document.getElementById('mLon');
+      if (mLat) mLat.value = lat;
+      if (mLon) mLon.value = lon;
+    });
+  }
 
-  // Set today's date defaults
+  // Pre-fill hero city input
+  const heroCityEl = document.getElementById('heroCity');
+  if (heroCityEl) heroCityEl.value = currentCityName;
+
+  // Pre-fill muhurat inputs if they exist
+  const mCityEl = document.getElementById('mCity');
+  const mLatEl  = document.getElementById('mLat');
+  const mLonEl  = document.getElementById('mLon');
+  if (mCityEl) mCityEl.value = currentCityName;
+  if (mLatEl)  mLatEl.value  = currentLat;
+  if (mLonEl)  mLonEl.value  = currentLon;
+
+  // Set today's date defaults (only if elements exist)
   const todayStr = new Date().toISOString().split('T')[0];
-  document.getElementById('muhuratDate').value = todayStr;
-  document.getElementById('kDob').value = todayStr;
-  const now = new Date();
-  document.getElementById('kTob').value = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+  const muhuratDate = document.getElementById('muhuratDate');
+  if (muhuratDate) muhuratDate.value = todayStr;
 
   renderPanchang(currentLat, currentLon, currentCityName);
 }
