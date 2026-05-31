@@ -910,7 +910,15 @@ function init() {
   renderPanchang(currentLat, currentLon, currentCityName);
 }
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    init();
+  } catch(e) {
+    console.error('Init error:', e);
+    // Force render with Delhi defaults even if something fails
+    try { renderPanchang(28.6139, 77.2090, 'नई दिल्ली, भारत'); } catch(e2) { console.error(e2); }
+  }
+});
 </script>
 </body>
 </html>
