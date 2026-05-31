@@ -47,7 +47,7 @@
   box-shadow: 0 0 16px rgba(200,146,42,0.2);
 }
 .tab-section { display: none; }
-.tab-section.active { display: block; }
+.tab-section.active { display: block; position: relative; z-index: 10; }
 
 /* ===================== CITY SEARCH ===================== */
 .city-search-wrap { position: relative; }
@@ -254,7 +254,7 @@
 </nav>
 
 <!-- HERO -->
-<header class="hero">
+<header class="hero" style="position:relative;z-index:10">
   <div class="hero-date" id="heroDate"></div>
   <h1 class="hero-title">
     <span class="hi">वैदिक पञ्चाङ्ग</span>
@@ -483,7 +483,7 @@
 </div>
 
 <!-- FOOTER -->
-<footer class="footer">
+<footer class="footer" style="position:relative;z-index:10">
   <div class="om-footer">ॐ</div>
   <p class="hi">सर्वे भवन्तु सुखिनः | सर्वे सन्तु निरामयाः</p>
   <p class="en" style="display:none">May all be happy | May all be free from illness</p>
