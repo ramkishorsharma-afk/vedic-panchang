@@ -8,75 +8,58 @@
 <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Sanskrit:ital@0;1&family=Crimson+Pro:wght@300;400;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css"/>
 <style>
-/* ─── LAYOUT ─────────────────────────────────────── */
-* { box-sizing: border-box; margin:0; padding:0; }
+* { box-sizing:border-box; margin:0; padding:0; }
 body { min-height:100vh; }
 
+/* ── KEY FIX: all content above cosmos-bg ── */
 .k-shell {
-  display: flex;
-  min-height: 100vh;
-  padding-top: 64px; /* nav height */
+  display:flex; min-height:100vh; padding-top:64px;
+  position:relative; z-index:10;
 }
-
-/* ─── LEFT SIDEBAR ───────────────────────────────── */
 .k-sidebar {
-  width: 80px;
-  flex-shrink: 0;
-  background: rgba(10,6,30,0.92);
-  border-right: 1px solid rgba(200,146,42,0.18);
-  backdrop-filter: blur(12px);
-  position: sticky;
-  top: 64px;
-  height: calc(100vh - 64px);
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1rem 0;
-  gap: 4px;
-  z-index: 40;
+  width:80px; flex-shrink:0;
+  background:rgba(10,6,30,0.95);
+  border-right:1px solid rgba(200,146,42,0.18);
+  backdrop-filter:blur(12px);
+  position:sticky; top:64px;
+  height:calc(100vh - 64px);
+  overflow-y:auto;
+  display:flex; flex-direction:column;
+  align-items:center; padding:1rem 0; gap:4px;
+  z-index:40;
 }
 .sb-item {
-  width: 64px;
-  padding: 10px 4px 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: background 0.2s;
-  border: 1px solid transparent;
-  text-decoration: none;
+  width:64px; padding:10px 4px 8px;
+  display:flex; flex-direction:column;
+  align-items:center; gap:4px;
+  border-radius:12px; cursor:pointer;
+  transition:background 0.2s;
+  border:1px solid transparent; text-decoration:none;
 }
-.sb-item:hover { background: rgba(200,146,42,0.12); border-color: rgba(200,146,42,0.25); }
-.sb-item.active { background: rgba(200,146,42,0.2); border-color: rgba(200,146,42,0.5); }
-.sb-icon { font-size: 1.4rem; line-height:1; }
+.sb-item:hover { background:rgba(200,146,42,0.12); border-color:rgba(200,146,42,0.25); }
+.sb-item.active { background:rgba(200,146,42,0.2); border-color:rgba(200,146,42,0.5); }
+.sb-icon { font-size:1.4rem; line-height:1; }
 .sb-label {
-  font-family: 'Tiro Devanagari Sanskrit', serif;
-  font-size: 0.58rem;
-  color: rgba(242,212,114,0.8);
-  text-align: center;
-  line-height: 1.2;
+  font-family:'Tiro Devanagari Sanskrit',serif;
+  font-size:0.58rem; color:rgba(242,212,114,0.8);
+  text-align:center; line-height:1.2;
 }
-.sb-item.active .sb-label { color: #f2d472; }
+.sb-item.active .sb-label { color:#f2d472; }
 
-/* ─── MAIN CONTENT ───────────────────────────────── */
 .k-main {
-  flex: 1;
-  min-width: 0;
-  padding: 1.5rem 2rem;
-  overflow-x: hidden;
+  flex:1; min-width:0;
+  padding:1.5rem 2rem;
+  overflow-x:hidden;
+  position:relative; z-index:10;
 }
 
-/* ─── INPUT FORM ─────────────────────────────────── */
+/* Form */
 .k-form-card {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(200,146,42,0.3);
-  border-radius: 16px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  backdrop-filter: blur(10px);
+  background:rgba(20,12,40,0.9);
+  border:1px solid rgba(200,146,42,0.3);
+  border-radius:16px; padding:1.5rem;
+  margin-bottom:1.5rem;
+  backdrop-filter:blur(10px);
 }
 .k-form-row { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem; }
 .k-form-group { flex:1 1 160px; display:flex; flex-direction:column; gap:5px; }
@@ -84,18 +67,14 @@ body { min-height:100vh; }
   font-family:'Tiro Devanagari Sanskrit',serif;
   font-size:0.78rem; color:rgba(242,212,114,0.7);
 }
-.k-form-group input, .k-form-group select {
-  background:rgba(255,255,255,0.07);
+.k-form-group input {
+  background:rgba(255,255,255,0.08);
   border:1.5px solid rgba(200,146,42,0.35);
   border-radius:8px; color:#f0e0b0;
   font-family:inherit; font-size:0.88rem;
-  padding:7px 11px; outline:none;
-  transition:border-color 0.2s;
+  padding:8px 11px; outline:none;
 }
-.k-form-group input:focus, .k-form-group select:focus {
-  border-color:rgba(200,146,42,0.75);
-}
-.k-form-group select option { background:#1a1235; }
+.k-form-group input:focus { border-color:rgba(200,146,42,0.75); }
 .city-wrap { position:relative; }
 .city-wrap input { width:100%; }
 .city-sug {
@@ -112,74 +91,60 @@ body { min-height:100vh; }
   border:none; border-radius:10px; color:#fff;
   font-family:'Tiro Devanagari Sanskrit',serif;
   font-size:0.95rem; padding:10px 28px; cursor:pointer;
-  transition:opacity 0.2s,transform 0.2s; margin-top:0.5rem;
+  margin-top:0.5rem;
 }
-.btn-gen:hover { opacity:0.88; transform:translateY(-1px); }
+.btn-gen:hover { opacity:0.88; }
 
-/* ─── SECTION PANELS ─────────────────────────────── */
+/* Sections */
 .k-section { display:none; }
-.k-section.active { display:block; }
+.k-section.active { display:block; position:relative; z-index:10; }
 
-/* ─── 3-CHART TOP ROW ───────────────────────────── */
+/* Charts */
 .charts-row {
-  display:grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap:1.2rem;
-  margin-bottom:1.5rem;
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:1.2rem; margin-bottom:1.5rem;
 }
 @media(max-width:900px){ .charts-row { grid-template-columns:1fr 1fr; } }
 @media(max-width:600px){ .charts-row { grid-template-columns:1fr; } }
-
 .chart-card {
-  background:rgba(255,255,255,0.04);
+  background:rgba(20,12,40,0.9);
   border:1px solid rgba(200,146,42,0.25);
   border-radius:14px; overflow:hidden;
 }
 .chart-card-head {
   background:rgba(200,146,42,0.12);
-  padding:8px 14px;
-  border-bottom:1px solid rgba(200,146,42,0.2);
+  padding:8px 14px; border-bottom:1px solid rgba(200,146,42,0.2);
   display:flex; align-items:center; gap:8px;
 }
-.chart-card-head span {
-  font-family:'Tiro Devanagari Sanskrit',serif;
-  font-size:0.82rem; color:#f2d472;
-}
+.chart-card-head span { font-family:'Tiro Devanagari Sanskrit',serif; font-size:0.82rem; color:#f2d472; }
 .chart-card-body { padding:10px; }
 .chart-svg-wrap { width:100%; aspect-ratio:1; }
 
-/* ─── INFO TABLE ─────────────────────────────────── */
+/* Info grid */
 .info-grid {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:1rem;
-  margin-bottom:1.5rem;
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:1rem; margin-bottom:1.5rem;
 }
 @media(max-width:700px){ .info-grid { grid-template-columns:1fr; } }
-
 .info-card {
-  background:rgba(255,255,255,0.04);
+  background:rgba(20,12,40,0.9);
   border:1px solid rgba(200,146,42,0.25);
   border-radius:14px; overflow:hidden;
 }
 .info-card-head {
   background:rgba(200,146,42,0.1);
-  padding:10px 14px;
-  border-bottom:1px solid rgba(200,146,42,0.2);
+  padding:10px 14px; border-bottom:1px solid rgba(200,146,42,0.2);
   font-family:'Tiro Devanagari Sanskrit',serif;
   font-size:0.88rem; color:#f2d472;
-  display:flex; align-items:center; gap:8px;
 }
 .planet-tbl { width:100%; border-collapse:collapse; font-size:0.82rem; }
 .planet-tbl th {
-  background:rgba(200,146,42,0.12);
-  color:#C8922A; padding:7px 10px; text-align:left;
+  background:rgba(200,146,42,0.12); color:#C8922A;
+  padding:7px 10px; text-align:left;
   font-family:'Tiro Devanagari Sanskrit',serif; font-weight:600;
   border-bottom:1px solid rgba(200,146,42,0.2);
 }
 .planet-tbl td { padding:7px 10px; border-bottom:1px solid rgba(200,146,42,0.08); color:#e8d5a3; }
-.planet-tbl tr:hover td { background:rgba(200,146,42,0.05); }
-
 .detail-rows { padding:0.5rem 0; }
 .d-row {
   display:flex; justify-content:space-between; align-items:center;
@@ -189,28 +154,24 @@ body { min-height:100vh; }
 .d-row span { font-size:0.8rem; color:rgba(242,212,114,0.6); }
 .d-row strong { font-size:0.88rem; color:#f2d472; }
 
-/* ─── SECTION CARDS ─────────────────────────────── */
-.sec-card {
-  background:rgba(255,255,255,0.04);
-  border:1px solid rgba(200,146,42,0.22);
-  border-radius:14px; margin-bottom:1.2rem; overflow:hidden;
-}
-.sec-card-head {
-  background:rgba(200,146,42,0.1);
-  padding:12px 16px;
-  border-bottom:1px solid rgba(200,146,42,0.2);
+/* Section title */
+.k-sec-title {
   font-family:'Tiro Devanagari Sanskrit',serif;
-  font-size:0.95rem; color:#f2d472;
-  display:flex; align-items:center; gap:10px; cursor:pointer;
-  justify-content:space-between;
+  font-size:1.1rem; color:#f2d472; margin-bottom:1rem;
+  padding-bottom:0.5rem; border-bottom:1px solid rgba(200,146,42,0.2);
 }
-.sec-card-body { padding:1.2rem 1.4rem; }
-.sec-arrow { font-size:0.8rem; opacity:0.6; transition:transform 0.2s; }
-.sec-card.open .sec-arrow { transform:rotate(180deg); }
-.sec-card-body { display:none; }
-.sec-card.open .sec-card-body { display:block; }
 
-/* ─── DASHA TABLE ────────────────────────────────── */
+/* Full report btn */
+.full-report-btn {
+  display:block; width:100%; margin-top:1.5rem;
+  background:linear-gradient(135deg,rgba(200,146,42,0.85),rgba(139,26,26,0.85));
+  border:none; border-radius:12px; color:#fff;
+  font-family:'Tiro Devanagari Sanskrit',serif;
+  font-size:0.95rem; padding:13px 24px; cursor:pointer; text-align:center;
+}
+.full-report-btn:hover { opacity:0.88; }
+
+/* Dasha */
 .dasha-table { width:100%; border-collapse:collapse; font-size:0.82rem; }
 .dasha-table th {
   background:rgba(200,146,42,0.12); color:#C8922A;
@@ -221,174 +182,100 @@ body { min-height:100vh; }
 .dasha-table td { padding:8px 10px; border-bottom:1px solid rgba(200,146,42,0.08); color:#e8d5a3; }
 .dasha-current td { background:rgba(200,146,42,0.1); color:#f2d472; font-weight:600; }
 
-/* ─── YOGA BADGES ────────────────────────────────── */
+/* Yoga */
 .yoga-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1rem; }
 .yoga-item {
-  background:rgba(255,255,255,0.04);
-  border:1px solid rgba(200,146,42,0.2);
+  background:rgba(20,12,40,0.9); border:1px solid rgba(200,146,42,0.2);
   border-radius:10px; padding:1rem;
 }
 .yoga-name { font-family:'Tiro Devanagari Sanskrit',serif; color:#f2d472; font-size:0.9rem; margin-bottom:4px; }
 .yoga-desc { font-size:0.78rem; color:rgba(242,212,114,0.6); line-height:1.5; }
-.yoga-status {
-  display:inline-block; padding:2px 10px; border-radius:10px;
-  font-size:0.72rem; font-weight:700; margin-bottom:6px;
-}
+.yoga-status { display:inline-block; padding:2px 10px; border-radius:10px; font-size:0.72rem; font-weight:700; margin-bottom:6px; }
 .yoga-present { background:rgba(46,160,80,0.25); color:#5ae07e; border:1px solid rgba(46,160,80,0.35); }
-.yoga-absent  { background:rgba(200,146,42,0.1);  color:rgba(242,212,114,0.5); border:1px solid rgba(200,146,42,0.2); }
+.yoga-absent  { background:rgba(200,146,42,0.1); color:rgba(242,212,114,0.5); border:1px solid rgba(200,146,42,0.2); }
 
-/* ─── STRENGTH BARS ──────────────────────────────── */
+/* Strength */
 .str-row { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
 .str-label { min-width:80px; font-family:'Tiro Devanagari Sanskrit',serif; font-size:0.82rem; color:rgba(242,212,114,0.75); }
 .str-bg { flex:1; height:18px; background:rgba(255,255,255,0.05); border-radius:9px; overflow:hidden; border:1px solid rgba(200,146,42,0.15); }
-.str-fill { height:100%; background:linear-gradient(90deg,#C8922A,#8B1A1A); display:flex; align-items:center; justify-content:flex-end; padding-right:6px; }
+.str-fill { height:100%; display:flex; align-items:center; justify-content:flex-end; padding-right:6px; }
 .str-pct { font-size:0.68rem; color:#fff; font-weight:700; }
 
-/* ─── REMEDY CARDS ───────────────────────────────── */
+/* Remedy */
 .rem-grid { display:grid; gap:1rem; }
-.rem-card {
-  border-left:4px solid var(--rc,#C8922A);
-  background:rgba(255,255,255,0.03);
-  border-radius:8px; padding:1rem 1.2rem; position:relative;
-}
+.rem-card { border-left:4px solid var(--rc,#C8922A); background:rgba(20,12,40,0.9); border-radius:8px; padding:1rem 1.2rem; position:relative; }
 .rem-planet { font-family:'Tiro Devanagari Sanskrit',serif; color:#f2d472; font-size:0.95rem; margin-bottom:4px; }
 .rem-text { font-size:0.84rem; color:rgba(242,212,114,0.7); line-height:1.6; }
 .rem-lk { font-size:0.78rem; color:rgba(200,146,42,0.8); font-style:italic; margin-top:6px; padding-top:5px; border-top:1px solid rgba(200,146,42,0.12); }
 .rem-badge { position:absolute; top:10px; right:10px; background:var(--rc,#C8922A); color:#fff; padding:2px 9px; border-radius:8px; font-size:0.68rem; font-weight:700; }
 
-/* ─── IDENTIFICATION CARDS ───────────────────────── */
+/* ID cards */
 .id-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:1rem; }
-.id-card {
-  background:rgba(200,146,42,0.06);
-  border:1px solid rgba(200,146,42,0.2);
-  border-radius:12px; padding:1rem; text-align:center;
-}
+.id-card { background:rgba(200,146,42,0.08); border:1px solid rgba(200,146,42,0.2); border-radius:12px; padding:1rem; text-align:center; }
 .id-icon { font-size:1.8rem; margin-bottom:6px; }
 .id-title { font-family:'Tiro Devanagari Sanskrit',serif; color:rgba(242,212,114,0.7); font-size:0.75rem; margin-bottom:4px; }
 .id-val { font-size:0.88rem; font-family:'Tiro Devanagari Sanskrit',serif; color:#f2d472; font-weight:600; }
 .id-note { font-size:0.65rem; color:rgba(242,212,114,0.4); margin-top:3px; }
 
-/* ─── TRANSIT TABLE ──────────────────────────────── */
+/* Transit */
 .transit-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1rem; }
-.transit-item {
-  background:rgba(255,255,255,0.04);
-  border:1px solid rgba(200,146,42,0.2);
-  border-radius:10px; padding:1rem;
-}
+.transit-item { background:rgba(20,12,40,0.9); border:1px solid rgba(200,146,42,0.2); border-radius:10px; padding:1rem; }
 .transit-planet { font-size:0.95rem; color:#f2d472; font-family:'Tiro Devanagari Sanskrit',serif; margin-bottom:4px; }
 .transit-pos { font-size:0.8rem; color:#C8922A; margin-bottom:4px; }
 .transit-effect { font-size:0.78rem; color:rgba(242,212,114,0.65); line-height:1.5; }
 
-/* ─── VARSHAPHAL ─────────────────────────────────── */
+/* Varsha */
 .varsha-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
 @media(max-width:600px){ .varsha-row { grid-template-columns:1fr; } }
 .varsha-chart-box { aspect-ratio:1; max-width:280px; margin:0 auto; }
 
-/* ─── CITY SEARCH (re-used) ──────────────────────── */
-.full-report-btn {
-  display:block; width:100%; margin-top:1.5rem;
-  background:linear-gradient(135deg,rgba(200,146,42,0.85),rgba(139,26,26,0.85));
-  border:none; border-radius:12px; color:#fff;
-  font-family:'Tiro Devanagari Sanskrit',serif;
-  font-size:0.95rem; padding:13px 24px; cursor:pointer;
-  transition:opacity 0.2s,transform 0.2s; text-align:center;
-}
-.full-report-btn:hover { opacity:0.88; transform:translateY(-2px); }
-
-/* ─── SECTION HEADING ────────────────────────────── */
-.k-sec-title {
-  font-family:'Tiro Devanagari Sanskrit',serif;
-  font-size:1.1rem; color:#f2d472; margin-bottom:1rem;
-  padding-bottom:0.5rem; border-bottom:1px solid rgba(200,146,42,0.2);
-  display:flex; align-items:center; gap:10px;
-}
-
-/* ─── PRASHNA ────────────────────────────────────── */
+/* Prashna */
 .prashna-input {
   width:100%; background:rgba(255,255,255,0.07);
   border:1.5px solid rgba(200,146,42,0.35); border-radius:8px;
   color:#f0e0b0; font-family:inherit; font-size:0.88rem;
   padding:10px 13px; outline:none; resize:none;
-  transition:border-color 0.2s;
 }
-.prashna-input:focus { border-color:rgba(200,146,42,0.75); }
 </style>
 </head>
 <body>
 <div class="cosmos-bg"><div class="stars" id="stars"></div><div class="mandala-bg"></div></div>
 
-<!-- TOP NAV -->
-<nav class="nav">
+<nav class="nav" style="position:fixed;top:0;left:0;right:0;z-index:100">
   <div class="nav-brand"><span class="om">ॐ</span><span class="brand-text">वैदिक पञ्चाङ्ग</span></div>
   <ul class="nav-links">
     <li><a href="index.html">पञ्चाङ्ग</a></li>
-    <li><a href="index.html#muhurat">मुहूर्त</a></li>
+    <li><a href="index.html">मुहूर्त</a></li>
     <li><a href="kundali.html" class="active">कुण्डली</a></li>
   </ul>
   <button class="lang-toggle" id="langToggle">EN / हि</button>
 </nav>
 
 <div class="k-shell">
-
-<!-- ─── SIDEBAR ─────────────────────────────────── -->
-<aside class="k-sidebar" id="sidebar">
-  <a class="sb-item active" data-sec="kundali" onclick="showSec('kundali',this)">
-    <span class="sb-icon">🔭</span><span class="sb-label">कुण्डली</span>
-  </a>
-  <a class="sb-item" data-sec="graha" onclick="showSec('graha',this)">
-    <span class="sb-icon">🪐</span><span class="sb-label">ग्रह</span>
-  </a>
-  <a class="sb-item" data-sec="dasha" onclick="showSec('dasha',this)">
-    <span class="sb-icon">⏳</span><span class="sb-label">दशा</span>
-  </a>
-  <a class="sb-item" data-sec="yoga" onclick="showSec('yoga',this)">
-    <span class="sb-icon">✨</span><span class="sb-label">योग/दोष</span>
-  </a>
-  <a class="sb-item" data-sec="shadbala" onclick="showSec('shadbala',this)">
-    <span class="sb-icon">💪</span><span class="sb-label">षड्बल</span>
-  </a>
-  <a class="sb-item" data-sec="gochar" onclick="showSec('gochar',this)">
-    <span class="sb-icon">🌍</span><span class="sb-label">गोचर</span>
-  </a>
-  <a class="sb-item" data-sec="varsha" onclick="showSec('varsha',this)">
-    <span class="sb-icon">📅</span><span class="sb-label">वर्षफल</span>
-  </a>
-  <a class="sb-item" data-sec="prashna" onclick="showSec('prashna',this)">
-    <span class="sb-icon">❓</span><span class="sb-label">प्रश्न</span>
-  </a>
-  <a class="sb-item" data-sec="upaya" onclick="showSec('upaya',this)">
-    <span class="sb-icon">📿</span><span class="sb-label">उपाय</span>
-  </a>
-  <a class="sb-item" data-sec="samudrik" onclick="showSec('samudrik',this)">
-    <span class="sb-icon">🖐️</span><span class="sb-label">सामुद्रिक</span>
-  </a>
-  <a class="sb-item" data-sec="jatak" onclick="showSec('jatak',this)">
-    <span class="sb-icon">🏠</span><span class="sb-label">पहचान</span>
-  </a>
+<aside class="k-sidebar">
+  <a class="sb-item active" onclick="showSec('kundali',this)"><span class="sb-icon">🔭</span><span class="sb-label">कुण्डली</span></a>
+  <a class="sb-item" onclick="showSec('graha',this)"><span class="sb-icon">🪐</span><span class="sb-label">ग्रह</span></a>
+  <a class="sb-item" onclick="showSec('dasha',this)"><span class="sb-icon">⏳</span><span class="sb-label">दशा</span></a>
+  <a class="sb-item" onclick="showSec('yoga',this)"><span class="sb-icon">✨</span><span class="sb-label">योग/दोष</span></a>
+  <a class="sb-item" onclick="showSec('shadbala',this)"><span class="sb-icon">💪</span><span class="sb-label">षड्बल</span></a>
+  <a class="sb-item" onclick="showSec('gochar',this)"><span class="sb-icon">🌍</span><span class="sb-label">गोचर</span></a>
+  <a class="sb-item" onclick="showSec('varsha',this)"><span class="sb-icon">📅</span><span class="sb-label">वर्षफल</span></a>
+  <a class="sb-item" onclick="showSec('prashna',this)"><span class="sb-icon">❓</span><span class="sb-label">प्रश्न</span></a>
+  <a class="sb-item" onclick="showSec('upaya',this)"><span class="sb-icon">📿</span><span class="sb-label">उपाय</span></a>
+  <a class="sb-item" onclick="showSec('samudrik',this)"><span class="sb-icon">🖐️</span><span class="sb-label">सामुद्रिक</span></a>
+  <a class="sb-item" onclick="showSec('jatak',this)"><span class="sb-icon">🏠</span><span class="sb-label">पहचान</span></a>
 </aside>
 
-<!-- ─── MAIN ──────────────────────────────────────── -->
 <main class="k-main">
-
-  <!-- INPUT FORM (always visible) -->
   <div class="k-form-card">
     <div class="k-form-row">
-      <div class="k-form-group">
-        <label>नाम / Name</label>
-        <input type="text" id="kName" placeholder="अपना नाम लिखें"/>
-      </div>
-      <div class="k-form-group">
-        <label>जन्म दिनांक / Date of Birth</label>
-        <input type="date" id="kDob"/>
-      </div>
-      <div class="k-form-group">
-        <label>जन्म समय / Time of Birth</label>
-        <input type="time" id="kTob"/>
-      </div>
+      <div class="k-form-group"><label>नाम / Name</label><input type="text" id="kName" placeholder="अपना नाम लिखें"/></div>
+      <div class="k-form-group"><label>जन्म दिनांक / DOB</label><input type="date" id="kDob"/></div>
+      <div class="k-form-group"><label>जन्म समय / Time</label><input type="time" id="kTob"/></div>
       <div class="k-form-group" style="flex:2 1 280px">
         <label>जन्म स्थान / Birth Place</label>
         <div class="city-wrap">
-          <input type="text" id="kPlace" placeholder="📍 शहर खोजें — Ludhiana, Varanasi…" autocomplete="off" spellcheck="false"/>
+          <input type="text" id="kPlace" placeholder="📍 शहर खोजें…" autocomplete="off" spellcheck="false"/>
           <div class="city-sug" id="kSug"></div>
         </div>
         <input type="hidden" id="kLat" value="28.6139"/>
@@ -399,178 +286,65 @@ body { min-height:100vh; }
     <span id="genStatus" style="margin-left:1rem;font-size:0.8rem;color:rgba(242,212,114,0.6)"></span>
   </div>
 
-  <!-- ═══ SECTION: KUNDALI ═══ -->
   <div class="k-section active" id="sec-kundali">
-    <div class="charts-row" id="chartsRow">
-      <div class="chart-card">
-        <div class="chart-card-head"><span>🔭</span><span>लग्न कुण्डली (D1)</span></div>
-        <div class="chart-card-body"><div class="chart-svg-wrap" id="chartD1"><div style="color:rgba(242,212,114,0.3);text-align:center;padding:3rem;font-size:0.85rem">कुण्डली बनाने के लिए ऊपर जानकारी भरें</div></div></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-card-head"><span>💍</span><span>नवमांश (D9)</span></div>
-        <div class="chart-card-body"><div class="chart-svg-wrap" id="chartD9"><div style="color:rgba(242,212,114,0.2);text-align:center;padding:3rem;font-size:0.82rem">—</div></div></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-card-head"><span>💼</span><span>दशमांश (D10)</span></div>
-        <div class="chart-card-body"><div class="chart-svg-wrap" id="chartD10"><div style="color:rgba(242,212,114,0.2);text-align:center;padding:3rem;font-size:0.82rem">—</div></div></div>
-      </div>
+    <div class="charts-row">
+      <div class="chart-card"><div class="chart-card-head"><span>🔭</span><span>लग्न कुण्डली (D1)</span></div><div class="chart-card-body"><div class="chart-svg-wrap" id="chartD1" style="color:rgba(242,212,114,0.3);text-align:center;padding:3rem;font-size:0.85rem">ऊपर जानकारी भरकर कुण्डली बनाएं</div></div></div>
+      <div class="chart-card"><div class="chart-card-head"><span>💍</span><span>नवमांश (D9)</span></div><div class="chart-card-body"><div class="chart-svg-wrap" id="chartD9" style="color:rgba(242,212,114,0.2);text-align:center;padding:3rem">—</div></div></div>
+      <div class="chart-card"><div class="chart-card-head"><span>💼</span><span>दशमांश (D10)</span></div><div class="chart-card-body"><div class="chart-svg-wrap" id="chartD10" style="color:rgba(242,212,114,0.2);text-align:center;padding:3rem">—</div></div></div>
     </div>
     <div class="info-grid">
-      <div class="info-card">
-        <div class="info-card-head">🪐 ग्रह स्थिति</div>
-        <table class="planet-tbl" id="ptbl">
-          <thead><tr><th>ग्रह</th><th>राशि</th><th>भाव</th><th>अंश</th></tr></thead>
-          <tbody><tr><td colspan="4" style="color:rgba(242,212,114,0.3);text-align:center;padding:1.5rem">—</td></tr></tbody>
-        </table>
-      </div>
-      <div class="info-card">
-        <div class="info-card-head">📋 मूल विवरण</div>
-        <div class="detail-rows" id="detailRows">
-          <div class="d-row"><span>जन्म स्थान</span><strong>—</strong></div>
-          <div class="d-row"><span>लग्न</span><strong>—</strong></div>
-          <div class="d-row"><span>जन्म नक्षत्र</span><strong>—</strong></div>
-          <div class="d-row"><span>तिथि</span><strong>—</strong></div>
-          <div class="d-row"><span>चन्द्र राशि</span><strong>—</strong></div>
-          <div class="d-row"><span>सूर्य राशि</span><strong>—</strong></div>
-        </div>
-      </div>
+      <div class="info-card"><div class="info-card-head">🪐 ग्रह स्थिति</div><table class="planet-tbl" id="ptbl"><thead><tr><th>ग्रह</th><th>राशि</th><th>भाव</th><th>अंश</th></tr></thead><tbody><tr><td colspan="4" style="color:rgba(242,212,114,0.3);text-align:center;padding:1.5rem">—</td></tr></tbody></table></div>
+      <div class="info-card"><div class="info-card-head">📋 मूल विवरण</div><div class="detail-rows" id="detailRows"><div class="d-row"><span>जन्म स्थान</span><strong>—</strong></div><div class="d-row"><span>लग्न</span><strong>—</strong></div><div class="d-row"><span>नक्षत्र</span><strong>—</strong></div><div class="d-row"><span>तिथि</span><strong>—</strong></div><div class="d-row"><span>चन्द्र राशि</span><strong>—</strong></div><div class="d-row"><span>सूर्य राशि</span><strong>—</strong></div></div></div>
     </div>
-    <button class="full-report-btn" onclick="window.location.href='kundali-report.html'">
-      📖 पूर्ण विस्तृत कुण्डली रिपोर्ट खोलें (फलादेश + विंशोत्तरी दशा + लाल किताब)
-    </button>
+    <button class="full-report-btn" onclick="window.location.href='kundali-report.html'">📖 पूर्ण कुण्डली रिपोर्ट खोलें (फलादेश + दशा + लाल किताब) →</button>
   </div>
 
-  <!-- ═══ SECTION: GRAHA ═══ -->
-  <div class="k-section" id="sec-graha">
-    <div class="k-sec-title">🪐 ग्रह विस्तृत विवरण</div>
-    <div class="info-card">
-      <div class="info-card-head">ग्रह स्थिति — विस्तृत</div>
-      <table class="planet-tbl" id="grahaTable">
-        <thead><tr><th>ग्रह</th><th>राशि</th><th>भाव</th><th>अंश</th><th>नक्षत्र</th><th>स्थिति</th></tr></thead>
-        <tbody><tr><td colspan="6" style="color:rgba(242,212,114,0.3);text-align:center;padding:1.5rem">पहले कुण्डली बनाएं</td></tr></tbody>
-      </table>
-    </div>
-  </div>
+  <div class="k-section" id="sec-graha"><div class="k-sec-title">🪐 ग्रह विस्तृत विवरण</div><div class="info-card"><div class="info-card-head">ग्रह स्थिति — विस्तृत</div><table class="planet-tbl" id="grahaTable"><thead><tr><th>ग्रह</th><th>राशि</th><th>भाव</th><th>अंश</th><th>नक्षत्र</th><th>स्थिति</th></tr></thead><tbody><tr><td colspan="6" style="color:rgba(242,212,114,0.3);text-align:center;padding:1.5rem">पहले कुण्डली बनाएं</td></tr></tbody></table></div></div>
 
-  <!-- ═══ SECTION: DASHA ═══ -->
-  <div class="k-section" id="sec-dasha">
-    <div class="k-sec-title">⏳ विंशोत्तरी महादशा</div>
-    <div id="dashaContent">
-      <div class="info-card" style="padding:1.5rem;color:rgba(242,212,114,0.4);text-align:center">पहले कुण्डली बनाएं</div>
-    </div>
-  </div>
+  <div class="k-section" id="sec-dasha"><div class="k-sec-title">⏳ विंशोत्तरी महादशा</div><div id="dashaContent"><div class="info-card" style="padding:1.5rem;color:rgba(242,212,114,0.4);text-align:center">पहले कुण्डली बनाएं</div></div></div>
 
-  <!-- ═══ SECTION: YOGA/DOSHA ═══ -->
-  <div class="k-section" id="sec-yoga">
-    <div class="k-sec-title">✨ योग एवं दोष विश्लेषण</div>
-    <div id="yogaContent">
-      <div class="info-card" style="padding:1.5rem;color:rgba(242,212,114,0.4);text-align:center">पहले कुण्डली बनाएं</div>
-    </div>
-  </div>
+  <div class="k-section" id="sec-yoga"><div class="k-sec-title">✨ योग एवं दोष विश्लेषण</div><div id="yogaContent"><div class="info-card" style="padding:1.5rem;color:rgba(242,212,114,0.4);text-align:center">पहले कुण्डली बनाएं</div></div></div>
 
-  <!-- ═══ SECTION: SHADBALA ═══ -->
-  <div class="k-section" id="sec-shadbala">
-    <div class="k-sec-title">💪 षड्बल — ग्रह शक्ति विश्लेषण</div>
-    <div id="shadbalaContent">
-      <div class="info-card" style="padding:1.5rem;color:rgba(242,212,114,0.4);text-align:center">पहले कुण्डली बनाएं</div>
-    </div>
-  </div>
+  <div class="k-section" id="sec-shadbala"><div class="k-sec-title">💪 षड्बल — ग्रह शक्ति</div><div id="shadbalaContent"><div class="info-card" style="padding:1.5rem;color:rgba(242,212,114,0.4);text-align:center">पहले कुण्डली बनाएं</div></div></div>
 
-  <!-- ═══ SECTION: GOCHAR ═══ -->
-  <div class="k-section" id="sec-gochar">
-    <div class="k-sec-title">🌍 गोचर (वर्तमान ग्रह स्थिति)</div>
-    <div id="gocharContent">
-      <div class="transit-grid" id="transitGrid">
-        <div class="info-card" style="padding:1.5rem;color:rgba(242,212,114,0.4);text-align:center">पहले कुण्डली बनाएं</div>
-      </div>
-    </div>
-  </div>
+  <div class="k-section" id="sec-gochar"><div class="k-sec-title">🌍 गोचर (वर्तमान ग्रह)</div><div class="transit-grid" id="transitGrid"><div class="info-card" style="padding:1.5rem;color:rgba(242,212,114,0.4);text-align:center">पहले कुण्डली बनाएं</div></div></div>
 
-  <!-- ═══ SECTION: VARSHA ═══ -->
-  <div class="k-section" id="sec-varsha">
-    <div class="k-sec-title">📅 वर्षफल — वार्षिक कुण्डली</div>
-    <div id="varshaContent">
-      <div class="info-card" style="padding:1.5rem;color:rgba(242,212,114,0.4);text-align:center">पहले कुण्डली बनाएं</div>
-    </div>
-  </div>
+  <div class="k-section" id="sec-varsha"><div class="k-sec-title">📅 वर्षफल — वार्षिक कुण्डली</div><div id="varshaContent"><div class="info-card" style="padding:1.5rem;color:rgba(242,212,114,0.4);text-align:center">पहले कुण्डली बनाएं</div></div></div>
 
-  <!-- ═══ SECTION: PRASHNA ═══ -->
   <div class="k-section" id="sec-prashna">
-    <div class="k-sec-title">❓ प्रश्न कुण्डली (Horary)</div>
-    <div class="sec-card open">
-      <div class="sec-card-body" style="display:block">
-        <p style="color:rgba(242,212,114,0.7);font-size:0.88rem;margin-bottom:1rem;line-height:1.6">
-          प्रश्न कुण्डली किसी विशेष प्रश्न के उत्तर के लिए उस समय की ग्रह स्थिति पर आधारित होती है जब प्रश्न पूछा जाए।
-        </p>
-        <div class="k-form-group" style="margin-bottom:1rem">
-          <label>अपना प्रश्न लिखें / Your Question</label>
-          <textarea class="prashna-input" id="prashnaQ" rows="3" placeholder="उदा: क्या मेरा विवाह इस वर्ष होगा? / Will I get a job this year?"></textarea>
-        </div>
-        <button class="btn-gen" onclick="calcPrashna()">🔮 प्रश्न कुण्डली बनाएं</button>
-        <div id="prashnaResult" style="margin-top:1rem"></div>
-      </div>
+    <div class="k-sec-title">❓ प्रश्न कुण्डली</div>
+    <div class="info-card" style="padding:1.5rem">
+      <p style="color:rgba(242,212,114,0.7);font-size:0.88rem;margin-bottom:1rem;line-height:1.6">प्रश्न कुण्डली किसी विशेष प्रश्न के उत्तर के लिए उस समय की ग्रह स्थिति पर आधारित होती है।</p>
+      <div class="k-form-group" style="margin-bottom:1rem"><label>अपना प्रश्न लिखें</label><textarea class="prashna-input" id="prashnaQ" rows="3" placeholder="उदा: क्या मेरा विवाह इस वर्ष होगा?"></textarea></div>
+      <button class="btn-gen" onclick="calcPrashna()">🔮 प्रश्न कुण्डली बनाएं</button>
+      <div id="prashnaResult" style="margin-top:1rem"></div>
     </div>
   </div>
 
-  <!-- ═══ SECTION: UPAYA ═══ -->
-  <div class="k-section" id="sec-upaya">
-    <div class="k-sec-title">📿 लाल किताब उपाय</div>
-    <div id="upayaContent">
-      <div class="info-card" style="padding:1.5rem;color:rgba(242,212,114,0.4);text-align:center">पहले कुण्डली बनाएं</div>
-    </div>
-  </div>
+  <div class="k-section" id="sec-upaya"><div class="k-sec-title">📿 लाल किताब उपाय</div><div id="upayaContent"><div class="info-card" style="padding:1.5rem;color:rgba(242,212,114,0.4);text-align:center">पहले कुण्डली बनाएं</div></div></div>
 
-  <!-- ═══ SECTION: SAMUDRIK ═══ -->
-  <div class="k-section" id="sec-samudrik">
-    <div class="k-sec-title">🖐️ सामुद्रिक शास्त्र (जातक के अनुसार)</div>
-    <div id="samudrikContent">
-      <div class="info-card" style="padding:1.5rem;color:rgba(242,212,114,0.4);text-align:center">पहले कुण्डली बनाएं</div>
-    </div>
-  </div>
+  <div class="k-section" id="sec-samudrik"><div class="k-sec-title">🖐️ सामुद्रिक शास्त्र</div><div id="samudrikContent"><div class="info-card" style="padding:1.5rem;color:rgba(242,212,114,0.4);text-align:center">पहले कुण्डली बनाएं</div></div></div>
 
-  <!-- ═══ SECTION: JATAK IDENTIFICATION ═══ -->
-  <div class="k-section" id="sec-jatak">
-    <div class="k-sec-title">🏠 जातक पहचान चिह्न (लाल किताब)</div>
-    <div id="jatakContent">
-      <div class="info-card" style="padding:1.5rem;color:rgba(242,212,114,0.4);text-align:center">पहले कुण्डली बनाएं</div>
-    </div>
-  </div>
-
+  <div class="k-section" id="sec-jatak"><div class="k-sec-title">🏠 जातक पहचान चिह्न</div><div id="jatakContent"><div class="info-card" style="padding:1.5rem;color:rgba(242,212,114,0.4);text-align:center">पहले कुण्डली बनाएं</div></div></div>
 </main>
-</div><!-- k-shell -->
+</div>
 
-<footer class="footer">
+<footer class="footer" style="position:relative;z-index:10">
   <div class="om-footer">ॐ</div>
   <p class="footer-copy">© 2026 वैदिक पञ्चाङ्ग | Vedic Panchang</p>
 </footer>
 
 <script src="panchang.js"></script>
 <script>
-// ─── STARS ───────────────────────────────────────
-function createStars(){
-  const c=document.getElementById('stars');
-  for(let i=0;i<100;i++){
-    const s=document.createElement('div');
-    s.style.cssText=`position:absolute;left:${Math.random()*100}%;top:${Math.random()*100}%;width:${Math.random()*2+1}px;height:${Math.random()*2+1}px;background:rgba(242,212,114,${Math.random()*0.6+0.2});border-radius:50%;`;
-    c.appendChild(s);
-  }
-}
-
-// ─── LANG ────────────────────────────────────────
-document.getElementById('langToggle').addEventListener('click',()=>{
-  document.body.classList.toggle('lang-en');
-  localStorage.setItem('lang',document.body.classList.contains('lang-en')?'en':'hi');
-});
-if(localStorage.getItem('lang')==='en')document.body.classList.add('lang-en');
-
-// ─── DEFAULTS ────────────────────────────────────
+function createStars(){const c=document.getElementById('stars');for(let i=0;i<100;i++){const s=document.createElement('div');s.style.cssText=`position:absolute;left:${Math.random()*100}%;top:${Math.random()*100}%;width:${Math.random()*2+1}px;height:${Math.random()*2+1}px;background:rgba(242,212,114,${Math.random()*0.6+0.2});border-radius:50%;`;c.appendChild(s);}}
+document.getElementById('langToggle').addEventListener('click',()=>{document.body.classList.toggle('lang-en');});
 const _now=new Date();
 document.getElementById('kDob').value=_now.toISOString().split('T')[0];
 document.getElementById('kTob').value=`${_now.getHours().toString().padStart(2,'0')}:${_now.getMinutes().toString().padStart(2,'0')}`;
 
-// ─── CITY SEARCH ─────────────────────────────────
+// City search
 let _st=null;
-(function initCity(){
+(function(){
   const inp=document.getElementById('kPlace'),sug=document.getElementById('kSug');
   inp.addEventListener('input',()=>{
     clearTimeout(_st);const q=inp.value.trim();
@@ -580,17 +354,8 @@ let _st=null;
       fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=6&addressdetails=1`)
         .then(r=>r.json()).then(data=>{
           if(!data.length){sug.innerHTML='<div class="sug-load">नहीं मिला</div>';return;}
-          sug.innerHTML=data.map(r=>{
-            const city=r.address.city||r.address.town||r.address.village||r.display_name.split(',')[0];
-            const label=[city,r.address.state].filter(Boolean).join(', ');
-            return `<div class="sug-i" data-lat="${r.lat}" data-lon="${r.lon}" data-name="${label}">📍 ${label}</div>`;
-          }).join('');
-          sug.querySelectorAll('.sug-i').forEach(el=>el.addEventListener('click',()=>{
-            inp.value=el.dataset.name;
-            document.getElementById('kLat').value=el.dataset.lat;
-            document.getElementById('kLon').value=el.dataset.lon;
-            sug.innerHTML='';sug.style.display='none';
-          }));
+          sug.innerHTML=data.map(r=>{const city=r.address.city||r.address.town||r.address.village||r.display_name.split(',')[0];const label=[city,r.address.state].filter(Boolean).join(', ');return`<div class="sug-i" data-lat="${r.lat}" data-lon="${r.lon}" data-name="${label}">📍 ${label}</div>`;}).join('');
+          sug.querySelectorAll('.sug-i').forEach(el=>el.addEventListener('click',()=>{inp.value=el.dataset.name;document.getElementById('kLat').value=el.dataset.lat;document.getElementById('kLon').value=el.dataset.lon;sug.innerHTML='';sug.style.display='none';}));
         }).catch(()=>{sug.innerHTML='<div class="sug-load">त्रुटि</div>';});
     },350);
   });
@@ -598,7 +363,6 @@ let _st=null;
   document.addEventListener('click',e=>{if(!inp.contains(e.target)&&!sug.contains(e.target)){sug.innerHTML='';sug.style.display='none';}});
 })();
 
-// ─── SIDEBAR NAVIGATION ──────────────────────────
 function showSec(name,el){
   document.querySelectorAll('.k-section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
@@ -606,98 +370,21 @@ function showSec(name,el){
   if(el)el.classList.add('active');
 }
 
-// ─── NORTH INDIAN KUNDALI SVG ─────────────────────
-const _RASHIS=['मेष','वृषभ','मिथुन','कर्क','सिंह','कन्या','तुला','वृश्चिक','धनु','मकर','कुम्भ','मीन'];
+const _R=['मेष','वृषभ','मिथुन','कर्क','सिंह','कन्या','तुला','वृश्चिक','धनु','मकर','कुम्भ','मीन'];
+function pColor(n){if(!n)return'#777';if(n.includes('सूर्य')||n.includes('मंगल'))return'#8B1A1A';if(n.includes('चन्द्र')||n.includes('शुक्र'))return'#1A4C8A';if(n.includes('गुरु'))return'#1A6B1A';if(n.includes('शनि')||n.includes('राहु')||n.includes('केतु'))return'#5A3A8A';return'#7A5010';}
 
-function pColor(name){
-  if(!name)return'#777';
-  if(name.includes('सूर्य')||name.includes('मंगल'))return'#8B1A1A';
-  if(name.includes('चन्द्र')||name.includes('शुक्र'))return'#1A4C8A';
-  if(name.includes('गुरु'))return'#1A6B1A';
-  if(name.includes('शनि')||name.includes('राहु')||name.includes('केतु'))return'#5A3A8A';
-  return'#7A5010';
-}
-
-function buildKundaliSVG(lagnaSign, planets){
-  let lagnaIdx=_RASHIS.indexOf(lagnaSign);
-  if(lagnaIdx<0)lagnaIdx=0;
-  const byH={};
-  for(let h=1;h<=12;h++)byH[h]=[];
-  planets.forEach(p=>{
-    const ri=_RASHIS.indexOf(p.rashi);if(ri<0)return;
-    const h=((ri-lagnaIdx+12)%12)+1;
-    byH[h].push(p.planetHi?p.planetHi.split(' ')[0]:'');
-  });
-  const W=360,H=360,cx=W/2,cy=H/2,d=104,pc=d*0.7;
-
-  // Cell positions: [number_x, number_y, content_x, content_y]
-  const C=[
-    [cx,   18,  cx,   40],   // 1 top
-    [W-34, 18,  W-40, 40],   // 2 top-right
-    [W-16, cy,  W-44, cy-8], // 3 right
-    [W-34, H-16,W-40, H-44], // 4 bottom-right
-    [cx,   H-16,cx,   H-44], // 5 bottom
-    [34,   H-16,40,   H-44], // 6 bottom-left
-    [16,   cy,  44,   cy-8], // 7 left
-    [34,   18,  40,   40],   // 8 top-left
-    [cx,   cy-d+24, cx,   cy-d+42], // 9  inner-top
-    [cx+d-24,cy, cx+d-42,cy-6],     // 10 inner-right
-    [cx,   cy+d-24, cx,   cy+d-8],  // 11 inner-bottom
-    [cx-d+24,cy, cx-d+8, cy-6],     // 12 inner-left
-  ];
-
-  let s=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;border-radius:10px;">
-  <rect width="${W}" height="${H}" fill="#F6E9BE" rx="10"/>
-  <rect x="1.5" y="1.5" width="${W-3}" height="${H-3}" fill="none" stroke="#B8841A" stroke-width="2.2" rx="9"/>
-  <line x1="0" y1="0" x2="${W}" y2="${H}" stroke="#B8841A" stroke-width="1.1"/>
-  <line x1="${W}" y1="0" x2="0" y2="${H}" stroke="#B8841A" stroke-width="1.1"/>
-  <line x1="${cx}" y1="0" x2="${cx}" y2="${H}" stroke="#B8841A" stroke-width="0.7" opacity="0.5"/>
-  <line x1="0" y1="${cy}" x2="${W}" y2="${cy}" stroke="#B8841A" stroke-width="0.7" opacity="0.5"/>
-  <polygon points="${cx},${cy-d} ${cx+d},${cy} ${cx},${cy+d} ${cx-d},${cy}" fill="#EDCF78" stroke="#B8841A" stroke-width="1.6" fill-opacity="0.5"/>
-  <path d="M ${cx},${cy-d} Q ${cx+pc},${cy-pc} ${cx+d},${cy}" fill="none" stroke="#B8841A" stroke-width="1" opacity="0.55"/>
-  <path d="M ${cx+d},${cy} Q ${cx+pc},${cy+pc} ${cx},${cy+d}" fill="none" stroke="#B8841A" stroke-width="1" opacity="0.55"/>
-  <path d="M ${cx},${cy+d} Q ${cx-pc},${cy+pc} ${cx-d},${cy}" fill="none" stroke="#B8841A" stroke-width="1" opacity="0.55"/>
-  <path d="M ${cx-d},${cy} Q ${cx-pc},${cy-pc} ${cx},${cy-d}" fill="none" stroke="#B8841A" stroke-width="1" opacity="0.55"/>
-  <text x="${cx}" y="${cy+9}" text-anchor="middle" font-family="serif" font-size="20" fill="#B8841A" opacity="0.45">ॐ</text>`;
-
-  for(let i=0;i<12;i++){
-    const h=i+1,rashi=_RASHIS[(lagnaIdx+i)%12],[nx,ny,px,py]=C[i],ps=byH[h];
-    s+=`<text x="${nx}" y="${ny}" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" font-weight="700" fill="#9B6B1A">${h}</text>`;
-    s+=`<text x="${nx}" y="${ny+12}" text-anchor="middle" font-family="serif" font-size="9" fill="#8B1A1A" opacity="0.8">${rashi}</text>`;
-    if(i===0)s+=`<text x="${nx}" y="${ny-8}" text-anchor="middle" font-family="monospace" font-size="7.5" fill="#B8841A" font-weight="700">▲लग्न</text>`;
-    ps.forEach((n,pi)=>s+=`<text x="${px}" y="${py+pi*12}" text-anchor="middle" font-family="serif" font-size="10" font-weight="600" fill="${pColor(n)}">${n}</text>`);
-  }
+function buildSVG(lagnaSign,planets){
+  let li=_R.indexOf(lagnaSign);if(li<0)li=0;
+  const byH={};for(let h=1;h<=12;h++)byH[h]=[];
+  planets.forEach(p=>{const ri=_R.indexOf(p.rashi);if(ri<0)return;const h=((ri-li+12)%12)+1;byH[h].push(p.planetHi?p.planetHi.split(' ')[0]:'');});
+  const W=340,H=340,cx=W/2,cy=H/2,d=98,pc=d*0.7;
+  const C=[[cx,18,cx,40],[W-34,18,W-40,40],[W-16,cy,W-44,cy-8],[W-34,H-16,W-40,H-44],[cx,H-16,cx,H-44],[34,H-16,40,H-44],[16,cy,44,cy-8],[34,18,40,40],[cx,cy-d+24,cx,cy-d+40],[cx+d-24,cy,cx+d-42,cy-6],[cx,cy+d-22,cx,cy+d-6],[cx-d+24,cy,cx-d+6,cy-6]];
+  let s=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;border-radius:10px;"><rect width="${W}" height="${H}" fill="#F6E9BE" rx="10"/><rect x="1.5" y="1.5" width="${W-3}" height="${H-3}" fill="none" stroke="#B8841A" stroke-width="2" rx="9"/><line x1="0" y1="0" x2="${W}" y2="${H}" stroke="#B8841A" stroke-width="1.1"/><line x1="${W}" y1="0" x2="0" y2="${H}" stroke="#B8841A" stroke-width="1.1"/><line x1="${cx}" y1="0" x2="${cx}" y2="${H}" stroke="#B8841A" stroke-width="0.6" opacity="0.5"/><line x1="0" y1="${cy}" x2="${W}" y2="${cy}" stroke="#B8841A" stroke-width="0.6" opacity="0.5"/><polygon points="${cx},${cy-d} ${cx+d},${cy} ${cx},${cy+d} ${cx-d},${cy}" fill="#EDCF78" stroke="#B8841A" stroke-width="1.5" fill-opacity="0.5"/><path d="M ${cx},${cy-d} Q ${cx+pc},${cy-pc} ${cx+d},${cy}" fill="none" stroke="#B8841A" stroke-width="0.9" opacity="0.5"/><path d="M ${cx+d},${cy} Q ${cx+pc},${cy+pc} ${cx},${cy+d}" fill="none" stroke="#B8841A" stroke-width="0.9" opacity="0.5"/><path d="M ${cx},${cy+d} Q ${cx-pc},${cy+pc} ${cx-d},${cy}" fill="none" stroke="#B8841A" stroke-width="0.9" opacity="0.5"/><path d="M ${cx-d},${cy} Q ${cx-pc},${cy-pc} ${cx},${cy-d}" fill="none" stroke="#B8841A" stroke-width="0.9" opacity="0.5"/><text x="${cx}" y="${cy+9}" text-anchor="middle" font-family="serif" font-size="18" fill="#B8841A" opacity="0.4">ॐ</text>`;
+  for(let i=0;i<12;i++){const h=i+1,rashi=_R[(li+i)%12],[nx,ny,px,py]=C[i],ps=byH[h];s+=`<text x="${nx}" y="${ny}" text-anchor="middle" font-family="monospace" font-size="10" font-weight="700" fill="#9B6B1A">${h}</text><text x="${nx}" y="${ny+12}" text-anchor="middle" font-family="serif" font-size="9" fill="#8B1A1A" opacity="0.8">${rashi}</text>`;if(i===0)s+=`<text x="${nx}" y="${ny-8}" text-anchor="middle" font-family="monospace" font-size="7" fill="#B8841A" font-weight="700">▲लग्न</text>`;ps.forEach((n,pi)=>s+=`<text x="${px}" y="${py+pi*12}" text-anchor="middle" font-family="serif" font-size="10" font-weight="600" fill="${pColor(n)}">${n}</text>`);}
   return s+'</svg>';
 }
 
-// Navamsa: each rashi is divided into 9 navamsas
-function buildNavamsaSVG(planets, lagnaJD, lat, lon){
-  // Simplified: each planet moves 9x faster in navamsa
-  const navPlanets=planets.map(p=>{
-    const lon_deg=parseFloat(p.lon)||0;
-    const navLon=((lon_deg*9)%360+360)%360;
-    const rIdx=Math.floor(navLon/30);
-    return{...p,rashi:_RASHIS[rIdx]};
-  });
-  const navLagna=_RASHIS[(Math.floor(((parseFloat(planets[0]?.lon)||0)*9%360)/30)+12)%12]||_RASHIS[0];
-  return buildKundaliSVG(navLagna,navPlanets);
-}
-
-// D10: each rashi divided into 10 parts
-function buildD10SVG(planets){
-  const d10Planets=planets.map(p=>{
-    const lon_deg=parseFloat(p.lon)||0;
-    const d10Lon=((lon_deg*10)%360+360)%360;
-    const rIdx=Math.floor(d10Lon/30);
-    return{...p,rashi:_RASHIS[rIdx]};
-  });
-  const d10Lagna=_RASHIS[Math.floor((parseFloat(planets[0]?.lon||0)*10%360+360)%360/30)];
-  return buildKundaliSVG(d10Lagna||_RASHIS[0],d10Planets);
-}
-
-// ─── MAIN GENERATE ───────────────────────────────
-let G={}; // global kundali data
-
+let G={};
 function generateAll(){
   const dob=document.getElementById('kDob').value;
   const tob=document.getElementById('kTob').value;
@@ -707,7 +394,6 @@ function generateAll(){
   const name=document.getElementById('kName').value.trim();
   if(!dob){alert('कृपया जन्म दिनांक दर्ज करें।');return;}
   if(!place){alert('कृपया जन्म स्थान चुनें।');return;}
-
   const[y,m,d]=dob.split('-').map(Number);
   const[hr,mn]=tob?tob.split(':').map(Number):[12,0];
   const jd=Panchang.toJulianDate(new Date(y,m-1,d,hr,mn));
@@ -716,326 +402,116 @@ function generateAll(){
   const cusps=Panchang.getHouseCusps(jd,lat,lon);
   const tithi=Panchang.getTithi(jd);
   const nak=Panchang.getNakshatra(jd);
-
-  // Fix lagna
   let lagnaSign=lagnaObj.rashiHi;
-  if(!lagnaSign||lagnaSign==='undefined'){lagnaSign=Panchang.getMoonRashi(jd).nameHi;}
-  let lagnaIdx=_RASHIS.indexOf(lagnaSign);if(lagnaIdx<0)lagnaIdx=0;
-
+  if(!lagnaSign||lagnaSign==='undefined')lagnaSign=Panchang.getMoonRashi(jd).nameHi;
+  let lagnaIdx=_R.indexOf(lagnaSign);if(lagnaIdx<0)lagnaIdx=0;
   G={name:name||'जातक',dob,tob:tob||'12:00',place,lat,lon,jd,planets,lagnaSign,lagnaIdx,lagnaObj:{...lagnaObj,rashiHi:lagnaSign},cusps,tithi,nak};
   localStorage.setItem('kundaliReport',JSON.stringify({name:G.name,dob,tob:G.tob,place,lat,lon,jd,planets,lagna:G.lagnaObj,cusps,tithi,nakshatra:nak}));
-
   document.getElementById('genStatus').textContent='✅ कुण्डली तैयार है!';
   setTimeout(()=>document.getElementById('genStatus').textContent='',3000);
-
-  renderKundali();
-  renderGraha();
-  renderDasha();
-  renderYoga();
-  renderShadbala();
-  renderGochar();
-  renderVarsha();
-  renderUpaya();
-  renderSamudrik();
-  renderJatak();
+  renderKundali();renderGraha();renderDasha();renderYoga();renderShadbala();renderGochar();renderVarsha();renderUpaya();renderSamudrik();renderJatak();
 }
 
-// ─── RENDER: KUNDALI SECTION ─────────────────────
 function renderKundali(){
   const{planets,lagnaSign,lagnaIdx,nak,tithi,place,lagnaObj,jd}=G;
-
-  document.getElementById('chartD1').innerHTML=buildKundaliSVG(lagnaSign,planets);
-  document.getElementById('chartD9').innerHTML=buildNavamsaSVG(planets,jd,G.lat,G.lon);
-  document.getElementById('chartD10').innerHTML=buildD10SVG(planets);
-
+  // D1
+  document.getElementById('chartD1').innerHTML=buildSVG(lagnaSign,planets);
+  // D9
+  const d9p=planets.map(p=>{const l=((parseFloat(p.lon)*9)%360+360)%360;return{...p,rashi:_R[Math.floor(l/30)]};});
+  const d9l=_R[Math.floor(((parseFloat(planets[0]?.lon||0)*9)%360+360)%360/30)]||_R[0];
+  document.getElementById('chartD9').innerHTML=buildSVG(d9l,d9p);
+  // D10
+  const d10p=planets.map(p=>{const l=((parseFloat(p.lon)*10)%360+360)%360;return{...p,rashi:_R[Math.floor(l/30)]};});
+  const d10l=_R[Math.floor(((parseFloat(planets[0]?.lon||0)*10)%360+360)%360/30)]||_R[0];
+  document.getElementById('chartD10').innerHTML=buildSVG(d10l,d10p);
   // Planet table
-  const tbody=document.querySelector('#ptbl tbody');
-  tbody.innerHTML=planets.map(p=>{
-    const ri=_RASHIS.indexOf(p.rashi);
-    const h=ri>=0?((ri-lagnaIdx+12)%12)+1:'?';
-    return`<tr><td>${p.planet}</td><td>${p.rashi}</td><td>${h}</td><td>${p.degree}°</td></tr>`;
-  }).join('');
-
-  // Detail rows
-  const dr=document.getElementById('detailRows');
-  const rows=[
-    ['जन्म स्थान',place],
-    ['लग्न',`${lagnaSign} ${parseFloat(lagnaObj.degree||0).toFixed(1)}°`],
-    ['जन्म नक्षत्र',`${nak.nameHi} — पाद ${nak.pada}`],
-    ['तिथि',`${tithi.nameHi} (${tithi.pakshaHi})`],
-    ['चन्द्र राशि',Panchang.getMoonRashi(jd).nameHi],
-    ['सूर्य राशि',Panchang.getSunRashi(jd).nameHi],
-  ];
-  dr.innerHTML=rows.map(([l,v])=>`<div class="d-row"><span>${l}</span><strong>${v}</strong></div>`).join('');
+  document.querySelector('#ptbl tbody').innerHTML=planets.map(p=>{const ri=_R.indexOf(p.rashi);const h=ri>=0?((ri-lagnaIdx+12)%12)+1:'?';return`<tr><td>${p.planet}</td><td>${p.rashi}</td><td>${h}</td><td>${p.degree}°</td></tr>`;}).join('');
+  // Details
+  document.getElementById('detailRows').innerHTML=[['जन्म स्थान',place],['लग्न',`${lagnaSign} ${parseFloat(lagnaObj.degree||0).toFixed(1)}°`],['नक्षत्र',`${nak.nameHi} — पाद ${nak.pada}`],['तिथि',`${tithi.nameHi} (${tithi.pakshaHi})`],['चन्द्र राशि',Panchang.getMoonRashi(jd).nameHi],['सूर्य राशि',Panchang.getSunRashi(jd).nameHi]].map(([l,v])=>`<div class="d-row"><span>${l}</span><strong>${v}</strong></div>`).join('');
 }
 
-// ─── RENDER: GRAHA ───────────────────────────────
 function renderGraha(){
-  const{planets,lagnaIdx,jd}=G;
-  const NAKSH=['अश्विनी','भरणी','कृत्तिका','रोहिणी','मृगशिरा','आर्द्रा','पुनर्वसु','पुष्य','आश्लेषा','मघा','पूर्वाफाल्गुनी','उत्तराफाल्गुनी','हस्त','चित्रा','स्वाती','विशाखा','अनुराधा','ज्येष्ठा','मूल','पूर्वाषाढ़ा','उत्तराषाढ़ा','श्रवण','धनिष्ठा','शतभिषा','पूर्वाभाद्रपद','उत्तराभाद्रपद','रेवती'];
-  const tbody=document.querySelector('#grahaTable tbody');
-  tbody.innerHTML=planets.map(p=>{
-    const ri=_RASHIS.indexOf(p.rashi);
-    const h=ri>=0?((ri-lagnaIdx+12)%12)+1:'?';
-    const deg=parseFloat(p.lon||0);
-    const nIdx=Math.floor(deg/360*27);
-    const state=parseFloat(p.degree)>15?'बली':'सामान्य';
-    return`<tr><td>${p.planet}</td><td>${p.rashi}</td><td>${h}</td><td>${p.degree}°</td><td>${NAKSH[nIdx%27]||'—'}</td><td>${state}</td></tr>`;
-  }).join('');
+  const{planets,lagnaIdx}=G;
+  const NK=['अश्विनी','भरणी','कृत्तिका','रोहिणी','मृगशिरा','आर्द्रा','पुनर्वसु','पुष्य','आश्लेषा','मघा','पूर्वाफाल्गुनी','उत्तराफाल्गुनी','हस्त','चित्रा','स्वाती','विशाखा','अनुराधा','ज्येष्ठा','मूल','पूर्वाषाढ़ा','उत्तराषाढ़ा','श्रवण','धनिष्ठा','शतभिषा','पूर्वाभाद्रपद','उत्तराभाद्रपद','रेवती'];
+  document.querySelector('#grahaTable tbody').innerHTML=planets.map(p=>{const ri=_R.indexOf(p.rashi);const h=ri>=0?((ri-lagnaIdx+12)%12)+1:'?';const nIdx=Math.floor(parseFloat(p.lon||0)/360*27);const state=parseFloat(p.degree)>15?'बली':'सामान्य';return`<tr><td>${p.planet}</td><td>${p.rashi}</td><td>${h}</td><td>${p.degree}°</td><td>${NK[nIdx%27]||'—'}</td><td>${state}</td></tr>`;}).join('');
 }
 
-// ─── RENDER: DASHA ───────────────────────────────
 function renderDasha(){
-  const{jd,nak,dob}=G;
+  const{nak,dob}=G;
   const ORDER=['केतु','शुक्र','सूर्य','चन्द्र','मंगल','राहु','गुरु','शनि','बुध'];
   const YEARS=[7,20,6,10,7,18,16,19,17];
   const COLORS=['#5A3A8A','#1A4C8A','#8B1A1A','#1A4C8A','#8B1A1A','#5A3A8A','#1A6B1A','#5A3A8A','#1A6B1A'];
-
-  // Find starting dasha from nakshatra
-  const NAK_LORD=['केतु','शुक्र','सूर्य','चन्द्र','मंगल','राहु','गुरु','शनि','बुध','केतु','शुक्र','सूर्य','चन्द्र','मंगल','राहु','गुरु','शनि','बुध','केतु','शुक्र','सूर्य','चन्द्र','मंगल','राहु','गुरु','शनि','बुध'];
-  const nakIdx=nak.idx||0;
-  const startLord=NAK_LORD[nakIdx];
-  let startIdx=ORDER.indexOf(startLord);
-  if(startIdx<0)startIdx=0;
-
-  const birthDate=new Date(dob);
-  const today=new Date();
-
-  let rows='';
-  let cur=new Date(birthDate);
-  for(let loop=0;loop<2;loop++){
-    for(let i=0;i<9;i++){
-      const idx=(startIdx+i)%9;
-      const end=new Date(cur);end.setFullYear(end.getFullYear()+YEARS[idx]);
-      const isCurrent=today>=cur&&today<end;
-      const sy=cur.getFullYear(),ey=end.getFullYear();
-      rows+=`<tr${isCurrent?' class="dasha-current"':''}><td style="color:${COLORS[idx]};font-weight:600">${ORDER[idx]}</td><td>${YEARS[idx]} वर्ष</td><td>${sy}</td><td>${ey}</td><td>${isCurrent?'<span style="color:#5ae07e;font-weight:700">● वर्तमान</span>':'—'}</td></tr>`;
-      cur=new Date(end);
-    }
-    if(cur>new Date(today.getFullYear()+10,0,1))break;
-  }
-
-  document.getElementById('dashaContent').innerHTML=`
-    <div class="info-card">
-      <div class="info-card-head">⏳ विंशोत्तरी महादशा — ${G.name}</div>
-      <table class="dasha-table">
-        <thead><tr><th>दशा ग्रह</th><th>अवधि</th><th>आरम्भ</th><th>समाप्ति</th><th>स्थिति</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>`;
+  const NL=['केतु','शुक्र','सूर्य','चन्द्र','मंगल','राहु','गुरु','शनि','बुध','केतु','शुक्र','सूर्य','चन्द्र','मंगल','राहु','गुरु','शनि','बुध','केतु','शुक्र','सूर्य','चन्द्र','मंगल','राहु','गुरु','शनि','बुध'];
+  let startIdx=ORDER.indexOf(NL[nak.idx||0]);if(startIdx<0)startIdx=0;
+  const today=new Date();let rows='';let cur=new Date(dob);
+  for(let loop=0;loop<2;loop++){for(let i=0;i<9;i++){const idx=(startIdx+i)%9;const end=new Date(cur);end.setFullYear(end.getFullYear()+YEARS[idx]);const isCurrent=today>=cur&&today<end;rows+=`<tr${isCurrent?' class="dasha-current"':''}><td style="color:${COLORS[idx]};font-weight:600">${ORDER[idx]}</td><td>${YEARS[idx]} वर्ष</td><td>${cur.getFullYear()}</td><td>${end.getFullYear()}</td><td>${isCurrent?'<span style="color:#5ae07e;font-weight:700">● वर्तमान</span>':'—'}</td></tr>`;cur=new Date(end);}if(cur>new Date(today.getFullYear()+10,0,1))break;}
+  document.getElementById('dashaContent').innerHTML=`<div class="info-card"><div class="info-card-head">⏳ विंशोत्तरी महादशा — ${G.name}</div><table class="dasha-table"><thead><tr><th>दशा ग्रह</th><th>अवधि</th><th>आरम्भ</th><th>समाप्ति</th><th>स्थिति</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
-// ─── RENDER: YOGA/DOSHA ──────────────────────────
 function renderYoga(){
-  const{planets,lagnaIdx,jd}=G;
+  const{planets,lagnaIdx}=G;
   const byH={};for(let h=1;h<=12;h++)byH[h]=[];
-  planets.forEach(p=>{const ri=_RASHIS.indexOf(p.rashi);if(ri>=0){const h=((ri-lagnaIdx+12)%12)+1;byH[h].push(p.planetHi?.split(' ')[0]||'');}});
-
-  const hasP=(h,name)=>byH[h]?.some(n=>n.includes(name));
-  const h1Pl=byH[1]||[],h5Pl=byH[5]||[],h9Pl=byH[9]||[];
-
-  // Check common yogas
-  const yogas=[
-    {name:'गजकेसरी योग',present:hasP(4,'गुरु')||hasP(1,'गुरु')||hasP(7,'गुरु')||hasP(10,'गुरु'),desc:'चन्द्र से केंद्र में गुरु। यश, बुद्धि और सम्पत्ति का योग।'},
-    {name:'राजयोग',present:(byH[1].length>0&&byH[5].length>0)||(byH[9].length>0&&byH[10].length>0),desc:'केंद्र और त्रिकोण के स्वामियों का संबंध। उच्च पद और ख्याति।'},
-    {name:'धन योग',present:byH[2].length>0||byH[11].length>0,desc:'द्वितीय और एकादश भाव में ग्रह। धन और आय में वृद्धि।'},
-    {name:'बुधादित्य योग',present:hasP(byH[1].length>0?1:4,'सूर्य')&&hasP(byH[1].length>0?1:4,'बुध'),desc:'एक ही भाव में सूर्य और बुध। तीव्र बुद्धि और वाकपटुता।'},
-    {name:'चन्द्र-मंगल योग',present:planets.some(p=>p.planetHi?.includes('चन्द्र'))&&planets.some(p=>p.planetHi?.includes('मंगल')),desc:'चन्द्र और मंगल का संयोग। धन अर्जन की शक्ति।'},
-    {name:'पञ्चमहापुरुष योग',present:planets.some(p=>parseFloat(p.degree)>=0&&parseFloat(p.degree)<=5),desc:'ग्रह उच्च या स्व-राशि में। महान व्यक्तित्व का योग।'},
-    {name:'मांगलिक दोष',present:hasP(1,'मंगल')||hasP(2,'मंगल')||hasP(4,'मंगल')||hasP(7,'मंगल')||hasP(8,'मंगल')||hasP(12,'मंगल'),desc:'मंगल 1,2,4,7,8,12 भाव में। विवाह में विलम्ब संभव, उपाय करें।'},
-    {name:'कालसर्प दोष',present:false,desc:'सभी ग्रह राहु-केतु के मध्य। जीवन में संघर्ष, उपाय अनिवार्य।'},
-    {name:'पितृ दोष',present:hasP(9,'शनि')||hasP(9,'राहु')||hasP(10,'शनि'),desc:'नवम भाव में पाप ग्रह। पितृ तर्पण करें।'},
-    {name:'शश योग',present:hasP(1,'शनि')||hasP(4,'शनि')||hasP(7,'शनि')||hasP(10,'शनि'),desc:'शनि केंद्र में। दीर्घायु, अनुशासन और न्याय-प्रियता।'},
-  ];
-
-  // Check Kalsarpa
-  const rahu=planets.find(p=>p.planet?.includes('Rahu'));
-  const ketu=planets.find(p=>p.planet?.includes('Ketu'));
-  if(rahu&&ketu){
-    const rh=_RASHIS.indexOf(rahu.rashi),kh=_RASHIS.indexOf(ketu.rashi);
-    const allIn=planets.filter(p=>!p.planet?.includes('Rahu')&&!p.planet?.includes('Ketu'))
-      .every(p=>{const ri=_RASHIS.indexOf(p.rashi);return ri>=0&&((ri>=rh&&ri<=kh)||(ri>=kh&&ri<=rh));});
-    if(allIn)yogas[7].present=true;
-  }
-
-  document.getElementById('yogaContent').innerHTML=`<div class="yoga-grid">${yogas.map(y=>`
-    <div class="yoga-item">
-      <span class="yoga-status ${y.present?'yoga-present':'yoga-absent'}">${y.present?'✓ उपस्थित':'✗ अनुपस्थित'}</span>
-      <div class="yoga-name">${y.name}</div>
-      <div class="yoga-desc">${y.desc}</div>
-    </div>`).join('')}</div>`;
+  planets.forEach(p=>{const ri=_R.indexOf(p.rashi);if(ri>=0){const h=((ri-lagnaIdx+12)%12)+1;byH[h].push(p.planetHi?.split(' ')[0]||'');}});
+  const hasP=(h,n)=>byH[h]?.some(x=>x.includes(n));
+  const yogas=[{name:'गजकेसरी योग',present:hasP(1,'गुरु')||hasP(4,'गुरु')||hasP(7,'गुरु')||hasP(10,'गुरु'),desc:'चन्द्र से केंद्र में गुरु। यश और बुद्धि का योग।'},{name:'राजयोग',present:(byH[1].length>0&&byH[5].length>0)||(byH[9].length>0&&byH[10].length>0),desc:'केंद्र-त्रिकोण संबंध। उच्च पद और ख्याति।'},{name:'धन योग',present:byH[2].length>0||byH[11].length>0,desc:'द्वितीय-एकादश में ग्रह। धन वृद्धि।'},{name:'मांगलिक दोष',present:hasP(1,'मंगल')||hasP(2,'मंगल')||hasP(4,'मंगल')||hasP(7,'मंगल')||hasP(8,'मंगल')||hasP(12,'मंगल'),desc:'मंगल 1,2,4,7,8,12 भाव में। विवाह में विलम्ब।'},{name:'पितृ दोष',present:hasP(9,'शनि')||hasP(9,'राहु'),desc:'नवम भाव में पाप ग्रह। पितृ तर्पण करें।'},{name:'शश योग',present:hasP(1,'शनि')||hasP(4,'शनि')||hasP(7,'शनि')||hasP(10,'शनि'),desc:'शनि केंद्र में। दीर्घायु और अनुशासन।'}];
+  document.getElementById('yogaContent').innerHTML=`<div class="yoga-grid">${yogas.map(y=>`<div class="yoga-item"><span class="yoga-status ${y.present?'yoga-present':'yoga-absent'}">${y.present?'✓ उपस्थित':'✗ अनुपस्थित'}</span><div class="yoga-name">${y.name}</div><div class="yoga-desc">${y.desc}</div></div>`).join('')}</div>`;
 }
 
-// ─── RENDER: SHADBALA ────────────────────────────
 function renderShadbala(){
-  const{planets}=G;
-  const html=planets.map(p=>{
-    const deg=parseFloat(p.degree);
-    let s=50;
-    if(deg<5||deg>25)s+=15;
-    if(deg>=8&&deg<=22)s+=20;
-    s=Math.min(98,s+(deg%7)*3);
-    const color=s>75?'linear-gradient(90deg,#1A6B1A,#4CAF50)':s>50?'linear-gradient(90deg,#C8922A,#E6A93A)':'linear-gradient(90deg,#8B1A1A,#C84A4A)';
-    return`<div class="str-row">
-      <div class="str-label">${p.planetHi?.split(' ')[0]||p.planet}</div>
-      <div class="str-bg"><div class="str-fill" style="width:${s}%;background:${color}"><span class="str-pct">${s}%</span></div></div>
-    </div>`;
-  }).join('');
-  document.getElementById('shadbalaContent').innerHTML=`<div class="sec-card open"><div class="sec-card-body" style="display:block">${html}</div></div>`;
+  const html=G.planets.map(p=>{let s=50;const deg=parseFloat(p.degree);if(deg<5||deg>25)s+=15;if(deg>=8&&deg<=22)s+=20;s=Math.min(98,s+(deg%7)*3);const color=s>75?'linear-gradient(90deg,#1A6B1A,#4CAF50)':s>50?'linear-gradient(90deg,#C8922A,#E6A93A)':'linear-gradient(90deg,#8B1A1A,#C84A4A)';return`<div class="str-row"><div class="str-label">${p.planetHi?.split(' ')[0]||p.planet}</div><div class="str-bg"><div class="str-fill" style="width:${s}%;background:${color}"><span class="str-pct">${s}%</span></div></div></div>`;}).join('');
+  document.getElementById('shadbalaContent').innerHTML=`<div class="info-card" style="padding:1.2rem">${html}</div>`;
 }
 
-// ─── RENDER: GOCHAR ──────────────────────────────
 function renderGochar(){
-  const{planets,lagnaIdx,jd}=G;
-  const today=new Date();
-  const todayJD=Panchang.toJulianDate(today);
-  const transitPlanets=Panchang.getPlanetaryPositions(todayJD);
-
-  const effects=[
-    'कार्यक्षेत्र में परिवर्तन संभव','आर्थिक स्थिति में सुधार','पारिवारिक सुख में वृद्धि',
-    'यात्रा का योग','स्वास्थ्य पर ध्यान दें','विवाह या प्रेम प्रसंग','उच्च शिक्षा अनुकूल',
-    'व्यापार में लाभ','नौकरी में पदोन्नति','संतान सुख','धार्मिक कार्य शुभ'
-  ];
-
-  const html=transitPlanets.slice(0,8).map((p,i)=>{
-    const ri=_RASHIS.indexOf(p.rashi);
-    const h=ri>=0?((ri-lagnaIdx+12)%12)+1:'?';
-    return`<div class="transit-item">
-      <div class="transit-planet">${p.planet}</div>
-      <div class="transit-pos">${p.rashi} — भाव ${h} | ${p.degree}°</div>
-      <div class="transit-effect">${effects[i%effects.length]}</div>
-    </div>`;
-  }).join('');
-  document.getElementById('transitGrid').innerHTML=html;
+  const tJD=Panchang.toJulianDate(new Date());
+  const tp=Panchang.getPlanetaryPositions(tJD);
+  const fx=['कार्यक्षेत्र में परिवर्तन','आर्थिक सुधार','पारिवारिक सुख','यात्रा का योग','स्वास्थ्य ध्यान','विवाह/प्रेम योग','शिक्षा अनुकूल','व्यापार लाभ'];
+  document.getElementById('transitGrid').innerHTML=tp.slice(0,8).map((p,i)=>{const ri=_R.indexOf(p.rashi);const h=ri>=0?((ri-G.lagnaIdx+12)%12)+1:'?';return`<div class="transit-item"><div class="transit-planet">${p.planet}</div><div class="transit-pos">${p.rashi} — भाव ${h} | ${p.degree}°</div><div class="transit-effect">${fx[i%fx.length]}</div></div>`;}).join('');
 }
 
-// ─── RENDER: VARSHA ──────────────────────────────
 function renderVarsha(){
-  const{dob,lat,lon,jd,lagnaSign,planets}=G;
-  const[y,m,d]=dob.split('-').map(Number);
-  const thisYear=new Date().getFullYear();
-  const varshaDate=new Date(thisYear,m-1,d,12,0);
-  const varshaJD=Panchang.toJulianDate(varshaDate);
-  const varshaPlanets=Panchang.getPlanetaryPositions(varshaJD);
-
-  const chartHTML=buildKundaliSVG(lagnaSign,varshaPlanets);
-  document.getElementById('varshaContent').innerHTML=`
-    <div class="varsha-row">
-      <div>
-        <div class="info-card-head" style="padding:10px 14px;background:rgba(200,146,42,0.1);border-radius:10px 10px 0 0;border:1px solid rgba(200,146,42,0.25)">📅 वर्ष ${thisYear} — वार्षिक कुण्डली</div>
-        <div class="varsha-chart-box">${chartHTML}</div>
-      </div>
-      <div class="info-card">
-        <div class="info-card-head">वर्ष ${thisYear} का फल</div>
-        <div class="detail-rows">
-          ${['जनवरी-मार्च','अप्रैल-जून','जुलाई-सितम्बर','अक्टूबर-दिसम्बर'].map((q,i)=>`
-          <div class="d-row"><span>${q}</span><strong style="font-size:0.78rem">${['कार्य में प्रगति, नया अवसर','यात्रा और शिक्षा अनुकूल','परिवार और स्वास्थ्य पर ध्यान','आर्थिक लाभ, उत्सव'][i]}</strong></div>`).join('')}
-        </div>
-      </div>
-    </div>`;
+  const[y,m,d]=G.dob.split('-').map(Number);
+  const ty=new Date().getFullYear();
+  const vJD=Panchang.toJulianDate(new Date(ty,m-1,d,12,0));
+  const vp=Panchang.getPlanetaryPositions(vJD);
+  document.getElementById('varshaContent').innerHTML=`<div class="varsha-row"><div><div style="padding:8px 12px;background:rgba(200,146,42,0.1);border-radius:8px 8px 0 0;color:#f2d472;font-family:'Tiro Devanagari Sanskrit',serif;font-size:0.85rem">📅 वर्ष ${ty} — वार्षिक कुण्डली</div><div class="varsha-chart-box">${buildSVG(G.lagnaSign,vp)}</div></div><div class="info-card"><div class="info-card-head">वर्ष ${ty} का फल</div><div class="detail-rows">${['जनवरी-मार्च','अप्रैल-जून','जुलाई-सितम्बर','अक्टूबर-दिसम्बर'].map((q,i)=>`<div class="d-row"><span>${q}</span><strong style="font-size:0.78rem">${['कार्य में प्रगति','यात्रा और शिक्षा','परिवार और स्वास्थ्य','आर्थिक लाभ'][i]}</strong></div>`).join('')}</div></div></div>`;
 }
 
-// ─── RENDER: UPAYA ───────────────────────────────
 function renderUpaya(){
-  const{planets,lagnaSign}=G;
-  const remedies=[
-    {planet:'सूर्य ☀️',color:'#C8922A',hi:'रविवार को गेहूं, गुड़, तांबा दान। सूर्योदय पर जल चढ़ाएं। आदित्य हृदय स्तोत्र का पाठ।',lk:'तांबे का सिक्का बहते जल में प्रवाहित करें।',badge:'उच्च'},
-    {planet:'चन्द्र 🌙',color:'#1A4C8A',hi:'सोमवार व्रत। माँ को दूध-चावल। चांदी का कड़ा। शिव अभिषेक।',lk:'सफेद चीजें दान करें, माँ का आशीर्वाद लें।',badge:'उच्च'},
-    {planet:'मंगल ♂️',color:'#8B1A1A',hi:'मंगलवार हनुमान चालीसा। लाल दाल दान। मूंगा रत्न धारण।',lk:'मिट्टी का तेल जलाएं। भूमि पूजन करें।',badge:'मध्यम'},
-    {planet:'बुध ☿',color:'#1A6B1A',hi:'बुधवार हरी वस्तु दान। गणेश पूजा। पन्ना रत्न।',lk:'हरा रुमाल रखें। कन्याओं को भोजन।',badge:'मध्यम'},
-    {planet:'गुरु ♃',color:'#1A6B1A',hi:'गुरुवार केले का पेड़ लगाएं। पीपल पूजा। पुखराज।',lk:'गुरुओं का सम्मान। पीले कपड़े दान।',badge:'उच्च'},
-    {planet:'शुक्र ♀',color:'#1A4C8A',hi:'शुक्रवार गाय सेवा। श्वेत वस्त्र दान। हीरा/ओपल।',lk:'इत्र और सफेद फूल चढ़ाएं।',badge:'मध्यम'},
-    {planet:'शनि ♄',color:'#5A3A8A',hi:'शनिवार तेल, तिल दान। पीपल में तेल। नीलम रत्न।',lk:'काले कुत्ते को रोटी खिलाएं।',badge:'उच्च'},
-    {planet:'राहु ☊',color:'#5A3A8A',hi:'राहु काल में भोजन न करें। नीली वस्तु दान। गोमेद।',lk:'नारियल बहते जल में प्रवाहित।',badge:'मध्यम'},
-  ];
-  document.getElementById('upayaContent').innerHTML=`<div class="rem-grid">${remedies.map(r=>`
-    <div class="rem-card" style="--rc:${r.color}">
-      <span class="rem-badge">${r.badge}</span>
-      <div class="rem-planet">${r.planet}</div>
-      <div class="rem-text">${r.hi}</div>
-      <div class="rem-lk">📿 लाल किताब: ${r.lk}</div>
-    </div>`).join('')}</div>`;
+  const remedies=[{planet:'सूर्य ☀️',color:'#C8922A',hi:'रविवार को गेहूं, गुड़, तांबा दान। सूर्योदय पर जल चढ़ाएं।',lk:'तांबे का सिक्का बहते जल में प्रवाहित करें।',badge:'उच्च'},{planet:'चन्द्र 🌙',color:'#1A4C8A',hi:'सोमवार व्रत। माँ को दूध-चावल। चांदी का कड़ा।',lk:'सफेद चीजें दान करें, माँ का आशीर्वाद लें।',badge:'उच्च'},{planet:'मंगल ♂️',color:'#8B1A1A',hi:'मंगलवार हनुमान चालीसा। लाल दाल दान।',lk:'मिट्टी का तेल जलाएं। भूमि पूजन।',badge:'मध्यम'},{planet:'बुध ☿',color:'#1A6B1A',hi:'बुधवार हरी वस्तु दान। गणेश पूजा।',lk:'हरा रुमाल रखें।',badge:'मध्यम'},{planet:'गुरु ♃',color:'#1A6B1A',hi:'गुरुवार केले का पेड़ लगाएं। पीपल पूजा।',lk:'गुरुओं का सम्मान। पीले कपड़े दान।',badge:'उच्च'},{planet:'शुक्र ♀',color:'#1A4C8A',hi:'शुक्रवार गाय सेवा। श्वेत वस्त्र दान।',lk:'इत्र और सफेद फूल चढ़ाएं।',badge:'मध्यम'},{planet:'शनि ♄',color:'#5A3A8A',hi:'शनिवार तेल, तिल दान। पीपल में तेल।',lk:'काले कुत्ते को रोटी खिलाएं।',badge:'उच्च'},{planet:'राहु ☊',color:'#5A3A8A',hi:'राहु काल में भोजन न करें। नीली वस्तु दान।',lk:'नारियल बहते जल में प्रवाहित।',badge:'मध्यम'}];
+  document.getElementById('upayaContent').innerHTML=`<div class="rem-grid">${remedies.map(r=>`<div class="rem-card" style="--rc:${r.color}"><span class="rem-badge">${r.badge}</span><div class="rem-planet">${r.planet}</div><div class="rem-text">${r.hi}</div><div class="rem-lk">📿 लाल किताब: ${r.lk}</div></div>`).join('')}</div>`;
 }
 
-// ─── RENDER: SAMUDRIK ────────────────────────────
 function renderSamudrik(){
-  const{lagnaSign,nak,planets}=G;
-  const SM={
-    'मेष':   {face:'लम्बाकार,माथा चौड़ा',mark:'दाहिने कंधे पर',palm:'अंगूठा लम्बा, ऊर्जावान',nature:'साहसी, नेता'},
-    'वृषभ':  {face:'गोल, चौड़ी ठोड़ी',mark:'गले या कंठ पर',palm:'हथेली चौड़ी, भाग्यरेखा गहरी',nature:'धैर्यवान, कलाप्रेमी'},
-    'मिथुन': {face:'अंडाकार, चमकदार आंखें',mark:'भुजाओं पर',palm:'लम्बी उंगलियां, बुद्धि रेखा स्पष्ट',nature:'बुद्धिमान, वाचाल'},
-    'कर्क':  {face:'गोल, मृदु भाव',mark:'वक्षस्थल पर',palm:'उभरी हुई चंद्र पर्वत',nature:'भावुक, मातृप्रेमी'},
-    'सिंह':  {face:'तेजस्वी, विशाल नेत्र',mark:'पीठ या हृदय पर',palm:'सूर्य पर्वत उभरा',nature:'नेतृत्वकर्ता, उदार'},
-    'कन्या': {face:'सुडौल, सूक्ष्म लक्षण',mark:'कमर या पेट पर',palm:'बुध पर्वत विकसित',nature:'विश्लेषक, सेवाभावी'},
-    'तुला':  {face:'सुंदर, सौम्य',mark:'कमर के नीचे',palm:'शुक्र पर्वत पूर्ण',nature:'न्यायप्रिय, सौंदर्यप्रेमी'},
-    'वृश्चिक':{face:'तीव्र दृष्टि, गहरी आंखें',mark:'गुप्तांग क्षेत्र में',palm:'जीवन रेखा गहरी, मंगल पर्वत',nature:'रहस्यमय, शक्तिशाली'},
-    'धनु':   {face:'आयताकार, खुला भाव',mark:'जांघ पर',palm:'बृहस्पति पर्वत',nature:'दार्शनिक, यात्राप्रिय'},
-    'मकर':   {face:'लम्बा, गंभीर',mark:'घुटने के पास',palm:'शनि पर्वत विकसित',nature:'परिश्रमी, अनुशासित'},
-    'कुम्भ': {face:'बौद्धिक, विशाल माथा',mark:'पिंडलियों पर',palm:'विवाह रेखाएं स्पष्ट',nature:'मानवतावादी, अभिनव'},
-    'मीन':   {face:'स्निग्ध, स्वप्निल',mark:'पैरों पर',palm:'चंद्र पर्वत, सहज ज्ञान',nature:'संवेदनशील, आध्यात्मिक'},
-  };
+  const SM={'मेष':{face:'लम्बाकार, माथा चौड़ा',mark:'दाहिने कंधे पर',palm:'अंगूठा लम्बा',nature:'साहसी, नेता'},'वृषभ':{face:'गोल, चौड़ी ठोड़ी',mark:'गले पर',palm:'हथेली चौड़ी',nature:'धैर्यवान'},'मिथुन':{face:'अंडाकार आंखें',mark:'भुजाओं पर',palm:'लम्बी उंगलियां',nature:'बुद्धिमान'},'कर्क':{face:'गोल, मृदु',mark:'वक्षस्थल',palm:'चंद्र पर्वत',nature:'भावुक'},'सिंह':{face:'तेजस्वी नेत्र',mark:'पीठ पर',palm:'सूर्य पर्वत',nature:'नेता, उदार'},'कन्या':{face:'सुडौल',mark:'कमर पर',palm:'बुध पर्वत',nature:'विश्लेषक'},'तुला':{face:'सुंदर',mark:'कमर के नीचे',palm:'शुक्र पर्वत',nature:'न्यायप्रिय'},'वृश्चिक':{face:'तीव्र दृष्टि',mark:'गुप्तांग',palm:'मंगल पर्वत',nature:'रहस्यमय'},'धनु':{face:'आयताकार',mark:'जांघ पर',palm:'बृहस्पति पर्वत',nature:'दार्शनिक'},'मकर':{face:'लम्बा',mark:'घुटने',palm:'शनि पर्वत',nature:'परिश्रमी'},'कुम्भ':{face:'विशाल माथा',mark:'पिंडलियां',palm:'विवाह रेखाएं',nature:'मानवतावादी'},'मीन':{face:'स्निग्ध',mark:'पैरों पर',palm:'चंद्र पर्वत',nature:'संवेदनशील'}};
   const s=SM[G.lagnaSign]||SM['मेष'];
-  document.getElementById('samudrikContent').innerHTML=`
-    <div class="id-grid">
-      <div class="id-card"><div class="id-icon">😊</div><div class="id-title">मुखाकृति</div><div class="id-val">${s.face}</div><div class="id-note">लग्न राशि से</div></div>
-      <div class="id-card"><div class="id-icon">🔴</div><div class="id-title">शरीर चिह्न</div><div class="id-val">${s.mark}</div><div class="id-note">लग्न भाव विश्लेषण</div></div>
-      <div class="id-card"><div class="id-icon">🖐️</div><div class="id-title">हस्तरेखा</div><div class="id-val">${s.palm}</div><div class="id-note">लग्नेश से</div></div>
-      <div class="id-card"><div class="id-icon">🌟</div><div class="id-title">स्वभाव</div><div class="id-val">${s.nature}</div><div class="id-note">लग्न + चन्द्र</div></div>
-    </div>`;
+  document.getElementById('samudrikContent').innerHTML=`<div class="id-grid"><div class="id-card"><div class="id-icon">😊</div><div class="id-title">मुखाकृति</div><div class="id-val">${s.face}</div><div class="id-note">लग्न से</div></div><div class="id-card"><div class="id-icon">🔴</div><div class="id-title">शरीर चिह्न</div><div class="id-val">${s.mark}</div><div class="id-note">लग्न भाव</div></div><div class="id-card"><div class="id-icon">🖐️</div><div class="id-title">हस्तरेखा</div><div class="id-val">${s.palm}</div><div class="id-note">लग्नेश से</div></div><div class="id-card"><div class="id-icon">🌟</div><div class="id-title">स्वभाव</div><div class="id-val">${s.nature}</div><div class="id-note">लग्न+चन्द्र</div></div></div>`;
 }
 
-// ─── RENDER: JATAK ───────────────────────────────
 function renderJatak(){
   const{lagnaSign,nak,dob}=G;
   const DIR={'मेष':'पूर्व','वृषभ':'दक्षिण','मिथुन':'पश्चिम','कर्क':'उत्तर','सिंह':'पूर्व','कन्या':'दक्षिण','तुला':'पश्चिम','वृश्चिक':'उत्तर','धनु':'ईशान','मकर':'नैऋत्य','कुम्भ':'वायव्य','मीन':'आग्नेय'};
   const TREE={'अश्विनी':'कुचला','भरणी':'आंवला','कृत्तिका':'गूलर','रोहिणी':'जामुन','मृगशिरा':'खैर','आर्द्रा':'शीशम','पुनर्वसु':'बाँस','पुष्य':'पीपल','आश्लेषा':'नागकेसर','मघा':'बरगद','पूर्वाफाल्गुनी':'पलाश','उत्तराफाल्गुनी':'पाकर','हस्त':'रीठा','चित्रा':'बेल','स्वाती':'अर्जुन','विशाखा':'विकंकत','अनुराधा':'मौलश्री','ज्येष्ठा':'चीड़','मूल':'राल','पूर्वाषाढ़ा':'अशोक','उत्तराषाढ़ा':'कटहल','श्रवण':'मदार','धनिष्ठा':'शमी','शतभिषा':'कदम्ब','पूर्वाभाद्रपद':'आम','उत्तराभाद्रपद':'नीम','रेवती':'महुआ'};
   const GEM={'मेष':'मूंगा','वृषभ':'हीरा','मिथुन':'पन्ना','कर्क':'मोती','सिंह':'माणिक','कन्या':'पन्ना','तुला':'हीरा','वृश्चिक':'मूंगा','धनु':'पुखराज','मकर':'नीलम','कुम्भ':'नीलम','मीन':'पुखराज'};
-  const DEITY={'मेष':'हनुमान जी','वृषभ':'माँ लक्ष्मी','मिथुन':'गणेश जी','कर्क':'माँ दुर्गा','सिंह':'सूर्य देव','कन्या':'माँ सरस्वती','तुला':'माँ लक्ष्मी','वृश्चिक':'काली माँ','धनु':'भगवान विष्णु','मकर':'शनि देव','कुम्भ':'शनि देव','मीन':'भगवान विष्णु'};
+  const DEITY={'मेष':'हनुमान','वृषभ':'लक्ष्मी','मिथुन':'गणेश','कर्क':'दुर्गा','सिंह':'सूर्य','कन्या':'सरस्वती','तुला':'लक्ष्मी','वृश्चिक':'काली','धनु':'विष्णु','मकर':'शनि','कुम्भ':'शनि','मीन':'विष्णु'};
   const age=new Date().getFullYear()-parseInt(dob.split('-')[0]);
-  const life=age<18?'शिक्षा काल':age<30?'युवावस्था — करियर':age<45?'गृहस्थाश्रम':age<60?'व्यवसाय स्थिरता':'प्रतिष्ठा काल';
-
-  document.getElementById('jatakContent').innerHTML=`<div class="id-grid">
-    <div class="id-card"><div class="id-icon">🧭</div><div class="id-title">घर की दिशा</div><div class="id-val">${DIR[lagnaSign]||'पूर्व'}</div><div class="id-note">लग्न राशि से</div></div>
-    <div class="id-card"><div class="id-icon">🌳</div><div class="id-title">निकटवर्ती वृक्ष</div><div class="id-val">${TREE[nak.nameHi]||'पीपल'}</div><div class="id-note">जन्म नक्षत्र से</div></div>
-    <div class="id-card"><div class="id-icon">💎</div><div class="id-title">शुभ रत्न</div><div class="id-val">${GEM[lagnaSign]||'मोती'}</div><div class="id-note">लग्नेश रत्न</div></div>
-    <div class="id-card"><div class="id-icon">🔔</div><div class="id-title">आराध्य देव</div><div class="id-val">${DEITY[lagnaSign]||'शिव जी'}</div><div class="id-note">लग्न स्वामी से</div></div>
-    <div class="id-card"><div class="id-icon">⏳</div><div class="id-title">वर्तमान काल</div><div class="id-val">${life}</div><div class="id-note">आयु ${age} वर्ष</div></div>
-    <div class="id-card"><div class="id-icon">🎨</div><div class="id-title">शुभ रंग</div><div class="id-val">${{'मेष':'लाल','वृषभ':'हरा','मिथुन':'पीला','कर्क':'सफेद','सिंह':'नारंगी','कन्या':'हरा','तुला':'नीला','वृश्चिक':'लाल','धनु':'पीला','मकर':'काला/नीला','कुम्भ':'आसमानी','मीन':'पीला'}[lagnaSign]||'सफेद'}</div><div class="id-note">लग्न अनुसार</div></div>
-  </div>`;
+  const life=age<18?'शिक्षा काल':age<30?'युवावस्था':age<45?'गृहस्थाश्रम':age<60?'स्थिरता काल':'प्रतिष्ठा काल';
+  document.getElementById('jatakContent').innerHTML=`<div class="id-grid"><div class="id-card"><div class="id-icon">🧭</div><div class="id-title">घर की दिशा</div><div class="id-val">${DIR[lagnaSign]||'पूर्व'}</div><div class="id-note">लग्न से</div></div><div class="id-card"><div class="id-icon">🌳</div><div class="id-title">निकट वृक्ष</div><div class="id-val">${TREE[nak.nameHi]||'पीपल'}</div><div class="id-note">नक्षत्र से</div></div><div class="id-card"><div class="id-icon">💎</div><div class="id-title">शुभ रत्न</div><div class="id-val">${GEM[lagnaSign]||'मोती'}</div><div class="id-note">लग्नेश</div></div><div class="id-card"><div class="id-icon">🔔</div><div class="id-title">आराध्य देव</div><div class="id-val">${DEITY[lagnaSign]||'शिव'}</div><div class="id-note">लग्न स्वामी</div></div><div class="id-card"><div class="id-icon">⏳</div><div class="id-title">वर्तमान काल</div><div class="id-val">${life}</div><div class="id-note">आयु ${age} वर्ष</div></div><div class="id-card"><div class="id-icon">🎨</div><div class="id-title">शुभ रंग</div><div class="id-val">${{'मेष':'लाल','वृषभ':'हरा','मिथुन':'पीला','कर्क':'सफेद','सिंह':'नारंगी','कन्या':'हरा','तुला':'नीला','वृश्चिक':'लाल','धनु':'पीला','मकर':'काला','कुम्भ':'आसमानी','मीन':'पीला'}[lagnaSign]||'सफेद'}</div><div class="id-note">लग्न</div></div></div>`;
 }
 
-// ─── PRASHNA ─────────────────────────────────────
 function calcPrashna(){
   const q=document.getElementById('prashnaQ').value.trim();
-  if(!q){alert('कृपया अपना प्रश्न लिखें।');return;}
-  const now=new Date();
-  const jd=Panchang.toJulianDate(now);
-  const p=Panchang.getPlanetaryPositions(jd);
-  const t=Panchang.getTithi(jd);
-  const n=Panchang.getNakshatra(jd);
-  const answers=['अनुकूल संकेत हैं। धैर्य रखें, सफलता निकट है।','थोड़ा विलम्ब संभव। उपाय करें और प्रयास जारी रखें।','शुभ योग बन रहे हैं। आगे बढ़ें।','सावधानी आवश्यक। विचार-विमर्श के बाद निर्णय लें।','परिवार का सहयोग मिलेगा। मनोकामना पूर्ण होगी।'];
-  const idx=Math.floor(jd)%answers.length;
-  document.getElementById('prashnaResult').innerHTML=`
-    <div class="sec-card open"><div class="sec-card-body" style="display:block">
-      <div style="color:#f2d472;font-family:'Tiro Devanagari Sanskrit',serif;margin-bottom:0.5rem">प्रश्न समय: ${now.toLocaleString('hi-IN')}</div>
-      <div style="font-size:0.82rem;color:rgba(242,212,114,0.6);margin-bottom:0.8rem">तिथि: ${t.nameHi} | नक्षत्र: ${n.nameHi}</div>
-      <div style="font-size:1rem;color:#5ae07e;font-family:'Tiro Devanagari Sanskrit',serif">🔮 ${answers[idx]}</div>
-    </div></div>`;
+  if(!q){alert('कृपया प्रश्न लिखें।');return;}
+  const jd=Panchang.toJulianDate(new Date());
+  const t=Panchang.getTithi(jd),n=Panchang.getNakshatra(jd);
+  const ans=['अनुकूल संकेत हैं। धैर्य रखें।','थोड़ा विलम्ब संभव। उपाय करें।','शुभ योग बन रहे हैं।','सावधानी आवश्यक।','मनोकामना पूर्ण होगी।'];
+  document.getElementById('prashnaResult').innerHTML=`<div class="info-card" style="padding:1.2rem;margin-top:1rem"><div style="color:#f2d472;font-family:'Tiro Devanagari Sanskrit',serif;margin-bottom:0.4rem">तिथि: ${t.nameHi} | नक्षत्र: ${n.nameHi}</div><div style="font-size:1rem;color:#5ae07e;font-family:'Tiro Devanagari Sanskrit',serif">🔮 ${ans[Math.floor(jd)%ans.length]}</div></div>`;
 }
 
-// ─── INIT ─────────────────────────────────────────
 createStars();
-
-// Restore saved kundali if exists
+// Restore saved
 const saved=localStorage.getItem('kundaliReport');
-if(saved){try{const d=JSON.parse(saved);if(d.dob){
-  document.getElementById('kDob').value=d.dob;
-  document.getElementById('kTob').value=d.tob||'12:00';
-  document.getElementById('kPlace').value=d.place||'';
-  document.getElementById('kLat').value=d.lat||28.6139;
-  document.getElementById('kLon').value=d.lon||77.2090;
-  document.getElementById('kName').value=d.name||'';
-}}catch(e){}}
+if(saved){try{const d=JSON.parse(saved);if(d.dob){document.getElementById('kDob').value=d.dob;document.getElementById('kTob').value=d.tob||'12:00';document.getElementById('kPlace').value=d.place||'';document.getElementById('kLat').value=d.lat||28.6139;document.getElementById('kLon').value=d.lon||77.2090;document.getElementById('kName').value=d.name||'';}}catch(e){}}
 </script>
 </body>
 </html>
