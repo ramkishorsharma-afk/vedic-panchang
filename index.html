@@ -1,423 +1,816 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>वैदिक पंचांग & कुंडली</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Janam Kundli — Complete Vedic Birth Chart</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --bg:#07070f;--card:#111120;--card2:#161630;--border:#d4952a20;--border-b:#d4952a55;
+  --accent:#d4952a;--accent-b:#f0b840;--red:#c44b2c;--text:#ede6d6;--text2:#8a7f96;--text3:#5a5068;
+  --benefic:#4ade80;--malefic:#f87171;--neutral:#60a5fa;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh}
+h1,h2,h3,h4{font-family:'Cinzel',serif}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border-b);border-radius:3px}
 
-        :root {
-            --bg-dark: #0b1026; /* Deep space blue */
-            --bg-card: #1a1f3c; /* Lighter space blue for cards */
-            --bg-input: #252b4d;
-            --primary: #FFD700; /* Gold for astrology */
-            --secondary: #9933FF; /* Purple for cosmic feel */
-            --text: #ffffff;
-            --muted: #a0aaba;
-            --danger: #ff4757;
-            --success: #2ecc71;
-            --shadow: 0 4px 15px rgba(0,0,0,0.4);
-        }
+/* Loading */
+#loader{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s,visibility .8s}
+#loader.hide{opacity:0;visibility:hidden}
+.mandala-spin{width:120px;height:120px;border-radius:50%;border:2px solid var(--border-b);position:relative;animation:spin 3s linear infinite}
+.mandala-spin::before,.mandala-spin::after{content:'';position:absolute;inset:8px;border-radius:50%;border:1px solid var(--border-b)}
+.mandala-spin::before{inset:16px;animation:spin 2s linear infinite reverse}
+.mandala-spin::after{inset:24px;border-style:dashed;animation:spin 4s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text);
-            line-height: 1.6;
-            overflow-x: hidden;
-            /* Starry background effect */
-            background-image: radial-gradient(white 1px, transparent 1px);
-            background-size: 40px 40px;
-        }
+/* Background effects */
+.bg-orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.15;pointer-events:none;z-index:0}
+.bg-orb-1{width:500px;height:500px;background:radial-gradient(circle,var(--accent),transparent);top:-100px;left:-100px;animation:drift1 20s ease-in-out infinite}
+.bg-orb-2{width:400px;height:400px;background:radial-gradient(circle,var(--red),transparent);bottom:-50px;right:-50px;animation:drift2 25s ease-in-out infinite}
+.bg-orb-3{width:300px;height:300px;background:radial-gradient(circle,#4a3080,transparent);top:50%;left:50%;animation:drift3 30s ease-in-out infinite}
+@keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(80px,60px)}}
+@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-60px,-80px)}}
+@keyframes drift3{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-30%,-40%)}}
 
-        .app-container {
-            width: 100%;
-            max-width: 480px;
-            margin: 0 auto;
-            min-height: 100vh;
-            position: relative;
-            padding-bottom: 80px; /* Space for bottom nav */
-        }
+/* Floating particles */
+.particle{position:fixed;width:2px;height:2px;background:var(--accent);border-radius:50%;opacity:0;pointer-events:none;z-index:0;animation:float-up linear infinite}
+@keyframes float-up{0%{opacity:0;transform:translateY(0)}10%{opacity:.6}90%{opacity:.6}100%{opacity:0;transform:translateY(-100vh)}}
 
-        /* Header */
-        header {
-            text-align: center;
-            padding: 20px;
-            background: rgba(11, 16, 38, 0.8);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        header h1 { font-size: 1.5rem; color: var(--primary); }
-        header p { font-size: 0.9rem; color: var(--muted); }
+/* Layout */
+.main-wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:16px}
+.header-card{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:16px;padding:28px 32px;margin-bottom:16px;position:relative;overflow:hidden}
+.header-card::before{content:'';position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,var(--accent)15,transparent);border-radius:50%;transform:translate(30%,-30%)}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border-b),transparent);margin:16px 0}
 
-        /* Main Tabs */
-        .main-tabs {
-            display: flex;
-            padding: 10px;
-            gap: 10px;
-            position: sticky;
-            top: 65px;
-            z-index: 99;
-            background: var(--bg-dark);
-        }
+/* Tabs */
+.tab-bar{display:flex;gap:4px;overflow-x:auto;padding:4px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;-webkit-overflow-scrolling:touch}
+.tab-bar::-webkit-scrollbar{height:0}
+.tab-btn{flex:0 0 auto;padding:10px 18px;border-radius:8px;border:none;background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .3s;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.tab-btn:hover{color:var(--text);background:var(--card2)}
+.tab-btn.active{background:var(--accent);color:#0a0a0f;font-weight:600}
+.tab-btn i{font-size:14px}
+.tab-panel{display:none;animation:fadeUp .4s ease}.tab-panel.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
-        .tab-btn {
-            flex: 1;
-            padding: 12px;
-            background: var(--bg-card);
-            color: var(--muted);
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+/* Charts */
+.chart-container{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:768px){.chart-container{grid-template-columns:1fr}}
+.chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;position:relative}
+.chart-title{text-align:center;font-family:'Cinzel',serif;font-size:15px;color:var(--accent);margin-bottom:16px;letter-spacing:2px;text-transform:uppercase}
+.chart-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:2px;width:100%;max-width:380px;margin:0 auto;aspect-ratio:1;background:var(--border-b);border:2px solid var(--border-b);border-radius:4px}
+.chart-cell{background:var(--card);padding:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0;position:relative;transition:background .3s}
+.chart-cell:hover{background:var(--card2)}
+.chart-cell.center{grid-column:2/4;grid-row:2/4;background:var(--bg);display:flex;flex-direction:column;gap:4px;padding:12px}
+.chart-cell.lagna-cell{background:linear-gradient(135deg,var(--accent)10,var(--card))}
+.sign-symbol{font-size:clamp(18px,4vw,26px);color:var(--accent);line-height:1}
+.sign-name{font-size:clamp(8px,1.5vw,10px);color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.planet-in-cell{font-size:clamp(10px,2vw,13px);line-height:1.6;text-align:center}
+.planet-sym{font-weight:700;margin-right:2px}
 
-        .tab-btn.active {
-            background: linear-gradient(135deg, var(--primary), #FFA500);
-            color: var(--bg-dark);
-            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
-        }
+/* Dasha */
+.dasha-timeline{position:relative;padding-left:20px}
+.dasha-maha{margin-bottom:8px;cursor:pointer}
+.dasha-bar{height:32px;border-radius:6px;display:flex;align-items:center;padding:0 12px;font-size:12px;font-weight:500;transition:all .3s;position:relative;overflow:hidden;border:1px solid transparent}
+.dasha-bar.current{border-color:var(--accent);box-shadow:0 0 20px var(--accent)20}
+.dasha-bar.past{opacity:.5}
+.dasha-bar.future{opacity:.35}
+.dasha-bar .fill{position:absolute;left:0;top:0;bottom:0;border-radius:5px;opacity:.15}
+.dasha-bar span{position:relative;z-index:1}
+.dasha-antar{display:none;padding-left:24px;margin-top:4px}
+.dasha-antar.open{display:block}
+.dasha-antar-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;font-size:11px;margin-bottom:2px;transition:background .2s}
+.dasha-antar-item:hover{background:var(--card2)}
+.dasha-antar-item.current-antar{background:var(--accent)12;border-left:2px solid var(--accent)}
+.dasha-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 
-        /* Views & Screens */
-        .view { display: none; padding: 20px; animation: fadeIn 0.5s; }
-        .view.active { display: block; }
-        
-        .screen { display: none; animation: fadeIn 0.5s; }
-        .screen.active { display: block; }
+/* Tables */
+.data-table{width:100%;border-collapse:separate;border-spacing:0}
+.data-table th{text-align:left;padding:10px 12px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);border-bottom:1px solid var(--border);font-weight:600}
+.data-table td{padding:10px 12px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
+.data-table tr:hover td{background:var(--card2)}
+.status-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;text-transform:uppercase}
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+/* Prediction cards */
+.pred-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.pred-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .3s;position:relative;overflow:hidden}
+.pred-card:hover{border-color:var(--border-b);transform:translateY(-2px)}
+.pred-card .icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px}
+.pred-card h4{font-size:14px;margin-bottom:8px;color:var(--accent-b)}
+.pred-card p{font-size:13px;color:var(--text2);line-height:1.6}
 
-        /* Cards */
-        .card {
-            background: var(--bg-card);
-            padding: 20px;
-            border-radius: 16px;
-            box-shadow: var(--shadow);
-            margin-bottom: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
+/* Panchang */
+.panchang-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.panchang-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.panchang-item .label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:6px}
+.panchang-item .value{font-size:14px;font-weight:600;color:var(--accent-b)}
 
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .text-center { text-align: center; }
-        
-        .highlight { color: var(--primary); font-weight: bold; }
-        .muted-text { color: var(--muted); font-size: 0.9rem; }
+/* Yoga cards */
+.yoga-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:10px;display:flex;gap:16px;align-items:flex-start;transition:all .3s}
+.yoga-card:hover{border-color:var(--border-b)}
+.yoga-type{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;white-space:nowrap;margin-top:2px}
+.yoga-auspicious{background:#4ade8015;color:var(--benefic)}
+.yoga-inauspicious{background:#f8717115;color:var(--malefic)}
+.yoga-neutral{background:#60a5fa15;color:var(--neutral)}
 
-        /* Forms */
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; color: var(--muted); }
-        
-        input, select {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px;
-            font-size: 1rem;
-            background: var(--bg-input);
-            color: var(--text);
-        }
+/* Strength bar */
+.str-bar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin-top:6px}
+.str-fill{height:100%;border-radius:3px;transition:width 1s ease}
 
-        input::placeholder { color: #555c7a; }
+/* Lucky items */
+.lucky-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:640px){.lucky-grid{grid-template-columns:repeat(2,1fr)}}
+.lucky-item{text-align:center;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:10px}
+.lucky-item .label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:8px}
+.lucky-item .val{font-size:20px;font-weight:700}
 
-        /* Buttons */
-        .btn {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.1s;
-            margin-top: 10px;
-        }
+/* Remedies */
+.remedy-card{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:12px;padding:18px;display:flex;gap:14px;align-items:flex-start;margin-bottom:10px}
+.remedy-card .r-icon{width:36px;height:36px;border-radius:50%;background:var(--accent)15;color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
 
-        .btn-primary { background: linear-gradient(135deg, var(--primary), #FFA500); color: var(--bg-dark); box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3); }
-        .btn-secondary { background: var(--bg-input); color: var(--text); border: 1px solid rgba(255,255,255,0.1); }
-        .btn-cta { background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3); font-size: 1.2rem; }
-        .btn:active { transform: scale(0.98); }
+/* Section header */
+.sec-header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.sec-header h2{font-size:20px;color:var(--accent-b)}
+.sec-header .line{flex:1;height:1px;background:linear-gradient(90deg,var(--border-b),transparent)}
 
-        /* Lists */
-        .prediction-list { list-style: none; }
-        .prediction-list li { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: flex-start; }
-        .prediction-list li:last-child { border-bottom: none; }
-        .prediction-list li::before { content: "🔮"; margin-right: 10px; }
+/* Tooltip */
+.tooltip{position:fixed;background:#1a1a30;border:1px solid var(--border-b);border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;z-index:100;opacity:0;transition:opacity .2s;max-width:220px;box-shadow:0 8px 32px #00000060}
+.tooltip.show{opacity:1}
 
-        /* Loader */
-        .loader { text-align: center; padding: 40px; }
-        .spinner { border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        /* CTA Pricing */
-        .price-tag { background: rgba(255,71,87,0.2); color: var(--danger); padding: 5px 10px; border-radius: 20px; font-weight: bold; text-decoration: line-through; font-size: 0.9rem; }
-        .final-price { color: var(--success); font-size: 1.5rem; font-weight: bold; }
-
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            max-width: 480px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(11, 16, 38, 0.95);
-            backdrop-filter: blur(10px);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            z-index: 1000;
-        }
-        .nav-item { background: none; border: none; color: var(--muted); font-size: 0.9rem; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-        .nav-item.active { color: var(--primary); }
-    </style>
+/* Animations */
+.fade-in{opacity:0;transform:translateY(20px);transition:all .6s ease}.fade-in.visible{opacity:1;transform:translateY(0)}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
 </head>
 <body>
 
-<div class="app-container">
-    <!-- Unified Header -->
-    <header>
-        <h1>वैदिक पंचांग</h1>
-        <p>📍 रोहतक, Haryana</p>
-    </header>
-
-    <!-- Main Tabs -->
-    <div class="main-tabs">
-        <button class="tab-btn active" onclick="switchMainView('panchang-view')">पंचांग</button>
-        <button class="tab-btn" onclick="switchMainView('kundli-view')">कुंडली</button>
-        <button class="tab-btn" onclick="switchMainView('muhurat-view')">मुहूर्त</button>
-    </div>
-
-    <!-- ========================================== -->
-    <!-- VIEW 1: PANCHANG (Matches your current UI) -->
-    <!-- ========================================== -->
-    <section id="panchang-view" class="view active">
-        <div class="card text-center">
-            <h2>1 जुलाई 2026, बुधवार</h2>
-            <p class="muted-text">आषाढ़ कृष्ण पक्ष नवमी</p>
-        </div>
-
-        <div class="grid-2">
-            <div class="card text-center">
-                <p class="muted-text">🌅 सूर्योदय</p>
-                <h3 class="highlight">05:21 AM</h3>
-            </div>
-            <div class="card text-center">
-                <p class="muted-text">🌇 सूर्यास्त</p>
-                <h3 class="highlight">07:19 PM</h3>
-            </div>
-        </div>
-
-        <div class="card">
-            <h3>आज का पंचांग</h3>
-            <div style="margin-top: 10px;">
-                <p><strong>तिथि:</strong> नवमी (08:12 AM तक)</p>
-                <p><strong>नक्षत्र:</strong> रोहिणी</p>
-                <p><strong>योग:</strong> सिद्धि</p>
-                <p><strong>करण:</strong> बव</p>
-                <p><strong>पक्ष:</strong> कृष्ण पक्ष</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- ========================================== -->
-    <!-- VIEW 2: KUNDLI (The Trust Hook Flow)       -->
-    <!-- ========================================== -->
-    <section id="kundli-view" class="view">
-        
-        <!-- Screen 1: Input -->
-        <div id="screen-input" class="screen active">
-            <h2>अपनी कुंडली बनाएं</h2>
-            <p class="muted-text">सटीक भविष्यवाणी के लिए सही जन्म विवरण दर्ज करें।</p>
-            
-            <div class="form-group">
-                <label>पूरा नाम (Full Name)</label>
-                <input type="text" id="name" placeholder="जैसे, राहुल शर्मा">
-            </div>
-            <div class="form-group">
-                <label>जन्म तिथि (Date of Birth)</label>
-                <input type="date" id="dob">
-            </div>
-            <div class="form-group">
-                <label>जन्म समय (Time of Birth)</label>
-                <input type="time" id="tob">
-            </div>
-            <div class="form-group">
-                <label>जन्म स्थान (Place of Birth)</label>
-                <input type="text" id="pob" placeholder="शहर खोजें...">
-            </div>
-            <button class="btn btn-primary" onclick="startAnalysis()">कुंडली जनरेट करें</button>
-        </div>
-
-        <!-- Screen 2: Loading -->
-        <div id="screen-loading" class="screen">
-            <div class="loader">
-                <div class="spinner"></div>
-                <h2>ग्रहों की स्थिति की गणना...</h2>
-                <p class="muted-text">स्विस एफेमेरिस डेटा और लाल किताब लक्षणों का विश्लेषण किया जा रहा है।</p>
-            </div>
-        </div>
-
-        <!-- Screen 3: Lal Kitab Trust Hook -->
-        <div id="screen-lal-kitab" class="screen">
-            <h2>🔮 आपका कार्मिक स्कैन तैयार है</h2>
-            <p class="muted-text">आपके जन्म समय के आधार पर, आपकी ग्रह चक्रव्यूह रचना इन भौतिक लक्षणों को दर्शाती है:</p>
-            
-            <div class="card">
-                <ul class="prediction-list">
-                    <li>क्या आपका घर किसी मंदिर या धार्मिक स्थल के बहुत पास है?</li>
-                    <li>क्या आप टूटे हुए इलेक्ट्रॉनिक्स या पुरानी घड़ियों को घर पर रखने की आदत रखते हैं?</li>
-                    <li>क्या हर महीने की 14 या 15 तारीख के आसपास रिश्तों में अचानक तनाव होता है?</li>
-                </ul>
-            </div>
-            <button class="btn btn-primary" onclick="showYesterday()">😲 हाँ, यह सच है! आगे बढ़ें</button>
-            <button class="btn btn-secondary" onclick="showYesterday()">🤔 कुछ सच है, देखते हैं आगे</button>
-        </div>
-
-        <!-- Screen 4: Yesterday Validation -->
-        <div id="screen-yesterday" class="screen">
-            <h2>🌙 कल क्या हुआ था?</h2>
-            <p class="muted-text">चूंकि आपका लाल किताब मैट्रिक्स मेल खाया, यहाँ बताया गया है कि पिछले 24 घंटों में चंद्रमा की चाल के कारण आपके जीवन में क्या हुआ:</p>
-            
-            <div class="card">
-                <ul class="prediction-list">
-                    <li>आपकी नींद अचानक टूटी या आप बेचैनी महसूस करते हुए जागे।</li>
-                    <li>किसी महिला सहकर्मी या परिवार के सदस्य ने आपको परेशान किया या छोटी बहस हुई।</li>
-                    <li>आपने अप्रत्याशित रूप से किसी वाहन या गैजेट पर पैसे खर्च किए।</li>
-                </ul>
-            </div>
-            <button class="btn btn-primary" onclick="showCTA()">⚡ वाह! अब क्या होगा?</button>
-        </div>
-
-        <!-- Screen 5: CTA -->
-        <div id="screen-cta" class="screen">
-            <h2>अगले 24 घंटे का राज खोलें</h2>
-            <p class="muted-text">चंद्रमा एक नए भाव में प्रवेश कर रहा है। आज कोई गलत कदम न उठाएं।</p>
-            
-            <div class="card">
-                <h3 class="highlight">मात्र ₹49 में अनलॉक करें:</h3>
-                <ul class="prediction-list">
-                    <li>अगले 24 घंटों में होने वाली सटीक घटनाएं।</li>
-                    <li>आज किससे बात करने से बचें।</li>
-                    <li>आपकी लकी विंडो: वह 1 घंटा जब सफलता गारंटीड है।</li>
-                </ul>
-            </div>
-
-            <div class="card" style="border-left: 4px solid var(--danger);">
-                <h3 style="color: var(--danger);">🎁 बोनस: लाल किताब उपाय</h3>
-                <p class="muted-text" style="margin-bottom: 0;">अपने घर और जीवन से बाधाओं को दूर करने का सटीक उपाय पाएं।</p>
-            </div>
-
-            <div class="text-center" style="margin: 20px 0;">
-                <span class="price-tag">₹199</span> <span class="final-price">₹49</span>
-            </div>
-
-            <button class="btn btn-cta" onclick="processPayment()"> 🔓 भविष्य और उपाय अनलॉक करें</button>
-            <p class="muted-text text-center" style="font-size: 0.8rem; margin-top: 10px;">🔒 100% सुरक्षित भुगतान | UPI / Cards स्वीकार्य</p>
-        </div>
-
-        <!-- Screen 6: Success -->
-        <div id="screen-success" class="screen">
-            <h2>✅ भुगतान सफल!</h2>
-            <p class="muted-text">यहाँ अगले 24 घंटों की आपकी भविष्यवाणी है:</p>
-            
-            <div class="card">
-                <ul class="prediction-list">
-                    <li>आज आपको किसी को पैसे उधार न दें। थोड़ी सी स्वास्थ्य समस्या या ऑफिस में प्रतिस्पर्धा रहेगी।</li>
-                    <li>दोपहर 2:00 बजे से 3:00 बजे के बीच आपको करियर के संबंध में एक सकारात्मक संदेश मिलेगा।</li>
-                </ul>
-            </div>
-
-            <div class="card" style="border-left: 4px solid var(--danger);">
-                <h3 style="color: var(--danger);">आपका लाल किताब उपाय</h3>
-                <p class="muted-text" style="margin-bottom: 0;">आज जेब में चांदी का एक वर्गाकार टुकड़ा रखें। शाम को किसी काले कुत्ते को गेहूं का आटा खिलाएं।</p>
-            </div>
-            <button class="btn btn-primary" onclick="location.reload()">🏠 होम पर वापस जाएं</button>
-        </div>
-    </section>
-
-    <!-- ========================================== -->
-    <!-- VIEW 3: MUHURAT (Placeholder)              -->
-    <!-- ========================================== -->
-    <section id="muhurat-view" class="view">
-        <div class="card text-center">
-            <h2>मुहूर्त खंड</h2>
-            <p class="muted-text">शुभ और अशुभ समय की जानकारी यहाँ दिखाई जाएगी।</p>
-        </div>
-    </section>
-
+<!-- Loading Screen -->
+<div id="loader">
+  <div class="mandala-spin"></div>
+  <p style="margin-top:24px;color:var(--text2);font-size:13px;letter-spacing:2px">CALCULATING YOUR KUNDLI</p>
 </div>
 
-<!-- Bottom Navigation -->
-<nav class="bottom-nav">
-    <button class="nav-item active" onclick="switchMainView('panchang-view')">🏠 पंचांग</button>
-    <button class="nav-item" onclick="switchMainView('kundli-view')">🔮 कुंडली</button>
-    <button class="nav-item" onclick="switchMainView('muhurat-view')">⏳ मुहूर्त</button>
-</nav>
+<!-- Background Effects -->
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+<div class="bg-orb bg-orb-3"></div>
+<div id="particles"></div>
+
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip"></div>
+
+<div class="main-wrap">
+
+  <!-- Header -->
+  <header class="header-card">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px">
+      <div>
+        <h1 style="font-size:clamp(24px,4vw,32px);font-weight:900;color:var(--accent-b);letter-spacing:1px">Janam Kundli</h1>
+        <p style="font-size:12px;color:var(--text3);margin-top:4px;letter-spacing:2px;text-transform:uppercase">Vedic Birth Chart Analysis</p>
+      </div>
+      <div style="text-align:right;font-size:13px;color:var(--text2);line-height:1.8">
+        <div><i class="fas fa-calendar-alt" style="color:var(--accent);margin-right:6px"></i>15 January 1990</div>
+        <div><i class="fas fa-clock" style="color:var(--accent);margin-right:6px"></i>06:30 AM IST</div>
+        <div><i class="fas fa-map-marker-alt" style="color:var(--accent);margin-right:6px"></i>New Delhi, India</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div style="display:flex;flex-wrap:wrap;gap:20px;font-size:12px;color:var(--text3)">
+      <span>Lagna: <strong style="color:var(--text)">Sagittarius 5°00'</strong></span>
+      <span>Rashi: <strong style="color:var(--text)">Aquarius (Shatabhisha)</strong></span>
+      <span>Nakshatra Lord: <strong style="color:var(--text)">Rahu</strong></span>
+      <span>Tithi: <strong style="color:var(--text)">Shukla Dashami</strong></span>
+      <span>Balance Dasha: <strong style="color:var(--accent)">Rahu 6y 9m 0d</strong></span>
+    </div>
+  </header>
+
+  <!-- Tab Navigation -->
+  <nav class="tab-bar" role="tablist" aria-label="Kundli sections">
+    <button class="tab-btn active" data-tab="chart" role="tab" aria-selected="true"><i class="fas fa-dharmachakra"></i>Kundli Chart</button>
+    <button class="tab-btn" data-tab="dasha" role="tab"><i class="fas fa-hourglass-half"></i>Dasha</button>
+    <button class="tab-btn" data-tab="planets" role="tab"><i class="fas fa-star"></i>Planets</button>
+    <button class="tab-btn" data-tab="houses" role="tab"><i class="fas fa-house-chimney"></i>Houses</button>
+    <button class="tab-btn" data-tab="tomorrow" role="tab"><i class="fas fa-sun"></i>Tomorrow</button>
+    <button class="tab-btn" data-tab="yogas" role="tab"><i class="fas fa-hand-sparkles"></i>Yogas</button>
+  </nav>
+
+  <!-- Tab Panels -->
+  <main>
+    <!-- Kundli Chart -->
+    <section class="tab-panel active" id="panel-chart" role="tabpanel"></section>
+    <!-- Dasha -->
+    <section class="tab-panel" id="panel-dasha" role="tabpanel"></section>
+    <!-- Planets -->
+    <section class="tab-panel" id="panel-planets" role="tabpanel"></section>
+    <!-- Houses -->
+    <section class="tab-panel" id="panel-houses" role="tabpanel"></section>
+    <!-- Tomorrow -->
+    <section class="tab-panel" id="panel-tomorrow" role="tabpanel"></section>
+    <!-- Yogas -->
+    <section class="tab-panel" id="panel-yogas" role="tabpanel"></section>
+  </main>
+
+  <footer style="text-align:center;padding:32px 16px;font-size:11px;color:var(--text3);line-height:1.8">
+    <p>Vedic astrology is a traditional guidance system. This chart is generated for educational and reference purposes.</p>
+    <p style="margin-top:4px">For major life decisions, consult a qualified Jyotish practitioner.</p>
+  </footer>
+</div>
 
 <script>
-    // --- Main View Switching (Tabs) ---
-    function switchMainView(viewId) {
-        // Hide all main views
-        document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
-        // Show selected view
-        document.getElementById(viewId).classList.add('active');
-        
-        // Reset Kundli screens to input whenever switching tabs
-        if(viewId === 'kundli-view') {
-            showKundliScreen('screen-input');
-        }
+/* ============================================
+   DATA: Planets, Signs, Nakshatras, Dasha
+   ============================================ */
+const PLANETS = {
+  Sun:     {sym:'☉',color:'#fbbf24',sign:'Capricorn',deg:1,    ret:false,nak:'Uttara Ashadha',nakLord:'Sun',  pada:2,house:2},
+  Moon:    {sym:'☽',color:'#e2e8f0',sign:'Aquarius', deg:15,   ret:false,nak:'Shatabhisha',   nakLord:'Rahu', pada:2,house:3},
+  Mars:    {sym:'♂',color:'#ef4444',sign:'Taurus',   deg:8,    ret:false,nak:'Krittika',      nakLord:'Sun',  pada:3,house:6},
+  Mercury: {sym:'☿',color:'#60a5fa',sign:'Sagittarius',deg:22, ret:true, nak:'Purva Ashadha', nakLord:'Venus',pada:3,house:1},
+  Jupiter: {sym:'♃',color:'#f59e0b',sign:'Gemini',   deg:5,    ret:true, nak:'Mrigashira',    nakLord:'Mars', pada:2,house:7},
+  Venus:   {sym:'♀',color:'#f472b6',sign:'Aquarius', deg:25,   ret:false,nak:'Purva Bhadrapada',nakLord:'Jupiter',pada:3,house:3},
+  Saturn:  {sym:'♄',color:'#8b5cf6',sign:'Sagittarius',deg:12, ret:false,nak:'Mula',          nakLord:'Ketu', pada:3,house:1},
+  Rahu:    {sym:'☊',color:'#94a3b8',sign:'Aquarius', deg:10,   ret:false,nak:'Shatabhisha',   nakLord:'Rahu', pada:1,house:3},
+  Ketu:    {sym:'☋',color:'#78716c',sign:'Leo',      deg:10,   ret:false,nak:'Magha',         nakLord:'Ketu', pada:2,house:9}
+};
 
-        // Update active states for top tabs
-        document.querySelectorAll('.tab-btn').forEach((btn, index) => {
-            btn.classList.remove('active');
-        });
-        event.currentTarget.classList.add('active'); // Note: For bottom nav, you'd need a slightly different approach, but works for top tabs.
+const SIGNS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+const SIGN_SYM = {'Aries':'♈','Taurus':'♉','Gemini':'♊','Cancer':'♋','Leo':'♌','Virgo':'♍','Libra':'♎','Scorpio':'♏','Sagittarius':'♐','Capricorn':'♑','Aquarius':'♒','Pisces':'♓'};
+const SIGN_SANS = {'Aries':'Ar','Taurus':'Ta','Gemini':'Ge','Cancer':'Cn','Leo':'Le','Virgo':'Vi','Libra':'Li','Scorpio':'Sc','Sagittarius':'Sg','Capricorn':'Cp','Aquarius':'Aq','Pisces':'Pi'};
 
-        // Sync bottom nav colors (basic implementation)
-        document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-        if(viewId === 'panchang-view') document.querySelectorAll('.nav-item')[0].classList.add('active');
-        if(viewId === 'kundli-view') document.querySelectorAll('.nav-item')[1].classList.add('active');
-        if(viewId === 'muhurat-view') document.querySelectorAll('.nav-item')[2].classList.add('active');
+// South Indian chart grid positions [row, col] (1-based)
+const CHART_POS = {
+  'Aquarius':[1,1],'Pisces':[1,2],'Aries':[1,3],'Taurus':[1,4],
+  'Capricorn':[2,1],'Gemini':[2,4],
+  'Sagittarius':[3,1],'Cancer':[3,4],
+  'Scorpio':[4,1],'Libra':[4,2],'Virgo':[4,3],'Leo':[4,4]
+};
 
-        window.scrollTo(0, 0);
-    }
+// D9 Navamsha positions
+const D9_POS = {
+  'Capricorn':[1,1],'Pisces':[1,2],'Sagittarius':[1,3],'Taurus':[1,4],
+  'Aquarius':[2,1],'Scorpio':[2,4],
+  'Cancer':[3,1],'Libra':[3,4],
+  'Gemini':[4,1],'Virgo':[4,2],'Aries':[4,3],'Leo':[4,4]
+};
+const D9_PLANETS = {Capricorn:['Sun'],Pisces:['Mars'],Sagittarius:['Rahu'],Taurus:['Venus'],Aquarius:['Moon'],Scorpio:['Jupiter'],Cancer:['Saturn'],Libra:['Mercury'],Gemini:['Ketu']};
 
-    // --- Kundli Screen Management ---
-    function showKundliScreen(screenId) {
-        document.querySelectorAll('#kundli-view .screen').forEach(screen => screen.classList.remove('active'));
-        document.getElementById(screenId).classList.add('active');
-        window.scrollTo(0, 0);
-    }
+// Vimshottari Dasha order and years
+const DASHA_ORDER = ['Ketu','Venus','Sun','Moon','Mars','Rahu','Jupiter','Saturn','Mercury'];
+const DASHA_YEARS = {Ketu:7,Venus:20,Sun:6,Moon:10,Mars:7,Rahu:18,Jupiter:16,Saturn:19,Mercury:17};
+const DASHA_COLORS = {Ketu:'#78716c',Venus:'#f472b6',Sun:'#fbbf24',Moon:'#e2e8f0',Mars:'#ef4444',Rahu:'#94a3b8',Jupiter:'#f59e0b',Saturn:'#8b5cf6',Mercury:'#60a5fa'};
 
-    function startAnalysis() {
-        const name = document.getElementById('name').value;
-        if(!name) { alert("कृपया नाम दर्ज करें।"); return; }
-        showKundliScreen('screen-loading');
-        setTimeout(() => showKundliScreen('screen-lal-kitab'), 3000);
-    }
+// Build Mahadasha timeline from birth (15 Jan 1990)
+// Moon in Shatabhisha (Rahu nakshatra), balance = 6.75 years
+const BIRTH = new Date(1990,0,15);
+const mahadashas = [];
+let dashaStart = new Date(BIRTH);
+// First dasha: Rahu, 6.75 years
+mahadashas.push({lord:'Rahu',start:new Date(dashaStart),years:6.75,end:addYears(dashaStart,6.75)});
+dashaStart = addYears(dashaStart,6.75);
+// Then follow DASHA_ORDER from Jupiter onwards
+const order = ['Jupiter','Saturn','Mercury','Ketu','Venus','Sun','Moon','Mars','Rahu'];
+order.forEach(lord => {
+  const y = DASHA_YEARS[lord];
+  mahadashas.push({lord,start:new Date(dashaStart),years:y,end:addYears(dashaStart,y)});
+  dashaStart = addYears(dashaStart,y);
+});
 
-    function showYesterday() { showKundliScreen('screen-yesterday'); }
-    function showCTA() { showKundliScreen('screen-cta'); }
-    
-    function processPayment() {
-        showKundliScreen('screen-loading');
-        setTimeout(() => showKundliScreen('screen-success'), 2000);
-    }
+function addYears(d,y){const r=new Date(d);r.setFullYear(r.getFullYear()+Math.floor(y));r.setMonth(r.getMonth()+Math.floor((y%1)*12));return r}
+function formatDate(d){return d.toLocaleDateString('en-IN',{month:'short',year:'numeric'})}
+function daysBetween(a,b){return Math.round((b-a)/86400000)}
+
+// Build antardashas for a given mahadasha
+function getAntardashas(maha){
+  const ants = [];
+  let antStart = new Date(maha.start);
+  const totalMonths = maha.years * 12;
+  DASHA_ORDER.forEach(lord => {
+    const months = (DASHA_YEARS[lord]/120) * totalMonths;
+    const antEnd = new Date(antStart);
+    antEnd.setMonth(antEnd.getMonth() + Math.round(months));
+    ants.push({lord, start:new Date(antStart), end:antEnd});
+    antStart = antEnd;
+  });
+  return ants;
+}
+
+// Current dasha
+const NOW = new Date();
+let currentMaha = mahadashas.find(m => NOW >= m.start && NOW < m.end);
+let currentAntars = getAntardashas(currentMaha);
+let currentAntar = currentAntars.find(a => NOW >= a.start && NOW < a.end);
+
+// House lords (from Sagittarius lagna)
+const HOUSE_SIGNS = ['Sagittarius','Capricorn','Aquarius','Pisces','Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio'];
+const HOUSE_LORDS = ['Jupiter','Saturn','Saturn','Jupiter','Mars','Venus','Mercury','Moon','Sun','Mercury','Venus','Mars'];
+const HOUSE_MEANINGS = [
+  'Self, personality, appearance, health, overall life direction',
+  'Wealth, family, speech, food habits, early education',
+  'Courage, siblings, communication, short travels, efforts',
+  'Home, mother, comfort, vehicles, property, inner peace',
+  'Children, intelligence, romance, creativity, past life merit',
+  'Enemies, debts, diseases, service, daily routine, litigation',
+  'Marriage, partnership, business, foreign travel, public relations',
+  'Longevity, sudden events, inheritance, hidden things, transformation',
+  'Fortune, father, higher education, spirituality, guru, dharma',
+  'Career, fame, authority, government, karma, public image',
+  'Gains, income, elder siblings, friends, social network, aspirations',
+  'Losses, expenses, foreign residence, liberation, sleep, subconscious'
+];
+
+/* ============================================
+   RENDER: Chart Panel
+   ============================================ */
+function renderChart(){
+  const panel = document.getElementById('panel-chart');
+  panel.innerHTML = `
+    <div class="chart-container">
+      <div class="chart-wrap fade-in">
+        <div class="chart-title">Rasi Chart (D1)</div>
+        <div class="chart-grid" id="rasi-grid"></div>
+      </div>
+      <div class="chart-wrap fade-in">
+        <div class="chart-title">Navamsha Chart (D9)</div>
+        <div class="chart-grid" id="navamsha-grid"></div>
+      </div>
+    </div>
+    <div style="margin-top:20px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px" class="fade-in">
+      <h3 style="font-size:14px;color:var(--accent);margin-bottom:12px;letter-spacing:1px">Chart Legend</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;font-size:12px">
+        ${Object.entries(PLANETS).map(([n,p])=>`<span style="display:flex;align-items:center;gap:4px"><span style="color:${p.color};font-weight:700">${p.sym}</span> ${n}${p.ret?' (R)':''}</span>`).join('')}
+      </div>
+    </div>`;
+  buildChartGrid('rasi-grid', CHART_POS, getPlanetsBySign(PLANETS), 'Sagittarius');
+  buildChartGrid('navamsha-grid', D9_POS, D9_PLANETS, 'Taurus');
+  observeFadeIn();
+}
+
+function getPlanetsBySign(data){
+  const map = {};
+  Object.entries(data).forEach(([name,p])=>{
+    if(!map[p.sign]) map[p.sign]=[];
+    map[p.sign].push({name,sym:p.sym,color:p.color,ret:p.ret});
+  });
+  return map;
+}
+
+function buildChartGrid(id, positions, planetsInSign, lagnaSign){
+  const grid = document.getElementById(id);
+  // Center cell
+  const center = document.createElement('div');
+  center.className = 'chart-cell center';
+  center.innerHTML = `<span style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Lagna</span>
+    <span style="font-size:20px;color:var(--accent)">${SIGN_SYM[lagnaSign]}</span>
+    <span style="font-size:10px;color:var(--text2)">${lagnaSign}</span>`;
+  grid.appendChild(center);
+
+  Object.entries(positions).forEach(([sign,[r,c]])=>{
+    const cell = document.createElement('div');
+    cell.className = 'chart-cell' + (sign===lagnaSign?' lagna-cell':'');
+    cell.style.gridRow = r;
+    cell.style.gridColumn = c;
+    const planets = planetsInSign[sign] || [];
+    cell.innerHTML = `<span class="sign-symbol">${SIGN_SYM[sign]}</span><span class="sign-name">${SIGN_SANS[sign]}</span>
+      <div class="planet-in-cell">${planets.map(p=>`<span class="planet-sym" style="color:${p.color}" data-planet="${p.name}">${p.sym}${p.ret?'</arg_value>':''}</span>`).join(' ')}</div>`;
+    cell.addEventListener('mouseenter',e=>showTooltip(e,sign,planets));
+    cell.addEventListener('mousemove',moveTooltip);
+    cell.addEventListener('mouseleave',hideTooltip);
+    grid.appendChild(cell);
+  });
+}
+
+function showTooltip(e,sign,planets){
+  const t = document.getElementById('tooltip');
+  const pInfo = planets.map(p=>{
+    const d = PLANETS[p.name];
+    return `<div style="color:${p.color};margin-top:4px">${p.sym} <strong>${p.name}</strong>${p.ret?' (Retrograde)':''}${d?` — ${d.sign} ${d.deg}° | ${d.nak} P${d.pada}`:''}</div>`;
+  }).join('');
+  t.innerHTML = `<strong style="color:var(--accent-b)">${SIGN_SYM[sign]} ${sign}</strong>${pInfo||'<div style="color:var(--text3);margin-top:4px">No planets</div>'}`;
+  t.classList.add('show');
+}
+function moveTooltip(e){const t=document.getElementById('tooltip');t.style.left=(e.clientX+14)+'px';t.style.top=(e.clientY+14)+'px'}
+function hideTooltip(){document.getElementById('tooltip').classList.remove('show')}
+
+/* ============================================
+   RENDER: Dasha Panel
+   ============================================ */
+function renderDasha(){
+  const panel = document.getElementById('panel-dasha');
+  const maxYears = 20;
+  let html = `<div class="sec-header"><h2>Vimshottari Dasha</h2><div class="line"></div></div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px" class="fade-in">
+      <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:center">
+        <div>
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Current Mahadasha</div>
+          <div style="font-size:22px;font-weight:700;color:${DASHA_COLORS[currentMaha.lord]};margin-top:4px">${DASHA_COLORS[currentMaha.lord]==='#fbbf24'?'☉':'♄'} ${currentMaha.lord}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Current Antardasha</div>
+          <div style="font-size:18px;font-weight:600;color:${DASHA_COLORS[currentAntar.lord]};margin-top:4px">${currentAntar.lord}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Period</div>
+          <div style="font-size:13px;color:var(--text2);margin-top:4px">${formatDate(currentAntar.start)} — ${formatDate(currentAntar.end)}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Remaining</div>
+          <div style="font-size:13px;color:var(--accent);margin-top:4px;font-weight:600">${Math.max(0,daysBetween(NOW,currentAntar.end))} days</div>
+        </div>
+      </div>
+    </div>
+    <div class="dasha-timeline fade-in">`;
+
+  mahadashas.forEach((m,mi) => {
+    const status = NOW < m.start ? 'future' : NOW >= m.end ? 'past' : 'current';
+    const width = Math.max(8, (m.years / maxYears) * 100);
+    const ants = getAntardashas(m);
+    const antHtml = ants.map(a => {
+      const aStatus = NOW >= a.start && NOW < a.end ? 'current-antar' : '';
+      return `<div class="dasha-antar-item ${aStatus}">
+        <div class="dasha-dot" style="background:${DASHA_COLORS[a.lord]}"></div>
+        <span style="color:${DASHA_COLORS[a.lord]};font-weight:600;min-width:60px">${a.lord}</span>
+        <span style="color:var(--text3);font-size:10px">${formatDate(a.start)} — ${formatDate(a.end)}</span>
+      </div>`;
+    }).join('');
+
+    html += `<div class="dasha-maha" data-maha="${mi}">
+      <div class="dasha-bar ${status}" style="width:${width}%">
+        <div class="fill" style="background:${DASHA_COLORS[m.lord]}"></div>
+        <span style="color:${DASHA_COLORS[m.lord]}">${m.lord}</span>
+        <span style="margin-left:auto;color:var(--text3);font-size:10px">${m.years}y</span>
+      </div>
+      <div class="dasha-antar" id="antar-${mi}">${antHtml}</div>
+    </div>`;
+  });
+  html += '</div>';
+  panel.innerHTML = html;
+
+  // Toggle antardasha on click
+  panel.querySelectorAll('.dasha-maha').forEach(el => {
+    el.querySelector('.dasha-bar').addEventListener('click', () => {
+      const id = el.dataset.maha;
+      document.querySelectorAll('.dasha-antar').forEach(a => a.classList.remove('open'));
+      document.getElementById('antar-'+id).classList.toggle('open');
+    });
+  });
+  // Open current maha's antardasha by default
+  const curIdx = mahadashas.indexOf(currentMaha);
+  document.getElementById('antar-'+curIdx).classList.add('open');
+  observeFadeIn();
+}
+
+/* ============================================
+   RENDER: Planets Panel
+   ============================================ */
+function renderPlanets(){
+  const panel = document.getElementById('planets');
+  let rows = Object.entries(PLANETS).map(([name,p]) => {
+    const statusClass = p.ret ? 'background:#f59e0b20;color:#f59e0b' :
+      (name==='Sun'&&p.sign==='Aries')||(name==='Moon'&&p.sign==='Taurus')||(name==='Mars'&&p.sign==='Capricorn')||(name==='Mercury'&&p.sign==='Virgo')||(name==='Jupiter'&&p.sign==='Cancer')||(name==='Venus'&&p.sign==='Pisces')||(name==='Saturn'&&p.sign==='Aquarius') ? 'background:#4ade8020;color:#4ade80' :
+      (name==='Sun'&&p.sign==='Libra')||(name==='Moon'&&p.sign==='Scorpio')||(name==='Mars'&&p.sign==='Cancer')||(name==='Mercury'&&p.sign==='Pisces')||(name==='Jupiter'&&p.sign==='Capricorn')||(name==='Venus'&&p.sign==='Virgo')||(name==='Saturn'&&p.sign==='Aries') ? 'background:#f8717120;color:#f87171' : 'background:var(--card2);color:var(--text3)';
+    const statusText = p.ret ? 'Retrograde' :
+      statusClass.includes('4ade80') ? 'Exalted' :
+      statusClass.includes('f87171') ? 'Debilitated' : 'Normal';
+    return `<tr>
+      <td style="color:${p.color};font-size:18px;font-weight:700;width:40px">${p.sym}</td>
+      <td style="font-weight:600">${name}</td>
+      <td>${SIGN_SYM[p.sign]} ${p.sign}</td>
+      <td>${p.deg}°00'</td>
+      <td style="font-size:12px">${p.nak}</td>
+      <td style="font-size:12px">${p.nakLord}</td>
+      <td>P${p.pada}</td>
+      <td><span class="status-badge" style="${statusClass}">${statusText}</span></td>
+    </tr>`;
+  }).join('');
+
+  panel.innerHTML = `<div class="sec-header"><h2>Planetary Positions</h2><div class="line"></div></div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden" class="fade-in">
+      <div style="overflow-x:auto">
+        <table class="data-table">
+          <thead><tr><th></th><th>Planet</th><th>Sign</th><th>Degree</th><th>Nakshatra</th><th>Nak. Lord</th><th>Pada</th><th>Status</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`;
+  observeFadeIn();
+}
+
+/* ============================================
+   RENDER: Houses Panel
+   ============================================ */
+function renderHouses(){
+  const panel = document.getElementById('houses');
+  let cards = '';
+  for(let i=0;i<12;i++){
+    const sign = HOUSE_SIGNS[i];
+    const lord = HOUSE_LORDS[i];
+    const planets = Object.entries(PLANETS).filter(([n,p])=>p.house===i+1).map(([n,p])=>({name:n,sym:p.sym,color:p.color}));
+    cards += `<div class="pred-card fade-in">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:36px;height:36px;border-radius:8px;background:var(--accent)15;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--accent)">${i+1}</div>
+        <div>
+          <div style="font-size:14px;font-weight:600">${SIGN_SYM[sign]} ${sign}</div>
+          <div style="font-size:11px;color:var(--text3)">Lord: ${lord}</div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--text3);margin-bottom:8px">${HOUSE_MEANINGS[i]}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${planets.length ? planets.map(p=>`<span style="background:${p.color}15;color:${p.color};padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600">${p.sym} ${p.name}</span>`).join('') : '<span style="font-size:11px;color:var(--text3);font-style:italic">No planets</span>'}
+      </div>
+    </div>`;
+  }
+  panel.innerHTML = `<div class="sec-header"><h2>Bhava Analysis — 12 Houses</h2><div class="line"></div></div>
+    <div class="pred-grid">${cards}</div>`;
+  observeFadeIn();
+}
+
+/* ============================================
+   RENDER: Tomorrow Panel
+   ============================================ */
+function renderTomorrow(){
+  const panel = document.getElementById('tomorrow');
+  const tmr = new Date(); tmr.setDate(tmr.getDate()+1);
+  const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const dayRulers = ['Sun','Moon','Mars','Mercury','Jupiter','Venus','Saturn'];
+  const dayIdx = tmr.getDay();
+  const dayName = dayNames[dayIdx];
+  const ruler = dayRulers[dayIdx];
+
+  // Approximate Moon transit
+  const refDate = new Date(2025,6,15); // ~July 15 2025, Moon roughly in Sagittarius
+  const daysDiff = Math.round((tmr - refDate)/86400000);
+  const moonIdx = ((Math.floor(daysDiff / 2.25)) % 12 + 12) % 12;
+  const moonTransit = SIGNS[moonIdx];
+
+  // Panchang calculations
+  const tithiArr = ['Shukla Pratipada','Shukla Dwitiya','Shukla Tritiya','Shukla Chaturthi','Shukla Panchami','Shukla Shashthi','Shukla Saptami','Shukla Ashtami','Shukla Navami','Shukla Dashami','Shukla Ekadashi','Shukla Dwadashi','Shukla Trayodashi','Shukla Chaturdashi','Purnima','Krishna Pratipada','Krishna Dwitiya','Krishna Tritiya','Krishna Chaturthi','Krishna Panchami','Krishna Shashthi','Krishna Saptami','Krishna Ashtami','Krishna Navami','Krishna Dashami','Krishna Ekadashi','Krishna Dwadashi','Krishna Trayodashi','Krishna Chaturdashi','Amavasya'];
+  const nakArr = ['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishtha','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
+  const yogaArr = ['Vishkumbha','Priti','Ayushman','Saubhagya','Shobhana','Atiganda','Sukarman','Dhriti','Shula','Ganda','Vriddhi','Dhruva','Vyaghata','Harshana','Vajra','Siddhi','Vyatipata','Variyan','Paridha','Shiva','Siddha','Sadhya','Shubha','Shukla','Brahman','Indra','Vaidhriti'];
+  const karanaArr = ['Bava','Balava','Kaulava','Taitila','Gara','Vanija','Vishti','Bava','Balava','Kaulava','Taitila','Gara','Vanija','Vishti','Bava','Balava','Kaulava','Taitila','Gara','Vanija','Vishti','Bava','Balava','Kaulava','Taitila','Gara','Vanija','Vishti','Bava','Balava','Kaulava','Taitila','Gara','Vanija','Vishti','Bava','Balava','Kaulava','Taitila','Gara','Vanija','Vishti','Bava','Balava','Kaulava','Taitila','Gara','Vanija','Vishti','Bava','Balava','Kaulava','Taitila','Gara','Vanija','Vishti','Shakuni','Chatushpada','Naga','Kimstughna'];
+  const baseDate = new Date(2025,0,10);
+  const diffDays = Math.round((tmr - baseDate)/86400000);
+  const tithiIdx = ((diffDays % 30) + 30) % 30;
+  const nakIdx = ((diffDays % 27) + 27) % 27;
+  const yogaIdx = ((diffDays % 27) + 27) % 27;
+  const karanaIdx = ((diffDays % 60) + 60) % 60;
+
+  const rahuKalam = {0:'4:30 – 6:00 PM',1:'7:30 – 9:00 AM',2:'3:00 – 4:30 PM',3:'12:00 – 1:30 PM',4:'1:30 – 3:00 PM',5:'10:30 – 12:00 PM',6:'9:00 – 10:30 AM'};
+  const gulika = {0:'3:00 – 4:30 PM',1:'6:00 – 7:30 AM',2:'1:30 – 3:00 PM',3:'10:30 – 12:00 PM',4:'12:00 – 1:30 PM',5:'9:00 – 10:30 AM',6:'7:30 – 9:00 AM'};
+  const yamaganda = {0:'12:00 – 1:30 PM',1:'10:30 – 12:00 PM',2:'9:00 – 10:30 AM',3:'7:30 – 9:00 AM',4:'6:00 – 7:30 AM',5:'3:00 – 4:30 PM',6:'1:30 – 3:00 PM'};
+
+  // Generate predictions based on dasha + day ruler + moon transit
+  const predictions = generatePredictions(ruler, moonTransit, dayIdx);
+  const lucky = getLucky(dayIdx, moonIdx);
+
+  panel.innerHTML = `
+    <div class="sec-header"><h2>Tomorrow's Forecast</h2><div class="line"></div></div>
+    <div style="background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;text-align:center" class="fade-in">
+      <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:2px">${tmr.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
+      <div style="font-size:28px;font-weight:900;color:var(--accent-b);margin:8px 0;font-family:'Cinzel',serif">${dayName}</div>
+      <div style="font-size:13px;color:var(--text2)">Day Lord: <strong style="color:${DASHA_COLORS[ruler]}">${PLANETS[ruler].sym} ${ruler}</strong> &nbsp;|&nbsp; Moon Transit: <strong style="color:#e2e8f0">${SIGN_SYM[moonTransit]} ${moonTransit}</strong></div>
+    </div>
+
+    <!-- Panchang -->
+    <div style="margin-bottom:20px" class="fade-in">
+      <h3 style="font-size:14px;color:var(--accent);margin-bottom:12px;letter-spacing:1px"><i class="fas fa-moon" style="margin-right:8px"></i>Panchang</h3>
+      <div class="panchang-grid">
+        <div class="panchang-item"><div class="label">Tithi</div><div class="value">${tithiArr[tithiIdx]}</div></div>
+        <div class="panchang-item"><div class="label">Nakshatra</div><div class="value">${nakArr[nakIdx]}</div></div>
+        <div class="panchang-item"><div class="label">Yoga</div><div class="value">${yogaArr[yogaIdx]}</div></div>
+        <div class="panchang-item"><div class="label">Karana</div><div class="value">${karanaArr[karanaIdx]}</div></div>
+        <div class="panchang-item"><div class="label">Rahu Kalam</div><div class="value" style="color:var(--malefic)">${rahuKalam[dayIdx]}</div></div>
+        <div class="panchang-item"><div class="label">Gulika</div><div class="value" style="color:#f59e0b">${gulika[dayIdx]}</div></div>
+        <div class="panchang-item"><div class="label">Yamaganda</div><div class="value" style="color:var(--malefic)">${yamaganda[dayIdx]}</div></div>
+        <div class="panchang-item"><div class="label">Abhijit Muhurta</div><div class="value" style="color:var(--benefic)">11:54 – 12:48</div></div>
+      </div>
+    </div>
+
+    <!-- Dasha Influence -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px" class="fade-in">
+      <h3 style="font-size:14px;color:var(--accent);margin-bottom:12px;letter-spacing:1px"><i class="fas fa-hourglass-half" style="margin-right:8px"></i>Dasha Influence on Tomorrow</h3>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7">${predictions.dashaInfluence}</p>
+    </div>
+
+    <!-- Predictions -->
+    <div class="pred-grid" style="margin-bottom:20px">
+      ${predictions.cards.map(c=>`<div class="pred-card fade-in">
+        <div class="icon" style="background:${c.bg};color:${c.color}"><i class="fas ${c.icon}"></i></div>
+        <h4>${c.title}</h4>
+        <p>${c.text}</p>
+      </div>`).join('')}
+    </div>
+
+    <!-- Lucky -->
+    <div style="margin-bottom:20px" class="fade-in">
+      <h3 style="font-size:14px;color:var(--accent);margin-bottom:12px;letter-spacing:1px"><i class="fas fa-clover" style="margin-right:8px"></i>Lucky for Tomorrow</h3>
+      <div class="lucky-grid">
+        <div class="lucky-item"><div class="label">Color</div><div class="val" style="color:${lucky.color}">${lucky.colorName}</div></div>
+        <div class="lucky-item"><div class="label">Number</div><div class="val" style="color:var(--accent-b)">${lucky.number}</div></div>
+        <div class="lucky-item"><div class="label">Direction</div><div class="val" style="color:var(--neutral);font-size:16px">${lucky.direction}</div></div>
+        <div class="lucky-item"><div class="label">Gemstone</div><div class="val" style="color:var(--benefic);font-size:14px">${lucky.gemstone}</div></div>
+      </div>
+    </div>
+
+    <!-- Remedies -->
+    <div class="fade-in">
+      <h3 style="font-size:14px;color:var(--accent);margin-bottom:12px;letter-spacing:1px"><i class="fas fa-pray" style="margin-right:8px"></i>Suggested Remedies for Tomorrow</h3>
+      ${predictions.remedies.map(r=>`<div class="remedy-card"><div class="r-icon"><i class="fas ${r.icon}"></i></div><div><div style="font-size:13px;font-weight:600;margin-bottom:4px">${r.title}</div><div style="font-size:12px;color:var(--text2);line-height:1.6">${r.text}</div></div></div>`).join('')}
+    </div>`;
+  observeFadeIn();
+}
+
+function generatePredictions(ruler, moonTransit, dayIdx){
+  // Dasha influence text
+  const dashaTexts = {
+    'Saturn-Mars': `You are under <strong style="color:#8b5cf6">Saturn Mahadasha</strong> and <strong style="color:#ef4444">Mars Antardasha</strong>. This is a period of intense effort and transformation. Saturn brings discipline and patience while Mars adds drive and energy. Tomorrow, you may feel a push-pull between caution and impulsiveness. Channel this energy into structured work rather than scattered efforts. The combination favors dealing with long-pending issues related to property, debts, or legal matters. Avoid unnecessary conflicts — Mars' influence can make you short-tempered.`,
+    'Saturn-Rahu': `Under <strong style="color:#8b5cf6">Saturn Mahadasha</strong> — <strong style="color:#94a3b8">Rahu Antardasha</strong>, this period brings unconventional opportunities mixed with uncertainty. Tomorrow may present sudden changes or unexpected encounters. Stay grounded in Saturn's discipline and don't let Rahu's illusions carry you away.`,
+    'Saturn-Moon': `<strong style="color:#8b5cf6">Saturn-Moon</strong> period emphasizes emotional resilience. Tomorrow may bring moments of introspection and sensitivity. Saturn's influence on Moon can create a sense of heaviness — practice mindfulness and avoid overthinking.`,
+    'Saturn-Jupiter': `<strong style="color:#8b5cf6">Saturn-Jupiter</strong> is a highly favorable period for wisdom and growth. Tomorrow is excellent for learning, teaching, and spiritual pursuits. Jupiter's expansiveness combined with Saturn's structure creates lasting results.`
+  };
+  const dashaKey = currentMaha.lord+'-'+currentAntar.lord;
+  const dashaInfluence = dashaTexts[dashaKey] || dashaTexts['Saturn-Mars'];
+
+  // Prediction cards based on ruler and moon transit
+  const rulerEffects = {
+    Sun:{career:'A day of authority and recognition. Your leadership qualities may be noticed. Favorable for government-related work and interactions with seniors.',health:'Focus on heart health and eyesight. Avoid excessive sun exposure. Morning exercise is beneficial.',relations:'Father or fatherly figures may play a role today. Romantic relationships benefit from warmth and generosity.'},
+    Moon:{career:'Emotional intelligence is your asset today. Good for counseling, creative work, and public relations. Avoid making major decisions in the afternoon.',health:'Pay attention to digestion and mental well-being. A light, nourishing diet is recommended. Stay hydrated.',relations:'Domestic harmony is highlighted. Spend quality time with family and loved ones. Women may play a significant role.'},
+    Mars:{career:'High energy day — tackle challenging tasks head-on. Favorable for competitive activities, sports, and assertive negotiations. Avoid office politics.',health:'Be cautious of injuries, especially to head, muscles, and blood-related issues. Warm-up before physical activity.',relations:'Passion runs high — channel it constructively. Avoid arguments with spouse or partners. Courage in relationships is favored.'},
+    Mercury:{career:'Excellent day for communication, writing, contracts, and business deals. Intellectual work shines. Favorable for interviews and presentations.',health:'Nervous system needs care. Practice deep breathing. Avoid overstimulation from screens and caffeine.',relations:'Witty conversations and intellectual connection strengthen bonds. Good day for resolving misunderstandings through dialogue.'},
+    Jupiter:{career:'A day of expansion and wisdom. Favorable for teaching, consulting, financial planning, and higher education matters. Mentors may offer guidance.',health:'Liver and digestion need attention. Avoid heavy, oily foods. A walk in nature is particularly healing today.',relations:'Blessings in relationships. Married life feels harmonious. Children bring joy. Spiritual connections deepen.'},
+    Venus:{career:'Creative and financial gains are highlighted. Good day for design, art, luxury goods, and entertainment industry. Financial negotiations favor you.',health:'Reproductive health and kidneys need care. Indulgence should be moderate. Beauty treatments are favored.',relations:'Romance is in the air. Married couples experience tenderness. Single people may attract someone charming. Social gatherings are enjoyable.'},
+    Saturn:{career:'A day for steady, persistent work. Not flashy but solid progress. Good for dealing with older people, government procedures, and long-term planning.',health:'Joints, bones, and teeth need attention. Keep warm. Ayurvedic oil massage is beneficial. Don\'t skip meals.',relations:'Relationships may feel heavy or duty-bound. Be patient with partners. Elders\' advice regarding marriage may come.'}
+  };
+
+  const moonEffects = {
+    Aries:'Moon in Aries brings impulsiveness and courage — act decisively but think first.',
+    Taurus:'Moon in Taurus grounds emotions — stability and patience are your allies today.',
+    Gemini:'Moon in Gemini creates mental restlessness — focus on one task at a time.',
+    Cancer:'Moon in its own sign brings emotional depth and intuitive clarity — trust your gut.',
+    Leo:'Moon in Leo brings confidence and drama — express yourself but avoid ego clashes.',
+    Virgo:'Moon in Virgo favors analysis and service — pay attention to details.',
+    Libra:'Moon in Libra seeks balance and harmony — partnerships are highlighted.',
+    Scorpio:'Moon in Scorpio intensifies emotions — transformative conversations likely.',
+    Sagittarius:'Moon in Sagittarius brings optimism and wanderlust — broaden your horizons.',
+    Capricorn:'Moon in Capricorn creates emotional discipline — professional focus is strong.',
+    Aquarius:'Moon in Aquarius brings unconventional thinking — innovation is favored.',
+    Pisces:'Moon in Pisces enhances intuition and creativity — spiritual practices are powerful.'
+  };
+
+  const re = rulerEffects[ruler] || rulerEffects.Saturn;
+  const cards = [
+    {title:'Career & Work',text:re.career+' '+moonEffects[moonTransit],icon:'fa-briefcase',bg:'#60a5fa15',color:'#60a5fa'},
+    {title:'Health & Wellness',text:re.health,icon:'fa-heart-pulse',bg:'#4ade8015',color:'#4ade80'},
+    {title:'Love & Relations',text:re.relations,icon:'fa-heart',bg:'#f472b615',color:'#f472b6'},
+    {title:'Moon Transit Note',text:moonEffects[moonTransit],icon:'fa-moon',bg:'#e2e8f015',color:'#e2e8f0'},
+    {title:'Financial Outlook',text:`With ${ruler} as day lord and Moon in ${moonTransit}, financial decisions should be moderate. ${ruler==='Jupiter'||ruler==='Venus'?'Favorable for investments and gains.':'Avoid speculative decisions; focus on saving.'} ${moonTransit==='Taurus'||moonTransit==='Cancer'||moonTransit==='Libra'?'Accumulation of wealth is indicated.':'Expenses may outweigh income — be cautious.'}`,icon:'fa-coins',bg:'#fbbf2415',color:'#fbbf24'},
+    {title:'Spiritual Guidance',text:`${moonTransit==='Pisces'||moonTransit==='Cancer'||moonTransit==='Scorpio'?'A deeply spiritual day — meditation and mantra chanting will be powerful. Connect with your inner self.':'A good day for light spiritual practices. Chanting the ${ruler} mantra 108 times during ${ruler==='Sun'?'sunrise':'morning'} hours will amplify positive energies.'}`,icon:'fa-om',bg:'#d4952a15',color:'#d4952a'}
+  ];
+
+  // Remedies
+  const remedies = [
+    {icon:'fa-fire',title:`Chant ${ruler} Mantra`,text:`Recite the ${ruler} Beej Mantra 108 times tomorrow morning. ${ruler==='Saturn'?'"Om Sham Shanicharaya Namah"':ruler==='Mars'?'"Om Kram Kreem Kroum Sah Bhaumaya Namah"':ruler==='Jupiter'?'"Om Gram Greem Groum Sah Gurave Namah"':'"Om "+['Suryaya','Somaya','Bhaumaya','Budhaya','Gurave','Shukraya','Shanicharaya'][dayIdx]+" Namah"}. Use a Rudraksha or Tulsi mala.`},
+    {icon:'fa-droplet',title:'Water Offering (Tarpan)',text:`Offer water mixed with a pinch of ${ruler==='Sun'?'red sandalwood':ruler==='Moon'?'white sandalwood':ruler==='Mars'?'red kumkum':'sesame seeds'} to the Sun at sunrise. This strengthens the day lord and brings mental clarity.`},
+    {icon:'fa-hand-holding-heart',title:'Charity (Daan)',text:`Donate ${ruler==='Saturn'?'black sesame seeds, iron items, or black cloth':ruler==='Jupiter'?'yellow cloth, turmeric, or books':ruler==='Venus'?'white cloth, sugar, or dairy products':'food to the needy'} tomorrow morning. Charity on the day of the ruling planet multiplies positive karma.`},
+    {icon:'fa-leaf',title:'Herbal Remedy',text:`Consume ${moonTransit==='Aries'||moonTransit==='Scorpio'?'Ashwagandha tea for strength':moonTransit==='Taurus'||moonTransit==='Libra'?'Brahmi tea for mental clarity':moonTransit==='Gemini'||moonTransit==='Virgo'?'Tulsi tea for immunity':'Turmeric milk before bedtime'} to align your body's energy with the lunar transit.`}
+  ];
+
+  return {dashaInfluence, cards, remedies};
+}
+
+function getLucky(dayIdx, moonIdx){
+  const colors = [{name:'Red',hex:'#ef4444'},{name:'White',hex:'#e2e8f0'},{name:'Crimson',hex:'#dc2626'},{name:'Green',hex:'#22c55e'},{name:'Yellow',hex:'#eab308'},{name:'White',hex:'#f0f0f0'},{name:'Blue',hex:'#3b82f6'}];
+  const numbers = [1,2,9,5,3,6,8];
+  const dirs = ['East','Northwest','South','North','Northeast','Southeast','West'];
+  const gems = ['Ruby','Pearl','Red Coral','Emerald','Yellow Sapphire','Diamond','Blue Sapphire'];
+  return {colorName:colors[dayIdx].name,color:colors[dayIdx].hex,number:((numbers[dayIdx]+moonIdx)%9)+1,direction:dirs[dayIdx],gemstone:gems[dayIdx]};
+}
+
+/* ============================================
+   RENDER: Yogas Panel
+   ============================================ */
+function renderYogas(){
+  const panel = document.getElementById('yogas');
+  const yogas = [
+    {name:'Ubhayachari Yoga',type:'auspicious',desc:'Planets are present on both sides of the Sun (2nd and 12th houses from Sun). Mercury and Saturn in 12th (Sagittarius) and Moon, Venus, Rahu in 2nd (Aquarius) from Sun in Capricorn. This yoga grants eloquence, virtue, wealth, and fame. The native possesses a well-formed body and enjoys worldly pleasures.'},
+    {name:'Veshi Yoga',type:'auspicious',desc:'Moon, Venus, and Rahu are placed in the 2nd house from the Sun. This combination bestows intelligence, wealth, and a virtuous disposition. The native is skilled in communication and enjoys favorable reputation in society.'},
+    {name:'Voshi Yoga',type:'auspicious',desc:'Mercury and Saturn are placed in the 12th house from the Sun. This yoga gives a strong physique, charitable nature, and success in foreign lands. The native may have an interest in spiritual or occult subjects.'},
+    {name:'Raj Yoga',type:'auspicious',desc:'Lagna lord Jupiter is placed in the 7th house (a kendra) in Gemini. This powerful Raj Yoga grants authority, status, and political success. The native rises to positions of influence through partnerships and public dealings.'},
+    {name:'Kemadruma Yoga',type:'inauspicious',desc:'Moon in the 3rd house with no planets in the 2nd or 4th house, and not in a kendra from Lagna. This yoga can cause financial struggles, lack of support, and mental unrest in early life. However, if Jupiter aspects the Moon, its effects are significantly reduced.'},
+    {name:'Gaja Kesari Yoga (Partial)',type:'neutral',desc:'While Moon and Jupiter are not in mutual kendras (Moon in 3rd, Jupiter in 7th), Jupiter aspects the Moon from the 7th house. This partial Gaja Kesari still confers wisdom, a dignified presence, and protection during difficult times.'},
+    {name:'Dhana Yoga (Mild)',type:'neutral',desc:'2nd lord Saturn is placed in the Lagna (1st house) giving financial stability through self-effort. While not a strong Dhana Yoga, it ensures the native earns through honest means and has steady accumulation of wealth over time.'}
+  ];
+
+  // Ashtakavarga scores
+  const ashtakavarga = [
+    {planet:'Sun',sym:'☉',score:4,color:'#fbbf24'},
+    {planet:'Moon',sym:'☽',score:3,color:'#e2e8f0'},
+    {planet:'Mars',sym:'♂',score:5,color:'#ef4444'},
+    {planet:'Mercury',sym:'☿',score:4,color:'#60a5fa'},
+    {planet:'Jupiter',sym:'♃',score:6,color:'#f59e0b'},
+    {planet:'Venus',sym:'♀',score:5,color:'#f472b6'},
+    {planet:'Saturn',sym:'♄',score:3,color:'#8b5cf6'},
+  ];
+  const totalAV = ashtakavarga.reduce((s,p)=>s+p.score,0);
+
+  let html = `<div class="sec-header"><h2>Yogas & Planetary Strengths</h2><div class="line"></div></div>
+    <div style="margin-bottom:24px">
+      <h3 style="font-size:14px;color:var(--accent);margin-bottom:12px;letter-spacing:1px">Planetary Yogas in Your Chart</h3>
+      ${yogas.map(y=>`<div class="yoga-card fade-in">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+            <strong style="font-size:14px;color:var(--text)">${y.name}</strong>
+            <span class="yoga-type yoga-${y.type}">${y.type}</span>
+          </div>
+          <p style="font-size:12px;color:var(--text2);line-height:1.7">${y.desc}</p>
+        </div>
+      </div>`).join('')}
+    </div>
+    <div class="fade-in" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px">
+      <h3 style="font-size:14px;color:var(--accent);margin-bottom:16px;letter-spacing:1px">Ashtakavarga Strength</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px">
+        ${ashtakavarga.map(p=>{
+          const pct = (p.score/8)*100;
+          const barColor = p.score>=5?'var(--benefic)':p.score>=4?'var(--accent)':'var(--malefic)';
+          return `<div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <span style="font-size:13px;color:${p.color};font-weight:600">${p.sym} ${p.planet}</span>
+              <span style="font-size:12px;color:var(--text2)">${p.score}/8</span>
+            </div>
+            <div class="str-bar"><div class="str-fill" style="width:${pct}%;background:${barColor}"></div></div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:13px;font-weight:600">Total Bindus (excl. Rahu/Ketu)</span>
+        <span style="font-size:18px;font-weight:700;color:${totalAV>=25?'var(--benefic)':totalAV>=20?'var(--accent)':'var(--malefic)'}">${totalAV} / 56</span>
+      </div>
+      <p style="font-size:11px;color:var(--text3);margin-top:8px">${totalAV>=28?'Strong chart with excellent planetary support. The native enjoys stability and success across multiple life areas.':totalAV>=22?'Moderate strength. Some areas of life are well-supported while others require effort and remedial measures.':'Lower than average — strengthening weak planets through gems, mantras, and charity is recommended.'}</p>
+    </div>`;
+  panel.innerHTML = html;
+  observeFadeIn();
+}
+
+/* ============================================
+   TAB SWITCHING
+   ============================================ */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected','true');
+    const panel = document.getElementById('panel-'+btn.dataset.tab);
+    panel.classList.add('active');
+    // Re-trigger fade-in animations
+    panel.querySelectorAll('.fade-in').forEach(el => { el.classList.remove('visible'); void el.offsetWidth; });
+    observeFadeIn();
+  });
+});
+
+/* ============================================
+   INTERSECTION OBSERVER for fade-in
+   ============================================ */
+function observeFadeIn(){
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e,i) => { if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('visible'), i*80); obs.unobserve(e.target); } });
+  }, {threshold:0.1});
+  document.querySelectorAll('.fade-in:not(.visible)').forEach(el => obs.observe(el));
+}
+
+/* ============================================
+   PARTICLES
+   ============================================ */
+function createParticles(){
+  const container = document.getElementById('particles');
+  for(let i=0;i<20;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random()*100+'%';
+    p.style.bottom = '-10px';
+    p.style.animationDuration = (8+Math.random()*12)+'s';
+    p.style.animationDelay = (Math.random()*10)+'s';
+    p.style.width = (1+Math.random()*2)+'px';
+    p.style.height = p.style.width;
+    container.appendChild(p);
+  }
+}
+
+/* ============================================
+   INIT
+   ============================================ */
+window.addEventListener('DOMContentLoaded', () => {
+  createParticles();
+  renderChart();
+  renderDasha();
+  renderPlanets();
+  renderHouses();
+  renderTomorrow();
+  renderYogas();
+  // Hide loader
+  setTimeout(() => document.getElementById('loader').classList.add('hide'), 1800);
+});
 </script>
-
 </body>
 </html>
